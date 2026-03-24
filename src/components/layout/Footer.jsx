@@ -1,13 +1,13 @@
 function Footer() {
     return (
-        <footer className="bg-slate-400 text-white">
+        <footer className="bg-slate-800 text-white">
             <div className="max-w-7xl mx-auto px-6 py-12">
                 <div className="grid grid-cols-4 gap-8">
                     {/* Logo ve Açıklama */}
                     <div>
-                        <h2 className="text-x1 font-bold mb-4">marka adı</h2>
+                        <h2 className="text-x1 font-bold mb-4">BRANDNAME</h2>
                         <p className="text-white text-sm">
-                            -marka hakkında-
+                            about brand
                         </p>
                     </div>
 
