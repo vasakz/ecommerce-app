@@ -2,16 +2,16 @@ import { ShoppingCart, User, Search } from 'lucide-react'
 
 function Navbar() {
   return (
-    <nav className="bg-slate-300 text-black">
+    <nav className="bg-slate-300 text-blue-950">
       <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
 
         {/* Logo */}
-        <h1 className="text-xl font-bold tracking-widest text-black">
+        <h1 className="text-xl font-bold tracking-widest text-blue-950">
           brandname
         </h1>
 
         {/* Linkler */}
-        <ul className="flex gap-8 text-sm text-black">
+        <ul className="flex gap-8 text-sm text-blue-950">
           <li className="hover:text-amber-400 cursor-pointer transition">Ürünler</li>
           <li className="hover:text-amber-400 cursor-pointer transition">Kampanyalar</li>
           <li className="hover:text-amber-400 cursor-pointer transition">Mağazalar</li>
