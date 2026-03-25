@@ -6,7 +6,7 @@ function Register() {
     <div className="h-screen flex overflow-hidden">
 
       {/* Sol: Görsel */}
-      <div className="hidden md:flex w-1/2 bg-stone-100 items-center justify-center">
+      <div className="hidden md:flex w-1/2 overflow-hidden">
         <img
           src={registerGorsel}
           alt="register"
