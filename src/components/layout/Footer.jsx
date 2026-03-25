@@ -1,6 +1,6 @@
 function Footer() {
     return (
-        <footer className="bg-slate-800 text-white">
+        <footer className="bg-stone-900 text-white">
             <div className="max-w-7xl mx-auto px-6 py-12">
                 <div className="grid grid-cols-4 gap-8">
                     {/* Logo ve Açıklama */}
