@@ -1,4 +1,5 @@
 import { ShoppingCart, Heart, Search } from 'lucide-react'
+import { Link } from 'react-router-dom'
 
 function Navbar() {
   return (
@@ -28,7 +29,9 @@ function Navbar() {
             <li className="hover:text-amber-500 cursor-pointer transition">ANASAYFA</li>
             <li className="hover:text-amber-500 cursor-pointer transition">ÜRÜNLER</li>
             <li className="hover:text-amber-500 cursor-pointer transition">GİRİŞ YAP</li>
-            <li className="hover:text-amber-500 cursor-pointer transition">KAYIT OL</li>
+            <Link to="/kayit-ol" className="hover:text-amber-500 cursor-pointer transition"> KAYIT OL 
+            </Link>
+            
           </ul>
 
           {/* Sağ: Arama + İkonlar */}
