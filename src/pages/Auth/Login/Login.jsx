@@ -45,7 +45,7 @@ function Login() {
             <span className="text-xs text-amber-500 cursor-pointer hover:underline">Şifremi Unuttum</span>
           </div>
 
-          <button className="w-full bg-stone-900 text-white py-3 text-sm font-semibold tracking-widest hover:bg-amber-500 transition">
+          <button className="w-full bg-stone-900 text-white py-3 text-sm font-semibold tracking-widest hover:bg-amber-500 transition rounded-full">
             GİRİŞ YAP
           </button>
 
