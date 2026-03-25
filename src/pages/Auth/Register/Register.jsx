@@ -1,4 +1,6 @@
 import registerGorsel from '../../../assets/register-login.jpg'
+import { Link } from 'react-router-dom'
+
 function Register() {
   return (
     <div className="h-screen flex overflow-hidden">
@@ -18,7 +20,9 @@ function Register() {
           <h2 className="text-3xl font-bold mb-2 tracking-widest">KAYIT OL.</h2>
           <p className="text-sm text-stone-500 mb-8">
             Zaten hesabın var mı?{' '}
-            <span className="text-amber-500 cursor-pointer hover:underline">Giriş Yap</span>
+            <Link to="/giris-yap" className="text-amber-500 cursor-pointer hover:underline">Giriş Yap
+            </Link>
+            
           </p>
 
           <div className="space-y-4">
