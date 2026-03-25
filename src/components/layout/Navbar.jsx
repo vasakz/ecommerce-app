@@ -29,7 +29,8 @@ function Navbar() {
             <li className="hover:text-amber-500 cursor-pointer transition">ANASAYFA</li>
             <li className="hover:text-amber-500 cursor-pointer transition">ATÖLYEDEN</li>
             <li className="hover:text-amber-500 cursor-pointer transition">ÜRÜNLER</li>
-            <li className="hover:text-amber-500 cursor-pointer transition">GİRİŞ YAP</li>
+            <Link to="/giris-yap" className="hover:text-amber-500 cursor-pointer transition text-sm font-medium"> GİRİŞ YAP
+            </Link>
             <Link to="/kayit-ol" className="hover:text-amber-500 cursor-pointer transition"> KAYIT OL 
             </Link>
             <li className="hover:text-red-500 cursor-pointer transition">KAMPANYALAR</li>
