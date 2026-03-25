@@ -27,10 +27,12 @@ function Navbar() {
           {/* Orta: Linkler */}
           <ul className="flex gap-8 text-sm font-medium">
             <li className="hover:text-amber-500 cursor-pointer transition">ANASAYFA</li>
+            <li className="hover:text-amber-500 cursor-pointer transition">ATÖLYEDEN</li>
             <li className="hover:text-amber-500 cursor-pointer transition">ÜRÜNLER</li>
             <li className="hover:text-amber-500 cursor-pointer transition">GİRİŞ YAP</li>
             <Link to="/kayit-ol" className="hover:text-amber-500 cursor-pointer transition"> KAYIT OL 
             </Link>
+            <li className="hover:text-red-500 cursor-pointer transition">KAMPANYALAR</li>
             
           </ul>
 
@@ -44,7 +46,7 @@ function Navbar() {
               />
               <Search size={16} className="text-stone-400" />
             </div>
-            <Heart size={20} className="cursor-pointer hover:text-amber-500 transition" />
+            <Heart size={20} className="cursor-pointer hover:text-red-500 transition" />
             <ShoppingCart size={20} className="cursor-pointer hover:text-amber-500 transition" />
           </div>
 
