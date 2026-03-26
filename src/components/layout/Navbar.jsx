@@ -24,7 +24,7 @@ function Navbar() {
 
           {/* Orta: Linkler */}
           <ul className="flex gap-8 text-sm font-medium">
-            <li className="hover:text-amber-500 cursor-pointer transition">ANASAYFA</li>
+            <Link to="/" className="hover:text-amber-500 cursor-pointer transition">ANASAYFA</Link>
             <Link to="/atolye" className="hover:text-amber-500 cursor-pointer transition">ATÖLYEDEN</Link>
             <li className="hover:text-amber-500 cursor-pointer transition">ÜRÜNLER</li>
             <li className="hover:text-red-500 cursor-pointer transition">KAMPANYALAR</li>
