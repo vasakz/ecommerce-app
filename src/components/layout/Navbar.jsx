@@ -36,7 +36,7 @@ function Navbar() {
               <input
                 type="text"
                 placeholder="Aradığınız şey nedir?"
-                className="text-sm outline-none w-40 text-stone-600"
+                className="text-sm outline-none w-80 text-stone-600"
               />
               <Search size={16} className="text-stone-400" />
             </div>
