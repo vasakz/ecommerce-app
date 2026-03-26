@@ -32,8 +32,8 @@ function UrunKarti({ urun }) {
   }
 
   return (
-    <div className="min-w-[260px] cursor-pointer group">
-      <div className="relative bg-stone-100 w-full h-72 mb-3 overflow-hidden">
+    <div className="w-[260px] flex-shrink-0 cursor-pointer group">
+      <div className="relative bg-stone-100 w-[260px] h-[260px] mb-3 overflow-hidden">
         <img
           src={urun.gorseller[aktifIndex]}
           alt={urun.isim}
