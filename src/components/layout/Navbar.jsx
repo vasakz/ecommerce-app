@@ -17,13 +17,13 @@ function Navbar() {
 
       {/* Ana Navbar */}
       <div className="bg-white text-stone-900 border-b border-stone-200">
-        <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+        <div className="px-6 py-4 flex items-center gap-8">
 
           {/* Logo */}
           <h1 className="text-xl font-bold tracking-widest">BRAND</h1>
 
           {/* Orta: Linkler */}
-          <ul className="flex gap-8 text-sm font-medium">
+          <ul className="flex gap-8 text-sm font-medium flex-1">
             <Link to="/" className="hover:text-amber-500 cursor-pointer transition">ANASAYFA</Link>
             <Link to="/atolye" className="hover:text-amber-500 cursor-pointer transition">ATÖLYEDEN</Link>
             <li className="hover:text-amber-500 cursor-pointer transition">ÜRÜNLER</li>
@@ -36,7 +36,7 @@ function Navbar() {
               <input
                 type="text"
                 placeholder="Aradığınız şey nedir?"
-                className="text-sm outline-none w-80 text-stone-600"
+                className="text-sm outline-none w-48 text-stone-600"
               />
               <Search size={16} className="text-stone-400" />
             </div>
