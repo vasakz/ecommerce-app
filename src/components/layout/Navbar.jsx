@@ -23,7 +23,7 @@ function Navbar() {
           <h1 className="text-xl font-bold tracking-widest">BRAND</h1>
 
           {/* Orta: Linkler */}
-          <ul className="flex gap-8 text-sm font-medium flex-1">
+          <ul className="flex gap-8 text-sm font-medium flex-1 justify-center">
             <Link to="/" className="hover:text-amber-500 cursor-pointer transition">ANASAYFA</Link>
             <Link to="/atolye" className="hover:text-amber-500 cursor-pointer transition">ATÖLYEDEN</Link>
             <li className="hover:text-amber-500 cursor-pointer transition">ÜRÜNLER</li>
