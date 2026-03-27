@@ -1,4 +1,4 @@
-import { ShoppingCart, Heart, Search } from 'lucide-react'
+import { ShoppingCart, Heart, Search, User } from 'lucide-react'
 import { Link } from 'react-router-dom'
 
 function Navbar() {
@@ -42,6 +42,7 @@ function Navbar() {
             </div>
             <Heart size={20} className="cursor-pointer hover:text-red-500 transition" />
             <ShoppingCart size={20} className="cursor-pointer hover:text-amber-500 transition" />
+            <User size={20} className="cursor-pointer hover:text-amber-500 transition" />
             <Link to="/giris-yap" className="text-sm font-medium hover:text-amber-500 transition">GİRİŞ YAP</Link>
             <Link to="/kayit-ol" className="text-sm font-medium hover:text-amber-500 transition">KAYIT OL</Link>
           </div>
