@@ -12,6 +12,7 @@ import deri9 from '../../assets/deri-9.jpeg'
 import deri10 from '../../assets/deri-10.jpeg'
 import deri11 from '../../assets/deri-11.jpeg'
 import deri12 from '../../assets/deri-12.jpeg'
+import atolyeden from '../../assets/atolyeden.jpeg'
 
 const urunler = [
   { isim: 'DERİ ÇANTA NO.1', fiyat: '1200TL', gorseller: [deri1, deri2, deri3, deri4] },
@@ -82,7 +83,7 @@ function Atolye() {
       {/* Hero Banner */}
       <div className="relative w-full h-96 overflow-hidden">
         <img
-          src={deri1}
+          src={atolyeden}
           alt="atolye"
           className="object-cover w-full h-full"
         />
