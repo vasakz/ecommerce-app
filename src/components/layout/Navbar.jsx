@@ -110,7 +110,7 @@ function Navbar() {
               onClick={() => setMenuOpen(false)}
               className="flex items-center justify-between px-6 py-3 hover:bg-red-50 transition text-red-500 font-semibold"
             >
-              KAMPANYALAR 
+              Kampanyalar
               <ChevronRight size={14} className="text-red-400" />
             </Link>
           </li>
