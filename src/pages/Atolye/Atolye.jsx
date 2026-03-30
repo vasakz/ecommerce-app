@@ -13,6 +13,9 @@ import deri10 from '../../assets/deri-10.jpeg'
 import deri11 from '../../assets/deri-11.jpeg'
 import deri12 from '../../assets/deri-12.jpeg'
 import atolyeden from '../../assets/atolyeden.jpeg'
+import oyuncak1 from '../../assets/oyuncak1.jpg'
+import deriAtolye1 from '../../assets/deri-atolye1.jpeg'
+import terzi from '../../assets/terzi.jpeg'
 
 const urunler = [
   { isim: 'DERİ ÇANTA NO.1', fiyat: '1200TL', gorseller: [deri1, deri2, deri3, deri4] },
@@ -80,7 +83,7 @@ function UrunKarti({ urun }) {
       <div className="flex flex-col px-1">
         <p className="font-medium tracking-wide text-sm text-stone-800 line-clamp-1">{urun.isim}</p>
         
-        {/* Senin İstediğin: Yıldızlar ve Değerlendirme Bölümü */}
+        {/*Yıldızlar ve Değerlendirme Bölümü */}
         <div className="flex items-center gap-1 mt-1 mb-2">
           <div className="flex">{renderYildizlar()}</div>
           <span className="text-[10px] text-stone-500 font-medium">(12 Yorum)</span>
@@ -89,7 +92,7 @@ function UrunKarti({ urun }) {
         <div className="flex justify-between items-center mt-1">
           <p className="font-semibold text-stone-900">{urun.fiyat}</p>
           
-          {/* Senin İstediğin: Sepete Ekle Butonu */}
+          {/* Sepete Ekle Butonu */}
           <button className="p-1.5 rounded-full bg-stone-100 hover:bg-stone-200 text-stone-700 transition-colors" title="Sepete Ekle">
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4">
               <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 10.5V6a3.75 3.75 0 10-7.5 0v4.5m11.356-1.993l1.263 12c.07.665-.45 1.243-1.119 1.243H4.25a1.125 1.125 0 01-1.12-1.243l1.264-12A1.125 1.125 0 015.513 7.5h12.974c.576 0 1.059.435 1.119 1.007zM8.625 10.5a.375.375 0 11-.75 0 .375.375 0 01.75 0zm7.5 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z" />
@@ -157,7 +160,116 @@ function Atolye() {
         </div>
       </div>
 
-    </div>
+{/* Öne Çıkan Atölyeler (Zikzak ve Hover Efektli) */}
+      <div className="max-w-6xl mx-auto px-6 py-20 border-t border-stone-200/60 mt-8">
+        
+        {/* Başlık ve Tümünü Gör Linki */}
+        <div className="flex flex-col md:flex-row justify-between items-end mb-16 gap-6">
+          <div>
+            <span className="text-[10px] tracking-[0.35em] text-stone-500 mb-3 block uppercase">Zanaatın Hikayesi</span>
+            <h2 className="text-3xl font-serif text-stone-800">Öne Çıkan Atölyeler</h2>
+          </div>
+          <button className="text-xs font-semibold tracking-widest text-stone-700 uppercase flex items-center gap-2 border-b border-stone-400 pb-1.5 hover:border-stone-800 transition-colors group">
+            Tüm Atölyeleri Gör <span className="text-lg font-light leading-none group-hover:translate-x-1 transition-transform">›</span>
+          </button>
+        </div>
+
+        <div className="flex flex-col gap-16 md:gap-24">
+          
+       {/* 1. Deri Atölyesi (Görsel Solda) */}
+          <div className="flex flex-col md:flex-row gap-8 md:gap-12 items-center">
+            <div className="w-full md:w-5/12">
+              <div className="aspect-[4/3] overflow-hidden rounded-md bg-stone-100 shadow-sm relative group cursor-pointer">
+                <img src={deriAtolye1} alt="Mila Vintage Deri" className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
+                
+                <div className="absolute inset-0 bg-stone-900/0 group-hover:bg-stone-900/50 transition-colors duration-500 flex items-center justify-center">
+                  <span className="opacity-0 group-hover:opacity-100 transition-opacity duration-500 delay-75 text-white border border-white/60 px-6 py-2.5 rounded-sm text-[10px] tracking-[0.2em] uppercase font-medium backdrop-blur-sm">
+                    Atölyeyi Keşfet
+                  </span>
+                </div>
+
+                <div className="absolute top-3 left-3 bg-white/90 backdrop-blur-sm text-[9px] font-bold tracking-widest px-3 py-1.5 rounded-sm uppercase text-stone-800 transition-opacity duration-300 group-hover:opacity-0">Mila Vintage</div>
+              </div>
+            </div>
+            <div className="w-full md:w-7/12 flex flex-col justify-center">
+              <h3 className="text-2xl font-serif text-stone-800 mb-3">Mila Vintage Deri</h3>
+              <p className="text-[10px] font-bold text-amber-600 tracking-wider mb-4 uppercase">El Yapımı Çanta & Zanaat</p>
+              <p className="text-stone-600 text-sm leading-relaxed mb-5">
+                Derinin yaşanmışlığını ve karakterini yansıtan koleksiyonlarımız, ustamızın yıllara dayanan tecrübesiyle şekilleniyor. Arkasındaki devasa renk paletinden özenle seçilen her bir deri parçası, zamana meydan okuyan tasarımlara dönüşerek sadece size özel bir hikaye anlatır.
+              </p>
+              <div className="bg-stone-50 border-l-2 border-amber-400 p-4 rounded-r-md">
+                <p className="text-stone-700 text-xs italic mb-2">"Yıllardır aradığım o kusursuz vintage görünümlü çantayı sonunda burada buldum. İşçilik tek kelimeyle muazzam."</p>
+                <div className="flex items-center justify-between">
+                  <span className="text-[10px] font-bold text-stone-500 uppercase">— Aylin S.</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          </div>
+
+          {/* 2. Oyuncak Atölyesi (Görsel Sağda) */}
+          <div className="flex flex-col md:flex-row-reverse gap-8 md:gap-12 items-center">
+            <div className="w-full md:w-5/12">
+              <div className="aspect-[4/3] overflow-hidden rounded-md bg-stone-100 shadow-sm relative group cursor-pointer">
+                <img src={oyuncak1} alt="Amigurumi Tales" className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
+                
+                {/* Siyah Yarı Saydam Katman ve Buton */}
+                <div className="absolute inset-0 bg-stone-900/0 group-hover:bg-stone-900/50 transition-colors duration-500 flex items-center justify-center">
+                  <span className="opacity-0 group-hover:opacity-100 transition-opacity duration-500 delay-75 text-white border border-white/60 px-6 py-2.5 rounded-sm text-[10px] tracking-[0.2em] uppercase font-medium backdrop-blur-sm">
+                    Atölyeyi Keşfet
+                  </span>
+                </div>
+
+                <div className="absolute top-3 right-3 bg-white/90 backdrop-blur-sm text-[9px] font-bold tracking-widest px-3 py-1.5 rounded-sm uppercase text-stone-800 transition-opacity duration-300 group-hover:opacity-0">Amigurumi Tales</div>
+              </div>
+            </div>
+            <div className="w-full md:w-7/12 flex flex-col justify-center md:text-right">
+              <h3 className="text-2xl font-serif text-stone-800 mb-3">Amigurumi Tales</h3>
+              <p className="text-[10px] font-bold text-rose-500 tracking-wider mb-4 uppercase">İlmek İlmek: Oyuncak</p>
+              <p className="text-stone-600 text-sm leading-relaxed mb-5">
+                Çocuklar ve ruhu çocuk kalanlar için, organik pamuk iplerle örülmüş uyku arkadaşları. Hiçbir zararlı madde içermeyen, tamamen doğal amigurumi oyuncaklarımız sevgiyle ilmek ilmek işleniyor.
+              </p>
+              <div className="bg-stone-50 border-r-2 border-rose-400 p-4 rounded-l-md md:text-left">
+                <p className="text-stone-700 text-xs italic mb-2">"Kızım tavşanını elinden düşürmüyor, dokusu o kadar yumuşak ve güvenli ki içim çok rahat."</p>
+                <div className="flex items-center justify-between">
+                  <span className="text-[10px] font-bold text-stone-500 uppercase">Zeynep K. —</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+         {/* 3. Terzi Atölyesi (Görsel Solda) */}
+          <div className="flex flex-col md:flex-row gap-8 md:gap-12 items-center">
+            <div className="w-full md:w-5/12">
+              <div className="aspect-[4/3] overflow-hidden rounded-md bg-stone-100 shadow-sm relative group cursor-pointer">
+                <img src={terzi} alt="Özel Dikim Terzihanesi" className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
+                
+                <div className="absolute inset-0 bg-stone-900/0 group-hover:bg-stone-900/50 transition-colors duration-500 flex items-center justify-center">
+                  <span className="opacity-0 group-hover:opacity-100 transition-opacity duration-500 delay-75 text-white border border-white/60 px-6 py-2.5 rounded-sm text-[10px] tracking-[0.2em] uppercase font-medium backdrop-blur-sm">
+                    Atölyeyi Keşfet
+                  </span>
+                </div>
+
+                <div className="absolute top-3 left-3 bg-white/90 backdrop-blur-sm text-[9px] font-bold tracking-widest px-3 py-1.5 rounded-sm uppercase text-stone-800 transition-opacity duration-300 group-hover:opacity-0">Özel Dikim</div>
+              </div>
+            </div>
+            <div className="w-full md:w-7/12 flex flex-col justify-center">
+              <h3 className="text-2xl font-serif text-stone-800 mb-3">Özel Dikim Terzihanesi</h3>
+              <p className="text-[10px] font-bold text-sky-600 tracking-wider mb-4 uppercase">Ismarlama & Klasik Kesim</p>
+              <p className="text-stone-600 text-sm leading-relaxed mb-5">
+                Milimetrik hesaplamalar, usta işi tebeşir çizgileri ve birinci sınıf kumaşların kusursuz buluşma noktası. Standart kalıpların ötesine geçerek; sadece bedeninize değil, karakterinize ve duruşunuza da tam oturan kişiye özel tasarımlar hazırlıyoruz.
+              </p>
+              <div className="bg-stone-50 border-l-2 border-sky-400 p-4 rounded-r-md">
+                <p className="text-stone-700 text-xs italic mb-2">"Kumaşın kalitesi ve ustanın özeni inanılmazdı. Kesimi o kadar kusursuz ki, üzerimde taşıdığım en iyi ceket oldu."</p>
+                <div className="flex items-center justify-between">
+                  <span className="text-[10px] font-bold text-stone-500 uppercase">— Burak Y.</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+   
   )
 }
 
