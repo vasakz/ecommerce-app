@@ -17,13 +17,13 @@ function Navbar() {
 
       {/* Ana Navbar */}
       <div className="bg-white text-stone-900 border-b border-stone-200">
-        <div className="px-6 py-4 flex items-center gap-8">
+        <div className="px-6 py-4 flex items-center justify-between relative">
 
           {/* Logo */}
           <h1 className="text-xl font-bold tracking-widest">BRAND</h1>
 
           {/* Orta: Linkler */}
-          <ul className="flex gap-8 text-sm font-medium flex-1">
+          <ul className="absolute left-1/2 -translate-x-1/2 flex gap-8 text-sm font-medium">
             <Link to="/" className="hover:text-amber-500 cursor-pointer transition">ANASAYFA</Link>
             <Link to="/atolye" className="hover:text-amber-500 cursor-pointer transition">ATÖLYEDEN</Link>
             <li className="hover:text-amber-500 cursor-pointer transition">ÜRÜNLER</li>
