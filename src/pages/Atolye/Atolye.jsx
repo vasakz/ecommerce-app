@@ -121,6 +121,32 @@ function Atolye() {
         </div>
       </div>
 
+   
+     {/* Kayan Yazı (Marquee) */}
+      <div className="w-full bg-stone-100/80 border-y border-stone-200 py-2.5 overflow-hidden flex items-center">
+        {/* Kayan yazı animasyonu için mini CSS */}
+        <style>
+          {`
+            @keyframes marquee {
+              0% { transform: translateX(0%); }
+              100% { transform: translateX(-100%); }
+            }
+            .animate-marquee {
+              display: flex;
+              white-space: nowrap;
+              animation: marquee 35s linear infinite;
+            }
+          `}
+        </style>
+        
+        <div className="animate-marquee text-[11px] tracking-[0.25em] text-stone-600 font-medium uppercase">
+          {/* Kusursuz ve kesintisiz bir döngü için metni yan yana ekliyoruz */}
+          <span className="mx-12">✧ Ürünlerimiz özenle el emeği ile hazırlandığından, kişiselleştirme süresi, teslimat ve stok durumu değişiklik gösterebilir ✧</span>
+          <span className="mx-12">✧ Ürünlerimiz özenle el emeği ile hazırlandığından, kişiselleştirme süresi, teslimat ve stok durumu değişiklik gösterebilir ✧</span>
+          <span className="mx-12">✧ Ürünlerimiz özenle el emeği ile hazırlandığından, kişiselleştirme süresi, teslimat ve stok durumu değişiklik gösterebilir ✧</span>
+        </div>
+      </div>
+
       {/* Ürün Slider */}
       <div className="max-w-7xl mx-auto px-6 py-12">
         <h2 className="text-sm font-bold tracking-widest mb-6">BU HAFTA ÖNE ÇIKANLAR :</h2>
