@@ -4,8 +4,10 @@ import NotFound from './pages/NotFound/NotFound'
 import Register from './pages/Auth/Register/Register'
 import Login from './pages/Auth/Login/Login'
 import Atolye from './pages/Atolye/Atolye'
+import Profile from './pages/Profile/Profile'
 import Navbar from './components/layout/Navbar'
 import Footer from './components/layout/Footer'
+
 
 
 function Layout() {
@@ -20,6 +22,7 @@ function Layout() {
       <Route path="/kayit-ol" element={<Register />} />
       <Route path="/giris-yap" element={<Login />} />
       <Route path="/atolye" element={<Atolye />} />
+      <Route path="/profil" element={<Profile />} />
       <Route path="*" element={<NotFound />} />
     </Routes>
     {!footerGizle.includes(location.pathname) && <Footer />}
