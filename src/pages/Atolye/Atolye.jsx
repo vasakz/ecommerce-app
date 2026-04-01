@@ -24,7 +24,26 @@ const urunler = [
   { isim: 'DERİ ÇANTA NO.4', fiyat: '850TL',  gorseller: [deri11, deri12] },
 ]
 
+const cokSatanlar = [
+  { isim: 'EL YAPIMI SERAMİK KUPA', fiyat: '450TL', gorseller: [oyuncak1, atolyeden] },
+  { isim: 'VINTAGE DERİ CÜZDAN', fiyat: '600TL', gorseller: [deri5, deri1] },
+  { isim: 'AHŞAP KESME TAHTASI', fiyat: '850TL', gorseller: [terzi, deri12] },
+  { isim: 'AMİGURUMİ TAVŞAN', fiyat: '350TL', gorseller: [oyuncak1, oyuncak1] },
+]
+
+const yeniTasarimlar = [
+  { isim: 'KETEN YASTIK KILIFI', fiyat: '300TL', gorseller: [deri8, deri9] },
+  { isim: 'ÖZEL DİKİM KUMAŞ ÇANTA', fiyat: '750TL', gorseller: [deriAtolye1, deri2] },
+  { isim: 'MAKROME DUVAR SÜSÜ', fiyat: '550TL', gorseller: [deri11, deri6] },
+  { isim: 'DOĞAL MUM SETİ', fiyat: '400TL', gorseller: [atolyeden, deri4] },
+]
+
 const kategoriler = [
+  {
+    baslik: 'Deri',
+    renk: 'text-stone-800',
+    alt: ['Çanta & Cüzdan', 'Kemer & Aksesuar', 'Deri Defter Kapağı', 'Özel Baskılı Deri'],
+  },
   {
     baslik: 'Mutfak & Sofra',
     renk: 'text-amber-700',
@@ -58,32 +77,21 @@ const kategoriler = [
 ]
 
 /* ─── Ürün Kartı ─────────────────────────────────────────────── */
+/* ─── Ürün Kartı ─────────────────────────────────────────────── */
 function UrunKarti({ urun }) {
   const [aktifIndex, setAktifIndex] = useState(0)
-  const timerRef = useRef(null)
+  
+  // Ürünün birden fazla görseli var mı kontrolü
+  const tekGorselMi = urun.gorseller.length <= 1;
 
   const gosterGorsel = (index) => {
     setAktifIndex((index + urun.gorseller.length) % urun.gorseller.length)
   }
 
-  // Otomatik geçiş
-  useEffect(() => {
-    timerRef.current = setInterval(() => {
-      setAktifIndex((prev) => (prev + 1) % urun.gorseller.length)
-    }, 3000)
-    return () => clearInterval(timerRef.current)
-  }, [urun.gorseller.length])
-
   const okTikla = (yon, e) => {
     e.stopPropagation()
-    e.preventDefault() // Link varsa tetiklenmesini engeller
-    clearInterval(timerRef.current)
+    e.preventDefault()
     gosterGorsel(aktifIndex + yon)
-    
-    // Kullanıcı tıkladıktan sonra timer yeniden başlasın
-    timerRef.current = setInterval(() => {
-      setAktifIndex((prev) => (prev + 1) % urun.gorseller.length)
-    }, 3000)
   }
 
   const renderYildizlar = () =>
@@ -102,31 +110,36 @@ function UrunKarti({ urun }) {
           className="object-cover w-full h-full transition duration-500 group-hover:scale-105"
         />
 
-       {/* ← Sol Ok — */}
-        <button
-          onClick={(e) => okTikla(-1, e)}
-          className="absolute left-2 top-1/2 -translate-y-1/2 bg-white/50 hover:bg-white/90 rounded-full w-7 h-7 flex items-center justify-center text-stone-800 shadow transition-all duration-300 opacity-0 group-hover:opacity-100"
-        >
-          ‹
-        </button>
+        {/* Sadece birden fazla görsel varsa okları ve noktaları render et */}
+        {!tekGorselMi && (
+          <>
+            {/* ← Sol Ok */}
+            <button
+              onClick={(e) => okTikla(-1, e)}
+              className="absolute left-2 top-1/2 -translate-y-1/2 bg-white/50 hover:bg-white/90 rounded-full w-7 h-7 flex items-center justify-center text-stone-800 shadow transition-all duration-300 opacity-0 group-hover:opacity-100"
+            >
+              ‹
+            </button>
 
-        {/* → Sağ Ok —  */}
-        <button
-          onClick={(e) => okTikla(1, e)}
-          className="absolute right-2 top-1/2 -translate-y-1/2 bg-white/50 hover:bg-white/90 rounded-full w-7 h-7 flex items-center justify-center text-stone-800 shadow transition-all duration-300 opacity-0 group-hover:opacity-100"
-        >
-          ›
-        </button>
+            {/* → Sağ Ok */}
+            <button
+              onClick={(e) => okTikla(1, e)}
+              className="absolute right-2 top-1/2 -translate-y-1/2 bg-white/50 hover:bg-white/90 rounded-full w-7 h-7 flex items-center justify-center text-stone-800 shadow transition-all duration-300 opacity-0 group-hover:opacity-100"
+            >
+              ›
+            </button>
 
-        {/* Nokta göstergesi */}
-        <div className="absolute bottom-2 left-1/2 -translate-x-1/2 flex gap-1">
-          {urun.gorseller.map((_, i) => (
-            <div
-              key={i}
-              className={`w-1.5 h-1.5 rounded-full transition ${i === aktifIndex ? 'bg-stone-800' : 'bg-white/70'}`}
-            />
-          ))}
-        </div>
+            {/* Nokta göstergesi */}
+            <div className="absolute bottom-2 left-1/2 -translate-x-1/2 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+              {urun.gorseller.map((_, i) => (
+                <div
+                  key={i}
+                  className={`w-1.5 h-1.5 rounded-full transition ${i === aktifIndex ? 'bg-stone-800' : 'bg-white/70 shadow-sm'}`}
+                />
+              ))}
+            </div>
+          </>
+        )}
       </div>
 
       <div className="flex flex-col px-1">
@@ -148,7 +161,7 @@ function UrunKarti({ urun }) {
   )
 }
 
-/* ─── Sidebar ────────────────────────────────────────────────── */
+/* ─── Sidebar Bileşeni ───────────────────────────────────────── */
 function Sidebar() {
   const [acik, setAcik] = useState(null)
 
@@ -198,37 +211,72 @@ function Sidebar() {
   )
 }
 
-/* ─── Ana Bileşen ────────────────────────────────────────────── */
-function Atolye() {
-  const urunlerSliderRef = useRef(null);
+/* ─── Vitrin Slider Bileşeni ─────────────────────────────────── */
+function VitrinSlider({ baslik, urunlerListesi }) {
+  const sliderRef = useRef(null);
 
-  // Ürünlerin sürekli akması için otomatik kaydırma
   useEffect(() => {
+    // 3.5 saniye ile 4.5 saniye arasında değişen aralıklarla kaydırma
+    const randomSure = Math.floor(Math.random() * 1000) + 3500; 
+    
     const otoKaydir = setInterval(() => {
-      if (urunlerSliderRef.current) {
-        const { scrollLeft, scrollWidth, clientWidth } = urunlerSliderRef.current;
-        // Scroll sona yaklaştıysa başa sar, değilse bir kart boyu ilerle
+      if (sliderRef.current) {
+        const { scrollLeft, scrollWidth, clientWidth } = sliderRef.current;
         if (scrollLeft + clientWidth >= scrollWidth - 5) {
-          urunlerSliderRef.current.scrollTo({ left: 0, behavior: 'smooth' });
+          sliderRef.current.scrollTo({ left: 0, behavior: 'smooth' });
         } else {
-          urunlerSliderRef.current.scrollBy({ left: 284, behavior: 'smooth' }); // 260px kart + 24px gap
+          sliderRef.current.scrollBy({ left: 284, behavior: 'smooth' });
         }
       }
-    }, 3500); // Her 3.5 saniyede bir akar
+    }, randomSure);
     
     return () => clearInterval(otoKaydir);
   }, []);
 
-  // Manuel sağ/sol buton fonksiyonu
   const manuelKaydir = (yon) => {
-    if (urunlerSliderRef.current) {
-      urunlerSliderRef.current.scrollBy({ left: yon * 284, behavior: 'smooth' });
+    if (sliderRef.current) {
+      sliderRef.current.scrollBy({ left: yon * 284, behavior: 'smooth' });
     }
   };
 
-  // Vitrin akışının daha dolu görünmesi için ürünleri ikiye katlıyoruz
-  const vitrinUrunleri = [...urunler, ...urunler];
+  const vitrinGosterimi = [...urunlerListesi, ...urunlerListesi];
 
+  return (
+    <div className="mb-14">
+      <h2 className="text-sm font-bold tracking-widest mb-6 uppercase">{baslik}</h2>
+      
+      <div className="relative group">
+        <button
+          onClick={() => manuelKaydir(-1)}
+          className="absolute left-0 top-[130px] -translate-y-1/2 -ml-5 z-10 bg-white/90 shadow-md border border-stone-200 text-stone-600 rounded-full w-10 h-10 flex items-center justify-center hover:bg-stone-800 hover:text-white transition-colors opacity-0 group-hover:opacity-100"
+        >
+          ‹
+        </button>
+
+        <button
+          onClick={() => manuelKaydir(1)}
+          className="absolute right-0 top-[130px] -translate-y-1/2 -mr-5 z-10 bg-white/90 shadow-md border border-stone-200 text-stone-600 rounded-full w-10 h-10 flex items-center justify-center hover:bg-stone-800 hover:text-white transition-colors opacity-0 group-hover:opacity-100"
+        >
+          ›
+        </button>
+
+        <div 
+          ref={sliderRef}
+          className="flex gap-6 overflow-x-auto scrollbar-hide hide-scroll pb-4 scroll-smooth snap-x snap-mandatory"
+        >
+          {vitrinGosterimi.map((urun, index) => (
+            <div key={index} className="snap-start shrink-0">
+              <UrunKarti urun={urun} />
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* ─── Ana Bileşen (Atolye) ───────────────────────────────────── */
+function Atolye() {
   return (
     <div className="bg-stone-50">
 
@@ -249,7 +297,6 @@ function Atolye() {
         <style>{`
           @keyframes marquee { 0% { transform: translateX(0%); } 100% { transform: translateX(-100%); } }
           .animate-marquee { display: flex; white-space: nowrap; animation: marquee 35s linear infinite; }
-          /* Native scrollbar'ı gizlemek için yedek sınıf */
           .hide-scroll::-webkit-scrollbar { display: none; }
           .hide-scroll { -ms-overflow-style: none; scrollbar-width: none; }
         `}</style>
@@ -269,38 +316,10 @@ function Atolye() {
         {/* ── Sağ taraf ── */}
         <div className="flex-1 min-w-0">
 
-          {/* Ürün Slider */}
-          <h2 className="text-sm font-bold tracking-widest mb-6">BU HAFTA ÖNE ÇIKANLAR :</h2>
-          
-          <div className="relative group">
-            {/* Sol Ok */}
-            <button
-              onClick={() => manuelKaydir(-1)}
-              className="absolute left-0 top-[130px] -translate-y-1/2 -ml-5 z-10 bg-white/90 shadow-md border border-stone-200 text-stone-600 rounded-full w-10 h-10 flex items-center justify-center hover:bg-stone-800 hover:text-white transition-colors opacity-0 group-hover:opacity-100"
-            >
-              ‹
-            </button>
-
-            {/* Sağ Ok */}
-            <button
-              onClick={() => manuelKaydir(1)}
-              className="absolute right-0 top-[130px] -translate-y-1/2 -mr-5 z-10 bg-white/90 shadow-md border border-stone-200 text-stone-600 rounded-full w-10 h-10 flex items-center justify-center hover:bg-stone-800 hover:text-white transition-colors opacity-0 group-hover:opacity-100"
-            >
-              ›
-            </button>
-
-            {/* Akışın gerçekleştiği asıl kapsayıcı */}
-            <div 
-              ref={urunlerSliderRef}
-              className="flex gap-6 overflow-x-auto scrollbar-hide hide-scroll pb-4 scroll-smooth snap-x snap-mandatory"
-            >
-              {vitrinUrunleri.map((urun, index) => (
-                <div key={index} className="snap-start shrink-0">
-                  <UrunKarti urun={urun} />
-                </div>
-              ))}
-            </div>
-          </div>
+          {/* Dinamik Vitrinler (Yeniden kullanılabilir bileşen) */}
+          <VitrinSlider baslik="BU HAFTA ÖNE ÇIKANLAR :" urunlerListesi={urunler} />
+          <VitrinSlider baslik="EN ÇOK SATANLAR :" urunlerListesi={cokSatanlar} />
+          <VitrinSlider baslik="YENİ TASARIMLAR :" urunlerListesi={yeniTasarimlar} />
 
           {/* Öne Çıkan Atölyeler */}
           <div className="py-20 border-t border-stone-200/60 mt-8">
@@ -317,7 +336,7 @@ function Atolye() {
 
             <div className="flex flex-col gap-16 md:gap-24">
 
-              {/* 1. Deri Atölyesi — Görsel Solda */}
+              {/* 1. Deri Atölyesi */}
               <div className="flex flex-col md:flex-row gap-8 md:gap-12 items-center">
                 <div className="w-full md:w-5/12">
                   <div className="aspect-[4/3] overflow-hidden rounded-md bg-stone-100 shadow-sm relative group cursor-pointer">
@@ -341,7 +360,7 @@ function Atolye() {
                 </div>
               </div>
 
-              {/* 2. Özel Dikim — Görsel Sağda */}
+              {/* 2. Özel Dikim */}
               <div className="flex flex-col md:flex-row-reverse gap-8 md:gap-12 items-center">
                 <div className="w-full md:w-5/12">
                   <div className="aspect-[4/3] overflow-hidden rounded-md bg-stone-100 shadow-sm relative group cursor-pointer">
@@ -365,7 +384,7 @@ function Atolye() {
                 </div>
               </div>
 
-              {/* 3. Oyuncak — Görsel Solda */}
+              {/* 3. Oyuncak */}
               <div className="flex flex-col md:flex-row gap-8 md:gap-12 items-center">
                 <div className="w-full md:w-5/12">
                   <div className="aspect-[4/3] overflow-hidden rounded-md bg-stone-100 shadow-sm relative group cursor-pointer">
