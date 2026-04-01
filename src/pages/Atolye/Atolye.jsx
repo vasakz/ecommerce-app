@@ -14,8 +14,21 @@ import deri11 from '../../assets/deri-11.jpeg'
 import deri12 from '../../assets/deri-12.jpeg'
 import atolyeden from '../../assets/atolyeden.jpeg'
 import oyuncak1 from '../../assets/oyuncak1.jpg'
-import deriAtolye1 from '../../assets/deri-atolye1.jpeg'
+import deriAtolye1 from '../../assets/deri-atolye1.jpg'
 import terzi from '../../assets/terzi.jpeg'
+
+// Çok Satanlar 
+import seramikKupa from '../../assets/seramik-kupa.jpg'
+import deriCuzdan from '../../assets/deri-cuzdan.jpg'
+import ahsapTahta from '../../assets/ahsap-tahta.jpg'
+import oyuncakTavsan from '../../assets/oyuncak-tavsan.jpg'
+
+// Yeni Tasarımlar 
+import ketenYastik from '../../assets/keten-yastik.jpg'
+import kumasCanta from '../../assets/kumas-canta.jpg'
+import makromeSusu from '../../assets/makrome-susu.jpg'
+import mumSeti from '../../assets/mum-seti.jpg'
+
 
 const urunler = [
   { isim: 'DERİ ÇANTA NO.1', fiyat: '1200TL', gorseller: [deri1, deri2, deri3, deri4] },
@@ -25,17 +38,17 @@ const urunler = [
 ]
 
 const cokSatanlar = [
-  { isim: 'EL YAPIMI SERAMİK KUPA', fiyat: '450TL', gorseller: [oyuncak1, atolyeden] },
-  { isim: 'VINTAGE DERİ CÜZDAN', fiyat: '600TL', gorseller: [deri5, deri1] },
-  { isim: 'AHŞAP KESME TAHTASI', fiyat: '850TL', gorseller: [terzi, deri12] },
-  { isim: 'AMİGURUMİ TAVŞAN', fiyat: '350TL', gorseller: [oyuncak1, oyuncak1] },
+  { isim: 'EL YAPIMI SERAMİK KUPA', fiyat: '450TL', gorseller: [seramikKupa] },
+  { isim: 'VINTAGE DERİ CÜZDAN', fiyat: '600TL', gorseller: [deriCuzdan] },
+  { isim: 'AHŞAP KESME TAHTASI', fiyat: '850TL', gorseller: [ahsapTahta] },
+  { isim: 'AMİGURUMİ TAVŞAN', fiyat: '350TL', gorseller: [oyuncakTavsan] },
 ]
 
 const yeniTasarimlar = [
-  { isim: 'KETEN YASTIK KILIFI', fiyat: '300TL', gorseller: [deri8, deri9] },
-  { isim: 'ÖZEL DİKİM KUMAŞ ÇANTA', fiyat: '750TL', gorseller: [deriAtolye1, deri2] },
-  { isim: 'MAKROME DUVAR SÜSÜ', fiyat: '550TL', gorseller: [deri11, deri6] },
-  { isim: 'DOĞAL MUM SETİ', fiyat: '400TL', gorseller: [atolyeden, deri4] },
+  { isim: 'KETEN YASTIK KILIFI', fiyat: '300TL', gorseller: [ketenYastik] },
+  { isim: 'ÖZEL DİKİM KUMAŞ ÇANTA', fiyat: '750TL', gorseller: [kumasCanta] },
+  { isim: 'MAKROME DUVAR SÜSÜ', fiyat: '550TL', gorseller: [makromeSusu] },
+  { isim: 'DOĞAL MUM SETİ', fiyat: '400TL', gorseller: [mumSeti] },
 ]
 
 const kategoriler = [
@@ -76,7 +89,7 @@ const kategoriler = [
   },
 ]
 
-/* ─── Ürün Kartı ─────────────────────────────────────────────── */
+
 /* ─── Ürün Kartı ─────────────────────────────────────────────── */
 function UrunKarti({ urun }) {
   const [aktifIndex, setAktifIndex] = useState(0)
