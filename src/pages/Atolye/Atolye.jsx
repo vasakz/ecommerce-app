@@ -26,17 +26,12 @@ const urunler = [
 
 const kategoriler = [
   {
-    baslik: 'Afiyet',
+    baslik: 'Mutfak & Sofra',
     renk: 'text-amber-700',
     alt: ['Ahşap Mutfak Gereçleri', 'El Yapımı Seramik', 'Özel Reçel & Konserve', 'Organik Baharat Setleri'],
   },
   {
-    baslik: 'Deri',
-    renk: 'text-stone-800',
-    alt: ['Çanta & Cüzdan', 'Kemer & Aksesuar', 'Deri Defter Kapağı', 'Özel Baskılı Deri'],
-  },
-  {
-    baslik: 'Ev Yaşam',
+    baslik: 'Ev Yaşam & Dekor',
     renk: 'text-teal-700',
     alt: ['Mum & Oda Kokusu', 'Makrome & Dokuma', 'Dekoratif Objeler', 'El Yapımı Yastık'],
   },
@@ -44,6 +39,21 @@ const kategoriler = [
     baslik: 'Tekstil & Giyim',
     renk: 'text-rose-700',
     alt: ['Örgü & Tığ İşi', 'Ismarlama Dikiş', 'Pamuklu Çocuk Giyim', 'Vintage Yeniden Tasarım'],
+  },
+  {
+    baslik: 'Oyuncak & Çocuk',
+    renk: 'text-rose-700',
+    alt: ['Amigurumi Oyuncak', 'Ahşap Oyun Seti', 'El Yapımı Bebek', 'Çocuk Odası Dekoru'],
+  },
+  {
+    baslik: 'Takı & Aksesuar',
+    renk: 'text-rose-700',
+    alt: ['El Yapımı Takı', 'Doğal Taş Aksesuar', 'Kişiye Özel İsim Kolye', 'Vintage Broş & Yüzük'],
+  },
+  {
+    baslik: 'Ahşap & Mobilya',
+    renk: 'text-rose-700',
+    alt: [' Ahşap Sehpa & Raf', 'El Yapımı Sandalye', 'Özel Tasarım Masa', 'Ahşap Dekoratif Objeler'],
   },
 ]
 
@@ -66,8 +76,10 @@ function UrunKarti({ urun }) {
 
   const okTikla = (yon, e) => {
     e.stopPropagation()
+    e.preventDefault() // Link varsa tetiklenmesini engeller
     clearInterval(timerRef.current)
     gosterGorsel(aktifIndex + yon)
+    
     // Kullanıcı tıkladıktan sonra timer yeniden başlasın
     timerRef.current = setInterval(() => {
       setAktifIndex((prev) => (prev + 1) % urun.gorseller.length)
@@ -90,18 +102,18 @@ function UrunKarti({ urun }) {
           className="object-cover w-full h-full transition duration-500 group-hover:scale-105"
         />
 
-        {/* ← Sol Ok — her zaman görünür */}
+       {/* ← Sol Ok — */}
         <button
           onClick={(e) => okTikla(-1, e)}
-          className="absolute left-2 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white rounded-full w-7 h-7 flex items-center justify-center text-stone-700 shadow transition"
+          className="absolute left-2 top-1/2 -translate-y-1/2 bg-white/50 hover:bg-white/90 rounded-full w-7 h-7 flex items-center justify-center text-stone-800 shadow transition-all duration-300 opacity-0 group-hover:opacity-100"
         >
           ‹
         </button>
 
-        {/* → Sağ Ok — her zaman görünür */}
+        {/* → Sağ Ok —  */}
         <button
           onClick={(e) => okTikla(1, e)}
-          className="absolute right-2 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white rounded-full w-7 h-7 flex items-center justify-center text-stone-700 shadow transition"
+          className="absolute right-2 top-1/2 -translate-y-1/2 bg-white/50 hover:bg-white/90 rounded-full w-7 h-7 flex items-center justify-center text-stone-800 shadow transition-all duration-300 opacity-0 group-hover:opacity-100"
         >
           ›
         </button>
@@ -188,6 +200,35 @@ function Sidebar() {
 
 /* ─── Ana Bileşen ────────────────────────────────────────────── */
 function Atolye() {
+  const urunlerSliderRef = useRef(null);
+
+  // Ürünlerin sürekli akması için otomatik kaydırma
+  useEffect(() => {
+    const otoKaydir = setInterval(() => {
+      if (urunlerSliderRef.current) {
+        const { scrollLeft, scrollWidth, clientWidth } = urunlerSliderRef.current;
+        // Scroll sona yaklaştıysa başa sar, değilse bir kart boyu ilerle
+        if (scrollLeft + clientWidth >= scrollWidth - 5) {
+          urunlerSliderRef.current.scrollTo({ left: 0, behavior: 'smooth' });
+        } else {
+          urunlerSliderRef.current.scrollBy({ left: 284, behavior: 'smooth' }); // 260px kart + 24px gap
+        }
+      }
+    }, 3500); // Her 3.5 saniyede bir akar
+    
+    return () => clearInterval(otoKaydir);
+  }, []);
+
+  // Manuel sağ/sol buton fonksiyonu
+  const manuelKaydir = (yon) => {
+    if (urunlerSliderRef.current) {
+      urunlerSliderRef.current.scrollBy({ left: yon * 284, behavior: 'smooth' });
+    }
+  };
+
+  // Vitrin akışının daha dolu görünmesi için ürünleri ikiye katlıyoruz
+  const vitrinUrunleri = [...urunler, ...urunler];
+
   return (
     <div className="bg-stone-50">
 
@@ -208,6 +249,9 @@ function Atolye() {
         <style>{`
           @keyframes marquee { 0% { transform: translateX(0%); } 100% { transform: translateX(-100%); } }
           .animate-marquee { display: flex; white-space: nowrap; animation: marquee 35s linear infinite; }
+          /* Native scrollbar'ı gizlemek için yedek sınıf */
+          .hide-scroll::-webkit-scrollbar { display: none; }
+          .hide-scroll { -ms-overflow-style: none; scrollbar-width: none; }
         `}</style>
         <div className="animate-marquee text-[11px] tracking-[0.25em] text-stone-600 font-medium uppercase">
           <span className="mx-12">✧ Ürünlerimiz özenle el emeği ile hazırlandığından, kişiselleştirme süresi, teslimat ve stok durumu değişiklik gösterebilir ✧</span>
@@ -227,10 +271,35 @@ function Atolye() {
 
           {/* Ürün Slider */}
           <h2 className="text-sm font-bold tracking-widest mb-6">BU HAFTA ÖNE ÇIKANLAR :</h2>
-          <div className="flex gap-6 overflow-x-auto scrollbar-hide pb-4">
-            {urunler.map((urun, index) => (
-              <UrunKarti key={index} urun={urun} />
-            ))}
+          
+          <div className="relative group">
+            {/* Sol Ok */}
+            <button
+              onClick={() => manuelKaydir(-1)}
+              className="absolute left-0 top-[130px] -translate-y-1/2 -ml-5 z-10 bg-white/90 shadow-md border border-stone-200 text-stone-600 rounded-full w-10 h-10 flex items-center justify-center hover:bg-stone-800 hover:text-white transition-colors opacity-0 group-hover:opacity-100"
+            >
+              ‹
+            </button>
+
+            {/* Sağ Ok */}
+            <button
+              onClick={() => manuelKaydir(1)}
+              className="absolute right-0 top-[130px] -translate-y-1/2 -mr-5 z-10 bg-white/90 shadow-md border border-stone-200 text-stone-600 rounded-full w-10 h-10 flex items-center justify-center hover:bg-stone-800 hover:text-white transition-colors opacity-0 group-hover:opacity-100"
+            >
+              ›
+            </button>
+
+            {/* Akışın gerçekleştiği asıl kapsayıcı */}
+            <div 
+              ref={urunlerSliderRef}
+              className="flex gap-6 overflow-x-auto scrollbar-hide hide-scroll pb-4 scroll-smooth snap-x snap-mandatory"
+            >
+              {vitrinUrunleri.map((urun, index) => (
+                <div key={index} className="snap-start shrink-0">
+                  <UrunKarti urun={urun} />
+                </div>
+              ))}
+            </div>
           </div>
 
           {/* Öne Çıkan Atölyeler */}
@@ -260,7 +329,7 @@ function Atolye() {
                   </div>
                 </div>
                 <div className="w-full md:w-7/12 flex flex-col justify-center">
-                  <h3 className="text-2xl font-serif text-stone-800 mb-3">Mila Vintage Deri</h3>
+                  <h3 className="text-2xl font-serif text-stone-800 mb-3">Mila DERİ ÇANTA & CÜZDAN</h3>
                   <p className="text-[10px] font-bold text-amber-600 tracking-wider mb-4 uppercase">El Yapımı Çanta & Zanaat</p>
                   <p className="text-stone-600 text-sm leading-relaxed mb-5">
                     Derinin yaşanmışlığını ve karakterini yansıtan koleksiyonlarımız, ustamızın yıllara dayanan tecrübesiyle şekilleniyor. Arkasındaki devasa renk paletinden özenle seçilen her bir deri parçası, zamana meydan okuyan tasarımlara dönüşerek sadece size özel bir hikaye anlatır.
@@ -272,7 +341,7 @@ function Atolye() {
                 </div>
               </div>
 
-              {/* 2. Özel Dikim — Görsel Sağda  ← YER DEĞİŞTİ */}
+              {/* 2. Özel Dikim — Görsel Sağda */}
               <div className="flex flex-col md:flex-row-reverse gap-8 md:gap-12 items-center">
                 <div className="w-full md:w-5/12">
                   <div className="aspect-[4/3] overflow-hidden rounded-md bg-stone-100 shadow-sm relative group cursor-pointer">
@@ -296,7 +365,7 @@ function Atolye() {
                 </div>
               </div>
 
-              {/* 3. Oyuncak — Görsel Solda  ← YER DEĞİŞTİ */}
+              {/* 3. Oyuncak — Görsel Solda */}
               <div className="flex flex-col md:flex-row gap-8 md:gap-12 items-center">
                 <div className="w-full md:w-5/12">
                   <div className="aspect-[4/3] overflow-hidden rounded-md bg-stone-100 shadow-sm relative group cursor-pointer">
@@ -308,7 +377,7 @@ function Atolye() {
                   </div>
                 </div>
                 <div className="w-full md:w-7/12 flex flex-col justify-center">
-                  <h3 className="text-2xl font-serif text-stone-800 mb-3">Amigurumi Tales</h3>
+                  <h3 className="text-2xl font-serif text-stone-800 mb-3">Amigurumi OYUNCAK</h3>
                   <p className="text-[10px] font-bold text-rose-500 tracking-wider mb-4 uppercase">İlmek İlmek: Oyuncak</p>
                   <p className="text-stone-600 text-sm leading-relaxed mb-5">
                     Çocuklar ve ruhu çocuk kalanlar için, organik pamuk iplerle örülmüş uyku arkadaşları. Hiçbir zararlı madde içermeyen, tamamen doğal amigurumi oyuncaklarımız sevgiyle ilmek ilmek işleniyor.
