@@ -4,6 +4,9 @@ import NotFound from './pages/NotFound/NotFound'
 import Register from './pages/Auth/Register/Register'
 import Login from './pages/Auth/Login/Login'
 import Atolye from './pages/Atolye/Atolye'
+import Cart from './pages/Cart/Cart'
+import Favorites from './pages/Favorites/Favorites'
+import Payment from './pages/Payment/Payment'
 import Navbar from './components/layout/Navbar'
 import Footer from './components/layout/Footer'
 
@@ -20,6 +23,11 @@ function Layout() {
       <Route path="/kayit-ol" element={<Register />} />
       <Route path="/giris-yap" element={<Login />} />
       <Route path="/atolye" element={<Atolye />} />
+      <Route path="/sepet" element={<Cart />} />
+      <Route path="/odeme" element={<Payment />} />
+      <Route path="/odeme/" element={<Payment />} />
+      <Route path="/sepetim/odeme" element={<Payment />} />
+      <Route path="/begendiklerim" element={<Favorites />} />
       <Route path="*" element={<NotFound />} />
     </Routes>
     {!footerGizle.includes(location.pathname) && <Footer />}
