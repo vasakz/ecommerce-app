@@ -1,125 +1,101 @@
-import { ShoppingCart, Heart, Search, User, Menu, X, ChevronRight } from 'lucide-react'
+import { ShoppingCart, Heart, Search, User, Menu, X, ChevronRight, Settings } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import { useState } from 'react'
+import ThemeToggle from './ThemeToggle'
 
 function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false)
 
   return (
     <header>
-
-      {/* Üst Şerit */}
-      <div className="bg-stone-900 text-white text-xs py-2 px-6 flex items-center justify-between">
-        <div></div>
-        <p className="tracking-widest font-semibold">
-          <span className="ml-4 underline cursor-pointer hover:text-amber-400 transition font-bold"></span>
-        </p>
-        <p className="text-stone-400 cursor-pointer hover:text-white transition">TÜRKÇE ▾</p>
+      <div className="bg-black text-white text-xs font-semibold py-1 flex justify-end px-4">
+        Türkçe
       </div>
 
-      {/* Ana Navbar */}
-      <div className="bg-white text-stone-900 border-b border-stone-200">
+      <div className="bg-white dark:bg-stone-900 text-stone-900 dark:text-white border-b border-stone-200 dark:border-stone-800 transition-colors duration-300">
         <div className="px-6 py-4 flex items-center gap-8">
 
-          {/* Sol: Hamburger + Logo */}
           <div className="flex items-center gap-3">
-            <button onClick={() => setMenuOpen(true)} className="hover:text-amber-500 transition">
+            <button onClick={() => setMenuOpen(true)}>
               <Menu size={22} />
             </button>
             <h1 className="text-xl font-bold tracking-widest">BRAND</h1>
           </div>
 
-          {/* Orta: Linkler */}
           <ul className="flex gap-8 text-sm font-medium flex-1 justify-center">
-            <Link to="/" className="hover:text-amber-500 cursor-pointer transition">ANASAYFA</Link>
-            <Link to="/atolye" className="hover:text-amber-500 cursor-pointer transition">ATÖLYEDEN</Link>
-            <li className="hover:text-amber-500 cursor-pointer transition">ÜRÜNLER</li>
-            <li className="hover:text-red-500 cursor-pointer transition">KAMPANYALAR</li>
+            <Link to="/">ANASAYFA</Link>
+            <Link to="/atolye">ATÖLYEDEN</Link>
+            <Link to="/urunler">ÜRÜNLER</Link>
+            <Link to="/kampanyalar">KAMPANYALAR</Link>
           </ul>
 
-          {/* Sağ: Arama + İkonlar + Auth */}
           <div className="flex items-center gap-4">
-            <div className="flex items-center border border-stone-300 rounded px-3 py-1 gap-2">
+
+            <div className="flex items-center border rounded px-3 py-1 gap-2">
               <input
                 type="text"
                 placeholder="Aradığınız şey nedir?"
-                className="text-sm outline-none w-48 text-stone-600"
+                className="text-sm outline-none w-40 bg-transparent"
               />
-              <Search size={16} className="text-stone-400" />
+              <Search size={16} />
             </div>
-            <Heart size={20} className="cursor-pointer hover:text-red-500 transition" />
-            <ShoppingCart size={20} className="cursor-pointer hover:text-amber-500 transition" />
-            <Link to="/profil"> 
-            <User size={20} className="cursor-pointer hover:text-amber-500 transition" />
-            </Link>
-            
-            <Link to="/giris-yap" className="text-sm font-medium hover:text-amber-500 transition">GİRİŞ YAP</Link>
-            <Link to="/kayit-ol" className="text-sm font-medium hover:text-amber-500 transition">KAYIT OL</Link>
-          </div>
 
+            <Link to="/begendiklerim">
+              <Heart size={20} />
+            </Link>
+
+            <Link to="/sepet">
+              <ShoppingCart size={20} />
+            </Link>
+
+            <Link to="/profil">
+              <User size={20} />
+            </Link>
+
+            <div className="h-6 w-[1px] bg-stone-300"></div>
+
+            <Link to="/giris-yap" className="text-xs font-bold">
+              GİRİŞ YAP
+            </Link>
+
+            <Link to="/kayit-ol" className="text-xs font-bold">
+              KAYIT OL
+            </Link>
+
+          </div>
         </div>
       </div>
 
-      {/* Sidebar Overlay */}
       {menuOpen && (
-        <div
-          className="fixed inset-0 bg-black/40 z-40"
-          onClick={() => setMenuOpen(false)}
-        />
+        <div className="fixed inset-0 bg-black/40 z-40" onClick={() => setMenuOpen(false)} />
       )}
 
-      {/* Sidebar */}
-      <div className={`fixed top-0 left-0 h-full w-72 bg-white z-50 shadow-2xl transform transition-transform duration-300 ${menuOpen ? 'translate-x-0' : '-translate-x-full'}`}>
+      <div className={`fixed top-0 left-0 h-full w-72 bg-white z-50 transform ${menuOpen ? 'translate-x-0' : '-translate-x-full'}`}>
 
-        {/* Sidebar Başlık */}
-        <div className="flex items-center justify-between px-6 py-5 border-b border-stone-200">
-          <h2 className="text-base font-bold tracking-widest">KATEGORİLER</h2>
-          <button onClick={() => setMenuOpen(false)} className="hover:text-amber-500 transition">
+        <div className="flex items-center justify-between px-6 py-5 border-b">
+          <h2 className="text-base font-bold">KATEGORİLER</h2>
+          <button onClick={() => setMenuOpen(false)}>
             <X size={20} />
           </button>
         </div>
 
-        {/* Sidebar Menü */}
-        <ul className="py-4 text-sm font-medium text-stone-800">
+        <ul className="py-4 text-sm">
           {[
             { label: 'Tüm Ürünler', to: '/urunler' },
-            { label: 'Yeni Gelenler', to: '/yeni-gelenler' },
-            { label: 'Çantalar', to: '/cantalar' },
-            { label: 'Cüzdanlar & Kartlıklar', to: '/cuzdanlar' },
-            { label: 'Kemerler', to: '/kemerler' },
-            { label: 'Ayakkabılar', to: '/ayakkabilar' },
-            { label: 'Aksesuarlar', to: '/aksesuarlar' },
-            { label: 'Ev & Yaşam', to: '/ev-yasam' },
+            { label: 'Yeni Gelenler', to: '/urunler?category=Yeni Gelenler' }
           ].map((item) => (
             <li key={item.to}>
-              <Link
-                to={item.to}
-                onClick={() => setMenuOpen(false)}
-                className="flex items-center justify-between px-6 py-3 hover:bg-stone-100 hover:text-amber-500 transition"
-              >
+              <Link to={item.to} onClick={() => setMenuOpen(false)}>
                 {item.label}
-                <ChevronRight size={14} className="text-stone-400" />
               </Link>
             </li>
           ))}
 
-          {/* Ayraç */}
-          <li className="border-t border-stone-200 my-3" />
-
-          {/* Kampanyalar - kırmızı */}
-          <li>
-            <Link
-              to="/kampanyalar"
-              onClick={() => setMenuOpen(false)}
-              className="flex items-center justify-between px-6 py-3 hover:bg-red-50 transition text-red-500 font-semibold"
-            >
-              Kampanyalar
-              <ChevronRight size={14} className="text-red-400" />
-            </Link>
+          <li className="mt-6 px-6">
+            <ThemeToggle />
           </li>
         </ul>
       </div>
-
     </header>
   )
 }
