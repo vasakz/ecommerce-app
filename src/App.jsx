@@ -6,7 +6,7 @@ import Login from './pages/Auth/Login/Login'
 import Atolye from './pages/Atolye/Atolye'
 import Navbar from './components/layout/Navbar'
 import Footer from './components/layout/Footer'
-
+import AtolyelerListesi from './pages/Atolye/AtolyelerListesi'
 
 function Layout() {
   const location = useLocation()
@@ -21,6 +21,7 @@ function Layout() {
       <Route path="/giris-yap" element={<Login />} />
       <Route path="/atolye" element={<Atolye />} />
       <Route path="*" element={<NotFound />} />
+      <Route path="/atolyeler" element={<AtolyelerListesi />} />
     </Routes>
     {!footerGizle.includes(location.pathname) && <Footer />}
       </>

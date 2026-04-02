@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react'
 
+import { Link } from 'react-router-dom'
 import deri1 from '../../assets/deri-1.jpeg'
 import deri2 from '../../assets/deri-2.jpeg'
 import deri3 from '../../assets/deri-3.jpeg'
@@ -342,9 +343,10 @@ function Atolye() {
                 <span className="text-[10px] tracking-[0.35em] text-stone-500 mb-3 block uppercase">Zanaatın Hikayesi</span>
                 <h2 className="text-3xl font-serif text-stone-800">Öne Çıkan Atölyeler</h2>
               </div>
-              <button className="text-xs font-semibold tracking-widest text-stone-700 uppercase flex items-center gap-2 border-b border-stone-400 pb-1.5 hover:border-stone-800 transition-colors group">
-                Tüm Atölyeleri Gör <span className="text-lg font-light leading-none group-hover:translate-x-1 transition-transform">›</span>
-              </button>
+                   <Link to="/atolyeler"
+               className="text-xs font-semibold tracking-widest text-stone-700 uppercase flex items-center gap-2 border-b border-stone-400 pb-1.5 hover:border-stone-800 transition-colors group">
+               Tüm Atölyeleri Gör <span className="text-lg font-light leading-none group-hover:translate-x-1 transition-transform">›</span>    
+               </Link>
             </div>
 
             <div className="flex flex-col gap-16 md:gap-24">
@@ -355,7 +357,9 @@ function Atolye() {
                   <div className="aspect-[4/3] overflow-hidden rounded-md bg-stone-100 shadow-sm relative group cursor-pointer">
                     <img src={deriAtolye1} alt="Mila Vintage Deri" className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
                     <div className="absolute inset-0 bg-stone-900/0 group-hover:bg-stone-900/50 transition-colors duration-500 flex items-center justify-center">
-                      <span className="opacity-0 group-hover:opacity-100 transition-opacity duration-500 delay-75 text-white border border-white/60 px-6 py-2.5 rounded-sm text-[10px] tracking-[0.2em] uppercase font-medium backdrop-blur-sm">Atölyeyi Keşfet</span>
+                      <Link to="/atolyeler" className="opacity-0 group-hover:opacity-100 transition-opacity duration-500 delay-75 text-white border border-white/60 px-6 py-2.5 rounded-sm text-[10px] tracking-[0.2em] uppercase font-medium backdrop-blur-sm">
+  Atölyeyi Keşfet
+</Link>
                     </div>
                     <div className="absolute top-3 left-3 bg-white/90 backdrop-blur-sm text-[9px] font-bold tracking-widest px-3 py-1.5 rounded-sm uppercase text-stone-800 transition-opacity duration-300 group-hover:opacity-0">Mila Vintage</div>
                   </div>
@@ -379,7 +383,9 @@ function Atolye() {
                   <div className="aspect-[4/3] overflow-hidden rounded-md bg-stone-100 shadow-sm relative group cursor-pointer">
                     <img src={terzi} alt="Özel Dikim Terzihanesi" className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
                     <div className="absolute inset-0 bg-stone-900/0 group-hover:bg-stone-900/50 transition-colors duration-500 flex items-center justify-center">
-                      <span className="opacity-0 group-hover:opacity-100 transition-opacity duration-500 delay-75 text-white border border-white/60 px-6 py-2.5 rounded-sm text-[10px] tracking-[0.2em] uppercase font-medium backdrop-blur-sm">Atölyeyi Keşfet</span>
+                      <Link to="/atolyeler" className="opacity-0 group-hover:opacity-100 transition-opacity duration-500 delay-75 text-white border border-white/60 px-6 py-2.5 rounded-sm text-[10px] tracking-[0.2em] uppercase font-medium backdrop-blur-sm">
+  Atölyeyi Keşfet
+</Link>
                     </div>
                     <div className="absolute top-3 right-3 bg-white/90 backdrop-blur-sm text-[9px] font-bold tracking-widest px-3 py-1.5 rounded-sm uppercase text-stone-800 transition-opacity duration-300 group-hover:opacity-0">Özel Dikim</div>
                   </div>
@@ -403,7 +409,9 @@ function Atolye() {
                   <div className="aspect-[4/3] overflow-hidden rounded-md bg-stone-100 shadow-sm relative group cursor-pointer">
                     <img src={oyuncak1} alt="Amigurumi Tales" className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
                     <div className="absolute inset-0 bg-stone-900/0 group-hover:bg-stone-900/50 transition-colors duration-500 flex items-center justify-center">
-                      <span className="opacity-0 group-hover:opacity-100 transition-opacity duration-500 delay-75 text-white border border-white/60 px-6 py-2.5 rounded-sm text-[10px] tracking-[0.2em] uppercase font-medium backdrop-blur-sm">Atölyeyi Keşfet</span>
+                      <Link to="/atolyeler" className="opacity-0 group-hover:opacity-100 transition-opacity duration-500 delay-75 text-white border border-white/60 px-6 py-2.5 rounded-sm text-[10px] tracking-[0.2em] uppercase font-medium backdrop-blur-sm">
+  Atölyeyi Keşfet
+</Link>
                     </div>
                     <div className="absolute top-3 left-3 bg-white/90 backdrop-blur-sm text-[9px] font-bold tracking-widest px-3 py-1.5 rounded-sm uppercase text-stone-800 transition-opacity duration-300 group-hover:opacity-0">Amigurumi Tales</div>
                   </div>
