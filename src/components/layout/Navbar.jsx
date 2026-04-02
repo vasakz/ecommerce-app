@@ -9,7 +9,7 @@ function Navbar() {
   return (
     <header>
       <div className="bg-black text-white text-xs font-semibold py-1 flex justify-end px-4">
-        Dil: Türkçe
+        Türkçe
       </div>
 
       {/* Ana Navbar */}
@@ -50,14 +50,9 @@ function Navbar() {
               
               <div className="h-6 w-[1px] bg-stone-200 dark:bg-stone-800 mx-1"></div>
               
-              <div className="flex items-center gap-4">
-                <button className="text-xs font-bold hover:text-amber-500 transition uppercase tracking-tighter">
-                  TÜRKÇE ▾
-                </button>
-                <div className="flex items-center gap-3">
-                  <Link to="/giris-yap" className="text-xs font-bold hover:text-amber-500 transition">GİRİŞ YAP</Link>
-                  <Link to="/kayit-ol" className="text-xs font-bold hover:text-amber-500 transition">KAYIT OL</Link>
-                </div>
+              <div className="flex items-center gap-3">
+                <Link to="/giris-yap" className="text-xs font-bold hover:text-amber-500 transition">GİRİŞ YAP</Link>
+                <Link to="/kayit-ol" className="text-xs font-bold hover:text-amber-500 transition">KAYIT OL</Link>
               </div>
             </div>
           </div>
