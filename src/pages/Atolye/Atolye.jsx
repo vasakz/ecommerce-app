@@ -1,5 +1,4 @@
 import { useState, useEffect, useRef } from 'react'
-
 import { Link } from 'react-router-dom'
 import deri1 from '../../assets/deri-1.jpeg'
 import deri2 from '../../assets/deri-2.jpeg'
@@ -52,51 +51,95 @@ const yeniTasarimlar = [
   { isim: 'DOĞAL MUM SETİ', fiyat: '400TL', gorseller: [mumSeti] },
 ]
 
+// Kampanyalar verisi
+const kampanyalar = [
+  {
+    baslik: 'YAZ KOLEKSİYONU',
+    altBaslik: '%30\'a Kadar İndirim',
+    aciklama: 'Seçili deri çanta ve aksesuarlarda yaz sezonu indirimleri başladı.',
+    renk: 'from-amber-900 to-stone-800',
+    rozet: 'SINIRLI SÜRE',
+    rozetRenk: 'bg-amber-500',
+    gorsel: deriAtolye1,
+  },
+  {
+    baslik: 'İLK SİPARİŞİNE ÖZEL',
+    altBaslik: '%15 İndirim Kodu',
+    aciklama: 'ATOLYE15 koduyla ilk siparişinde anında indirim kazan.',
+    renk: 'from-teal-900 to-stone-800',
+    rozet: 'YENİ ÜYE',
+    rozetRenk: 'bg-teal-500',
+    gorsel: oyuncak1,
+  },
+  {
+    baslik: 'ÖZEL DİKİM HAFTALARI',
+    altBaslik: 'Ücretsiz Kargo + Hediye Paket',
+    aciklama: 'Terzihane koleksiyonunda bu hafta tüm siparişlerde ücretsiz kargo.',
+    renk: 'from-rose-900 to-stone-800',
+    rozet: 'BU HAFTA',
+    rozetRenk: 'bg-rose-500',
+    gorsel: terzi,
+  },
+  {
+    baslik: 'ATÖLYE PAZAR GÜNÜ',
+    altBaslik: 'Canlı Üretim & Tanışma',
+    aciklama: 'Her pazar ustalarımızla canlı atölye deneyimi yaşa, sınırlı kontenjan.',
+    renk: 'from-sky-900 to-stone-800',
+    rozet: 'ETKİNLİK',
+    rozetRenk: 'bg-sky-500',
+    gorsel: deriAtolye1,
+  },
+]
+
 const kategoriler = [
   {
     baslik: 'Deri',
     renk: 'text-stone-800',
     alt: ['Çanta & Cüzdan', 'Kemer & Aksesuar', 'Deri Defter Kapağı', 'Özel Baskılı Deri'],
+    vitrinId: 'bu-hafta',
   },
   {
     baslik: 'Mutfak & Sofra',
     renk: 'text-amber-700',
     alt: ['Ahşap Mutfak Gereçleri', 'El Yapımı Seramik', 'Özel Reçel & Konserve', 'Organik Baharat Setleri'],
+    vitrinId: 'cok-satanlar',
   },
   {
     baslik: 'Ev Yaşam & Dekor',
     renk: 'text-teal-700',
     alt: ['Mum & Oda Kokusu', 'Makrome & Dokuma', 'Dekoratif Objeler', 'El Yapımı Yastık'],
+    vitrinId: 'yeni-tasarimlar',
   },
   {
     baslik: 'Tekstil & Giyim',
     renk: 'text-rose-700',
     alt: ['Örgü & Tığ İşi', 'Ismarlama Dikiş', 'Pamuklu Çocuk Giyim', 'Vintage Yeniden Tasarım'],
+    vitrinId: null,
   },
   {
     baslik: 'Oyuncak & Çocuk',
     renk: 'text-rose-700',
     alt: ['Amigurumi Oyuncak', 'Ahşap Oyun Seti', 'El Yapımı Bebek', 'Çocuk Odası Dekoru'],
+    vitrinId: null,
   },
   {
     baslik: 'Takı & Aksesuar',
     renk: 'text-rose-700',
     alt: ['El Yapımı Takı', 'Doğal Taş Aksesuar', 'Kişiye Özel İsim Kolye', 'Vintage Broş & Yüzük'],
+    vitrinId: null,
   },
   {
     baslik: 'Ahşap & Mobilya',
     renk: 'text-rose-700',
-    alt: [' Ahşap Sehpa & Raf', 'El Yapımı Sandalye', 'Özel Tasarım Masa', 'Ahşap Dekoratif Objeler'],
+    alt: ['Ahşap Sehpa & Raf', 'El Yapımı Sandalye', 'Özel Tasarım Masa', 'Ahşap Dekoratif Objeler'],
+    vitrinId: null,
   },
 ]
-
 
 /* ─── Ürün Kartı ─────────────────────────────────────────────── */
 function UrunKarti({ urun }) {
   const [aktifIndex, setAktifIndex] = useState(0)
-  
-  // Ürünün birden fazla görseli var mı kontrolü
-  const tekGorselMi = urun.gorseller.length <= 1;
+  const tekGorselMi = urun.gorseller.length <= 1
 
   const gosterGorsel = (index) => {
     setAktifIndex((index + urun.gorseller.length) % urun.gorseller.length)
@@ -123,39 +166,18 @@ function UrunKarti({ urun }) {
           alt={urun.isim}
           className="object-cover w-full h-full transition duration-500 group-hover:scale-105"
         />
-
-        {/* Sadece birden fazla görsel varsa okları ve noktaları render et */}
         {!tekGorselMi && (
           <>
-            {/* ← Sol Ok */}
-            <button
-              onClick={(e) => okTikla(-1, e)}
-              className="absolute left-2 top-1/2 -translate-y-1/2 bg-white/50 hover:bg-white/90 rounded-full w-7 h-7 flex items-center justify-center text-stone-800 shadow transition-all duration-300 opacity-0 group-hover:opacity-100"
-            >
-              ‹
-            </button>
-
-            {/* → Sağ Ok */}
-            <button
-              onClick={(e) => okTikla(1, e)}
-              className="absolute right-2 top-1/2 -translate-y-1/2 bg-white/50 hover:bg-white/90 rounded-full w-7 h-7 flex items-center justify-center text-stone-800 shadow transition-all duration-300 opacity-0 group-hover:opacity-100"
-            >
-              ›
-            </button>
-
-            {/* Nokta göstergesi */}
+            <button onClick={(e) => okTikla(-1, e)} className="absolute left-2 top-1/2 -translate-y-1/2 bg-white/50 hover:bg-white/90 rounded-full w-7 h-7 flex items-center justify-center text-stone-800 shadow transition-all duration-300 opacity-0 group-hover:opacity-100">‹</button>
+            <button onClick={(e) => okTikla(1, e)} className="absolute right-2 top-1/2 -translate-y-1/2 bg-white/50 hover:bg-white/90 rounded-full w-7 h-7 flex items-center justify-center text-stone-800 shadow transition-all duration-300 opacity-0 group-hover:opacity-100">›</button>
             <div className="absolute bottom-2 left-1/2 -translate-x-1/2 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
               {urun.gorseller.map((_, i) => (
-                <div
-                  key={i}
-                  className={`w-1.5 h-1.5 rounded-full transition ${i === aktifIndex ? 'bg-stone-800' : 'bg-white/70 shadow-sm'}`}
-                />
+                <div key={i} className={`w-1.5 h-1.5 rounded-full transition ${i === aktifIndex ? 'bg-stone-800' : 'bg-white/70 shadow-sm'}`} />
               ))}
             </div>
           </>
         )}
       </div>
-
       <div className="flex flex-col px-1">
         <p className="font-medium tracking-wide text-sm text-stone-800 line-clamp-1">{urun.isim}</p>
         <div className="flex items-center gap-1 mt-1 mb-2">
@@ -176,17 +198,45 @@ function UrunKarti({ urun }) {
 }
 
 /* ─── Sidebar Bileşeni ───────────────────────────────────────── */
-function Sidebar() {
+function Sidebar({ aktifFiltre, setAktifFiltre }) {
   const [acik, setAcik] = useState(null)
+
+  const scrollToSection = (id) => {
+    if (id) {
+      const el = document.getElementById(id)
+      if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' })
+    }
+  }
 
   return (
     <aside className="hidden lg:block w-52 flex-shrink-0 sticky top-20 self-start h-fit">
+      {/* Atölyeleri Gör Linki */}
+      <Link
+        to="/atolyeler"
+        className="flex items-center gap-2 w-full mb-6 px-3 py-2.5 rounded-md bg-stone-800 text-white text-xs font-bold tracking-widest uppercase hover:bg-stone-900 transition-colors group"
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4 flex-shrink-0">
+          <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 21v-7.5a.75.75 0 01.75-.75h3a.75.75 0 01.75.75V21m-4.5 0H2.36m11.14 0H18m0 0h3.64m-1.39 0V9.349m-16.5 11.65V9.35m0 0a3.001 3.001 0 003.75-.615A2.993 2.993 0 009.75 9.75c.896 0 1.7-.393 2.25-1.016a2.993 2.993 0 002.25 1.016c.896 0 1.7-.393 2.25-1.016a3.001 3.001 0 003.75.614m-16.5 0a3.004 3.004 0 01-.621-4.72L4.318 3.44A1.5 1.5 0 015.378 3h13.243a1.5 1.5 0 011.06.44l1.19 1.189a3 3 0 01-.621 4.72m-13.5 8.65h3.75a.75.75 0 00.75-.75V13.5a.75.75 0 00-.75-.75H6.75a.75.75 0 00-.75.75v3.75c0 .415.336.75.75.75z" />
+        </svg>
+        Atölyeleri Gör
+        <span className="ml-auto text-stone-300 group-hover:translate-x-0.5 transition-transform">›</span>
+      </Link>
+
       <p className="text-[9px] font-bold tracking-[0.3em] text-stone-400 uppercase mb-4">Kategoriler</p>
+      
       <nav className="flex flex-col gap-1">
         {kategoriler.map((kat, i) => (
-          <div key={i}>
+          <div 
+            key={i} 
+            onMouseEnter={() => setAcik(i)} 
+            onMouseLeave={() => setAcik(null)}
+            className="relative"
+          >
             <button
-              onClick={() => setAcik(acik === i ? null : i)}
+              onClick={() => {
+                setAcik(acik === i ? null : i)
+                if (kat.vitrinId) scrollToSection(kat.vitrinId)
+              }}
               className={`w-full flex justify-between items-center text-left py-2 px-3 rounded-md text-sm font-semibold tracking-wide transition-colors ${
                 acik === i ? 'bg-stone-100 ' + kat.renk : 'text-stone-700 hover:bg-stone-50'
               }`}
@@ -195,8 +245,9 @@ function Sidebar() {
               <span className={`transition-transform duration-200 text-xs ${acik === i ? 'rotate-90' : ''}`}>›</span>
             </button>
 
-            {acik === i && (
-              <div className="ml-3 mt-1 mb-1 flex flex-col gap-0.5">
+            {/* İçerik açılıp kapanma animasyonu */}
+            <div className={`overflow-hidden transition-all duration-300 ease-in-out ${acik === i ? 'max-h-48 opacity-100 mt-1 mb-1' : 'max-h-0 opacity-0'}`}>
+              <div className="ml-3 flex flex-col gap-0.5 pb-1">
                 {kat.alt.map((alt, j) => (
                   <button
                     key={j}
@@ -206,7 +257,7 @@ function Sidebar() {
                   </button>
                 ))}
               </div>
-            )}
+            </div>
           </div>
         ))}
       </nav>
@@ -215,66 +266,180 @@ function Sidebar() {
         <p className="text-[9px] font-bold tracking-[0.3em] text-stone-400 uppercase mb-3">Filtrele</p>
         <div className="flex flex-col gap-2">
           {['En Yeniler', 'En Çok Satanlar', 'Fiyat: Artan', 'Fiyat: Azalan'].map((f) => (
-            <button key={f} className="text-left text-[11px] text-stone-500 hover:text-stone-800 py-1 px-2 rounded hover:bg-stone-100 transition-colors">
-              {f}
+            <button
+              key={f}
+              onClick={() => setAktifFiltre(aktifFiltre === f ? null : f)}
+              className={`text-left text-[11px] py-1 px-2 rounded transition-colors ${
+                aktifFiltre === f
+                  ? 'bg-stone-800 text-white font-semibold'
+                  : 'text-stone-500 hover:text-stone-800 hover:bg-stone-100'
+              }`}
+            >
+              {aktifFiltre === f ? '✓ ' : ''}{f}
             </button>
           ))}
         </div>
+        {aktifFiltre && (
+          <button
+            onClick={() => setAktifFiltre(null)}
+            className="mt-3 text-[10px] text-stone-400 hover:text-stone-600 underline transition-colors"
+          >
+            Filtreyi Kaldır
+          </button>
+        )}
       </div>
     </aside>
   )
 }
-
-/* ─── Vitrin Slider Bileşeni ─────────────────────────────────── */
-function VitrinSlider({ baslik, urunlerListesi }) {
-  const sliderRef = useRef(null);
+/* ─── Kampanya Slider ────────────────────────────────────────── */
+function KampanyaSlider() {
+  const [aktif, setAktif] = useState(0)
+  const sliderRef = useRef(null)
 
   useEffect(() => {
-    // 3.5 saniye ile 4.5 saniye arasında değişen aralıklarla kaydırma
-    const randomSure = Math.floor(Math.random() * 1000) + 3500; 
+    const interval = setInterval(() => {
+      setAktif((prev) => (prev + 1) % kampanyalar.length)
+    }, 4000)
+    return () => clearInterval(interval)
+  }, [])
+
+  useEffect(() => {
+    if (sliderRef.current) {
+      const kartGenisligi = sliderRef.current.offsetWidth
+      sliderRef.current.scrollTo({ left: aktif * kartGenisligi, behavior: 'smooth' })
+    }
+  }, [aktif])
+
+  return (
+    <div className="mb-14" id="kampanyalar">
+      <div className="flex items-center justify-between mb-6">
+        <h2 className="text-sm font-bold tracking-widest uppercase">KAMPANYALAR & FIRSATLAR :</h2>
+        <div className="flex gap-1.5">
+          {kampanyalar.map((_, i) => (
+            <button
+              key={i}
+              onClick={() => setAktif(i)}
+              className={`rounded-full transition-all duration-300 ${i === aktif ? 'w-5 h-2 bg-stone-800' : 'w-2 h-2 bg-stone-300 hover:bg-stone-500'}`}
+            />
+          ))}
+        </div>
+      </div>
+
+      <div
+        ref={sliderRef}
+        className="flex overflow-x-hidden snap-x snap-mandatory rounded-xl"
+        style={{ scrollSnapType: 'x mandatory' }}
+      >
+        {kampanyalar.map((k, i) => (
+          <div
+            key={i}
+            className={`snap-start shrink-0 w-full relative overflow-hidden rounded-xl bg-gradient-to-br ${k.renk} min-h-[200px] flex`}
+            style={{ minWidth: '100%' }}
+          >
+            {/* Arkaplan fotoğraf */}
+            <img
+              src={k.gorsel}
+              alt={k.baslik}
+              className="absolute inset-0 w-full h-full object-cover opacity-20"
+            />
+
+            {/* İçerik */}
+            <div className="relative z-10 flex flex-col justify-between p-8 w-full">
+              <div>
+                <span className={`inline-block text-[9px] font-bold tracking-widest text-white px-3 py-1 rounded-full mb-4 ${k.rozetRenk}`}>
+                  {k.rozet}
+                </span>
+                <h3 className="text-2xl font-bold text-white tracking-wider mb-1">{k.baslik}</h3>
+                <p className="text-white/80 font-semibold text-lg mb-3">{k.altBaslik}</p>
+                <p className="text-white/60 text-sm max-w-md">{k.aciklama}</p>
+              </div>
+              <div className="flex items-center justify-between mt-6">
+                {/* Buton yerine Link kullanıldı */}
+                <Link to="/kampanyalar" className="bg-white text-stone-800 text-xs font-bold tracking-widest uppercase px-6 py-2.5 rounded-full hover:bg-stone-100 transition-colors">
+                  Kampanyayı Keşfet →
+                </Link>
+                <span className="text-white/40 text-xs">{i + 1} / {kampanyalar.length}</span>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  )
+}/* ─── Vitrin Slider Bileşeni ─────────────────────────────────── */
+function VitrinSlider({ baslik, urunlerListesi, id, aktifFiltre }) {
+  const sliderRef = useRef(null)
+
+  // Filtreye göre sıralama mantığı eklendi
+  const siraliUrunler = [...urunlerListesi].sort((a, b) => {
+    if (!aktifFiltre) return 0;
     
+    // Fiyatları "1200TL" formatından sadece sayıya dönüştürür
+    const fiyatA = parseInt(a.fiyat.replace(/\D/g, ''));
+    const fiyatB = parseInt(b.fiyat.replace(/\D/g, ''));
+
+    switch (aktifFiltre) {
+      case 'Fiyat: Artan':
+        return fiyatA - fiyatB;
+      case 'Fiyat: Azalan':
+        return fiyatB - fiyatA;
+      case 'En Yeniler':
+        // Gerçek tarih verisi olmadığı için diziyi ters çevirerek simüle ediyoruz
+        return -1; 
+      case 'En Çok Satanlar':
+        // Satış sayısı verisi olmadığı için geçici olarak alfabetik sıralama yapıyoruz
+        return a.isim.localeCompare(b.isim);
+      default:
+        return 0;
+    }
+  })
+
+  useEffect(() => {
+    const randomSure = Math.floor(Math.random() * 1000) + 3500
     const otoKaydir = setInterval(() => {
       if (sliderRef.current) {
-        const { scrollLeft, scrollWidth, clientWidth } = sliderRef.current;
+        const { scrollLeft, scrollWidth, clientWidth } = sliderRef.current
         if (scrollLeft + clientWidth >= scrollWidth - 5) {
-          sliderRef.current.scrollTo({ left: 0, behavior: 'smooth' });
+          sliderRef.current.scrollTo({ left: 0, behavior: 'smooth' })
         } else {
-          sliderRef.current.scrollBy({ left: 284, behavior: 'smooth' });
+          sliderRef.current.scrollBy({ left: 284, behavior: 'smooth' })
         }
       }
-    }, randomSure);
-    
-    return () => clearInterval(otoKaydir);
-  }, []);
+    }, randomSure)
+    return () => clearInterval(otoKaydir)
+  }, [])
 
   const manuelKaydir = (yon) => {
     if (sliderRef.current) {
-      sliderRef.current.scrollBy({ left: yon * 284, behavior: 'smooth' });
+      sliderRef.current.scrollBy({ left: yon * 284, behavior: 'smooth' })
     }
-  };
+  }
 
-  const vitrinGosterimi = [...urunlerListesi, ...urunlerListesi];
+  const vitrinGosterimi = [...siraliUrunler, ...siraliUrunler]
 
   return (
-    <div className="mb-14">
-      <h2 className="text-sm font-bold tracking-widest mb-6 uppercase">{baslik}</h2>
-      
+    <div className="mb-14" id={id}>
+      <div className="flex items-center justify-between mb-6">
+        <h2 className="text-sm font-bold tracking-widest uppercase">{baslik}</h2>
+        {aktifFiltre && (
+          <span className="text-[10px] bg-stone-200 text-stone-600 px-2.5 py-1 rounded-full font-medium">
+            {aktifFiltre}
+          </span>
+        )}
+      </div>
+
       <div className="relative group">
         <button
           onClick={() => manuelKaydir(-1)}
           className="absolute left-0 top-[130px] -translate-y-1/2 -ml-5 z-10 bg-white/90 shadow-md border border-stone-200 text-stone-600 rounded-full w-10 h-10 flex items-center justify-center hover:bg-stone-800 hover:text-white transition-colors opacity-0 group-hover:opacity-100"
-        >
-          ‹
-        </button>
+        >‹</button>
 
         <button
           onClick={() => manuelKaydir(1)}
           className="absolute right-0 top-[130px] -translate-y-1/2 -mr-5 z-10 bg-white/90 shadow-md border border-stone-200 text-stone-600 rounded-full w-10 h-10 flex items-center justify-center hover:bg-stone-800 hover:text-white transition-colors opacity-0 group-hover:opacity-100"
-        >
-          ›
-        </button>
+        >›</button>
 
-        <div 
+        <div
           ref={sliderRef}
           className="flex gap-6 overflow-x-auto scrollbar-hide hide-scroll pb-4 scroll-smooth snap-x snap-mandatory"
         >
@@ -286,13 +451,21 @@ function VitrinSlider({ baslik, urunlerListesi }) {
         </div>
       </div>
     </div>
-  );
+  )
 }
 
 /* ─── Ana Bileşen (Atolye) ───────────────────────────────────── */
 function Atolye() {
+  const [aktifFiltre, setAktifFiltre] = useState(null)
+
   return (
     <div className="bg-stone-50">
+      <style>{`
+        @keyframes marquee { 0% { transform: translateX(0%); } 100% { transform: translateX(-100%); } }
+        .animate-marquee { display: flex; white-space: nowrap; animation: marquee 35s linear infinite; }
+        .hide-scroll::-webkit-scrollbar { display: none; }
+        .hide-scroll { -ms-overflow-style: none; scrollbar-width: none; }
+      `}</style>
 
       {/* Hero Banner */}
       <div className="relative w-full h-96 overflow-hidden">
@@ -306,18 +479,17 @@ function Atolye() {
         </div>
       </div>
 
-      {/* Kayan Yazı */}
+      {/* Kayan Yazı — Kampanya bilgisi de dahil */}
       <div className="w-full bg-stone-100/80 border-y border-stone-200 py-2.5 overflow-hidden flex items-center">
-        <style>{`
-          @keyframes marquee { 0% { transform: translateX(0%); } 100% { transform: translateX(-100%); } }
-          .animate-marquee { display: flex; white-space: nowrap; animation: marquee 35s linear infinite; }
-          .hide-scroll::-webkit-scrollbar { display: none; }
-          .hide-scroll { -ms-overflow-style: none; scrollbar-width: none; }
-        `}</style>
         <div className="animate-marquee text-[11px] tracking-[0.25em] text-stone-600 font-medium uppercase">
           <span className="mx-12">✧ Ürünlerimiz özenle el emeği ile hazırlandığından, kişiselleştirme süresi, teslimat ve stok durumu değişiklik gösterebilir ✧</span>
+          <span className="mx-12 text-amber-700">🏷 YAZ KAMPANYASI: Deri ürünlerde %30'a kadar indirim — ATOLYE15 kodu ile ek %15 ✧</span>
+          <span className="mx-12">✧ Bu hafta özel dikim siparişlerinde ücretsiz kargo ve hediye paketleme ✧</span>
+          <span className="mx-12 text-teal-700">🎁 İlk siparişine özel ATOLYE15 kodunu kullanmayı unutma ✧</span>
           <span className="mx-12">✧ Ürünlerimiz özenle el emeği ile hazırlandığından, kişiselleştirme süresi, teslimat ve stok durumu değişiklik gösterebilir ✧</span>
-          <span className="mx-12">✧ Ürünlerimiz özenle el emeği ile hazırlandığından, kişiselleştirme süresi, teslimat ve stok durumu değişiklik gösterebilir ✧</span>
+          <span className="mx-12 text-amber-700">🏷 YAZ KAMPANYASI: Deri ürünlerde %30'a kadar indirim — ATOLYE15 kodu ile ek %15 ✧</span>
+          <span className="mx-12">✧ Bu hafta özel dikim siparişlerinde ücretsiz kargo ve hediye paketleme ✧</span>
+          <span className="mx-12 text-teal-700">🎁 İlk siparişine özel ATOLYE15 kodunu kullanmayı unutma ✧</span>
         </div>
       </div>
 
@@ -325,28 +497,29 @@ function Atolye() {
       <div className="max-w-7xl mx-auto px-6 py-12 flex gap-10 items-start">
 
         {/* ── Sidebar ── */}
-        <Sidebar />
+        <Sidebar aktifFiltre={aktifFiltre} setAktifFiltre={setAktifFiltre} />
 
         {/* ── Sağ taraf ── */}
         <div className="flex-1 min-w-0">
 
-          {/* Dinamik Vitrinler (Yeniden kullanılabilir bileşen) */}
-          <VitrinSlider baslik="BU HAFTA ÖNE ÇIKANLAR :" urunlerListesi={urunler} />
-          <VitrinSlider baslik="EN ÇOK SATANLAR :" urunlerListesi={cokSatanlar} />
-          <VitrinSlider baslik="YENİ TASARIMLAR :" urunlerListesi={yeniTasarimlar} />
+          {/* Kampanya Slider */}
+          <KampanyaSlider />
+
+          {/* Dinamik Vitrinler */}
+          <VitrinSlider id="bu-hafta" baslik="BU HAFTA ÖNE ÇIKANLAR :" urunlerListesi={urunler} aktifFiltre={aktifFiltre} />
+          <VitrinSlider id="cok-satanlar" baslik="EN ÇOK SATANLAR :" urunlerListesi={cokSatanlar} aktifFiltre={aktifFiltre} />
+          <VitrinSlider id="yeni-tasarimlar" baslik="YENİ TASARIMLAR :" urunlerListesi={yeniTasarimlar} aktifFiltre={aktifFiltre} />
 
           {/* Öne Çıkan Atölyeler */}
           <div className="py-20 border-t border-stone-200/60 mt-8">
-
             <div className="flex flex-col md:flex-row justify-between items-end mb-16 gap-6">
               <div>
                 <span className="text-[10px] tracking-[0.35em] text-stone-500 mb-3 block uppercase">Zanaatın Hikayesi</span>
                 <h2 className="text-3xl font-serif text-stone-800">Öne Çıkan Atölyeler</h2>
               </div>
-                   <Link to="/atolyeler"
-               className="text-xs font-semibold tracking-widest text-stone-700 uppercase flex items-center gap-2 border-b border-stone-400 pb-1.5 hover:border-stone-800 transition-colors group">
-               Tüm Atölyeleri Gör <span className="text-lg font-light leading-none group-hover:translate-x-1 transition-transform">›</span>    
-               </Link>
+              <Link to="/atolyeler" className="text-xs font-semibold tracking-widest text-stone-700 uppercase flex items-center gap-2 border-b border-stone-400 pb-1.5 hover:border-stone-800 transition-colors group">
+                Tüm Atölyeleri Gör <span className="text-lg font-light leading-none group-hover:translate-x-1 transition-transform">›</span>
+              </Link>
             </div>
 
             <div className="flex flex-col gap-16 md:gap-24">
@@ -357,9 +530,7 @@ function Atolye() {
                   <div className="aspect-[4/3] overflow-hidden rounded-md bg-stone-100 shadow-sm relative group cursor-pointer">
                     <img src={deriAtolye1} alt="Mila Vintage Deri" className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
                     <div className="absolute inset-0 bg-stone-900/0 group-hover:bg-stone-900/50 transition-colors duration-500 flex items-center justify-center">
-                      <Link to="/atolyeler" className="opacity-0 group-hover:opacity-100 transition-opacity duration-500 delay-75 text-white border border-white/60 px-6 py-2.5 rounded-sm text-[10px] tracking-[0.2em] uppercase font-medium backdrop-blur-sm">
-  Atölyeyi Keşfet
-</Link>
+                      <Link to="/atolyeler" className="opacity-0 group-hover:opacity-100 transition-opacity duration-500 delay-75 text-white border border-white/60 px-6 py-2.5 rounded-sm text-[10px] tracking-[0.2em] uppercase font-medium backdrop-blur-sm">Atölyeyi Keşfet</Link>
                     </div>
                     <div className="absolute top-3 left-3 bg-white/90 backdrop-blur-sm text-[9px] font-bold tracking-widest px-3 py-1.5 rounded-sm uppercase text-stone-800 transition-opacity duration-300 group-hover:opacity-0">Mila Vintage</div>
                   </div>
@@ -383,9 +554,7 @@ function Atolye() {
                   <div className="aspect-[4/3] overflow-hidden rounded-md bg-stone-100 shadow-sm relative group cursor-pointer">
                     <img src={terzi} alt="Özel Dikim Terzihanesi" className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
                     <div className="absolute inset-0 bg-stone-900/0 group-hover:bg-stone-900/50 transition-colors duration-500 flex items-center justify-center">
-                      <Link to="/atolyeler" className="opacity-0 group-hover:opacity-100 transition-opacity duration-500 delay-75 text-white border border-white/60 px-6 py-2.5 rounded-sm text-[10px] tracking-[0.2em] uppercase font-medium backdrop-blur-sm">
-  Atölyeyi Keşfet
-</Link>
+                      <Link to="/atolyeler" className="opacity-0 group-hover:opacity-100 transition-opacity duration-500 delay-75 text-white border border-white/60 px-6 py-2.5 rounded-sm text-[10px] tracking-[0.2em] uppercase font-medium backdrop-blur-sm">Atölyeyi Keşfet</Link>
                     </div>
                     <div className="absolute top-3 right-3 bg-white/90 backdrop-blur-sm text-[9px] font-bold tracking-widest px-3 py-1.5 rounded-sm uppercase text-stone-800 transition-opacity duration-300 group-hover:opacity-0">Özel Dikim</div>
                   </div>
@@ -409,9 +578,7 @@ function Atolye() {
                   <div className="aspect-[4/3] overflow-hidden rounded-md bg-stone-100 shadow-sm relative group cursor-pointer">
                     <img src={oyuncak1} alt="Amigurumi Tales" className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
                     <div className="absolute inset-0 bg-stone-900/0 group-hover:bg-stone-900/50 transition-colors duration-500 flex items-center justify-center">
-                      <Link to="/atolyeler" className="opacity-0 group-hover:opacity-100 transition-opacity duration-500 delay-75 text-white border border-white/60 px-6 py-2.5 rounded-sm text-[10px] tracking-[0.2em] uppercase font-medium backdrop-blur-sm">
-  Atölyeyi Keşfet
-</Link>
+                      <Link to="/atolyeler" className="opacity-0 group-hover:opacity-100 transition-opacity duration-500 delay-75 text-white border border-white/60 px-6 py-2.5 rounded-sm text-[10px] tracking-[0.2em] uppercase font-medium backdrop-blur-sm">Atölyeyi Keşfet</Link>
                     </div>
                     <div className="absolute top-3 left-3 bg-white/90 backdrop-blur-sm text-[9px] font-bold tracking-widest px-3 py-1.5 rounded-sm uppercase text-stone-800 transition-opacity duration-300 group-hover:opacity-0">Amigurumi Tales</div>
                   </div>
