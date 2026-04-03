@@ -31,24 +31,24 @@ import mumSeti from '../../assets/mum-seti.jpg'
 
 
 const urunler = [
-  { isim: 'DERİ ÇANTA NO.1', fiyat: '1200TL', gorseller: [deri1, deri2, deri3, deri4] },
-  { isim: 'DERİ ÇANTA NO.2', fiyat: '950TL',  gorseller: [deri5, deri6, deri7] },
-  { isim: 'DERİ ÇANTA NO.3', fiyat: '1100TL', gorseller: [deri8, deri9, deri10] },
-  { isim: 'DERİ ÇANTA NO.4', fiyat: '850TL',  gorseller: [deri11, deri12] },
+  { isim: 'DERİ ÇANTA NO.1', fiyat: '1200TL', kategori: 'Deri', altKategori: 'Çanta & Cüzdan', gorseller: [deri1, deri2, deri3, deri4] },
+  { isim: 'DERİ ÇANTA NO.2', fiyat: '950TL',  kategori: 'Deri', altKategori: 'Çanta & Cüzdan', gorseller: [deri5, deri6, deri7] },
+  { isim: 'DERİ ÇANTA NO.3', fiyat: '1100TL', kategori: 'Deri', altKategori: 'Çanta & Cüzdan', gorseller: [deri8, deri9, deri10] },
+  { isim: 'DERİ ÇANTA NO.4', fiyat: '850TL',  kategori: 'Deri', altKategori: 'Çanta & Cüzdan', gorseller: [deri11, deri12] },
 ]
 
 const cokSatanlar = [
-  { isim: 'EL YAPIMI SERAMİK KUPA', fiyat: '450TL', gorseller: [seramikKupa] },
-  { isim: 'VINTAGE DERİ CÜZDAN', fiyat: '600TL', gorseller: [deriCuzdan] },
-  { isim: 'AHŞAP KESME TAHTASI', fiyat: '850TL', gorseller: [ahsapTahta] },
-  { isim: 'AMİGURUMİ TAVŞAN', fiyat: '350TL', gorseller: [oyuncakTavsan] },
+  { isim: 'EL YAPIMI SERAMİK KUPA', fiyat: '450TL', kategori: 'Mutfak & Sofra', altKategori: 'El Yapımı Seramik', gorseller: [seramikKupa] },
+  { isim: 'VINTAGE DERİ CÜZDAN', fiyat: '600TL', kategori: 'Deri', altKategori: 'Çanta & Cüzdan', gorseller: [deriCuzdan] },
+  { isim: 'AHŞAP KESME TAHTASI', fiyat: '850TL', kategori: 'Mutfak & Sofra', altKategori: 'Ahşap Mutfak Gereçleri', gorseller: [ahsapTahta] },
+  { isim: 'AMİGURUMİ TAVŞAN', fiyat: '350TL', kategori: 'Oyuncak & Çocuk', altKategori: 'Amigurumi Oyuncak', gorseller: [oyuncakTavsan] },
 ]
 
 const yeniTasarimlar = [
-  { isim: 'KETEN YASTIK KILIFI', fiyat: '300TL', gorseller: [ketenYastik] },
-  { isim: 'ÖZEL DİKİM KUMAŞ ÇANTA', fiyat: '750TL', gorseller: [kumasCanta] },
-  { isim: 'MAKROME DUVAR SÜSÜ', fiyat: '550TL', gorseller: [makromeSusu] },
-  { isim: 'DOĞAL MUM SETİ', fiyat: '400TL', gorseller: [mumSeti] },
+  { isim: 'KETEN YASTIK KILIFI', fiyat: '300TL', kategori: 'Ev Yaşam & Dekor', altKategori: 'El Yapımı Yastık', gorseller: [ketenYastik] },
+  { isim: 'ÖZEL DİKİM KUMAŞ ÇANTA', fiyat: '750TL', kategori: 'Tekstil & Giyim', altKategori: 'Ismarlama Dikiş', gorseller: [kumasCanta] },
+  { isim: 'MAKROME DUVAR SÜSÜ', fiyat: '550TL', kategori: 'Ev Yaşam & Dekor', altKategori: 'Makrome & Dokuma', gorseller: [makromeSusu] },
+  { isim: 'DOĞAL MUM SETİ', fiyat: '400TL', kategori: 'Ev Yaşam & Dekor', altKategori: 'Mum & Oda Kokusu', gorseller: [mumSeti] },
 ]
 
 // Kampanyalar verisi
@@ -198,19 +198,24 @@ function UrunKarti({ urun }) {
 }
 
 /* ─── Sidebar Bileşeni ───────────────────────────────────────── */
-function Sidebar({ aktifFiltre, setAktifFiltre }) {
+function Sidebar({ aktifFiltre, setAktifFiltre, seciliKategori, setSeciliKategori, setSeciliAltKategori }) {
   const [acik, setAcik] = useState(null)
 
-  const scrollToSection = (id) => {
-    if (id) {
-      const el = document.getElementById(id)
-      if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' })
+  const kategoriTikla = (i, kat) => {
+    setAcik(acik === i ? null : i)
+    // Kategoriye tıklandığında ana kategoriyi seç, alt kategoriyi sıfırla
+    if (acik !== i) {
+      setSeciliKategori(kat.baslik)
+      setSeciliAltKategori(null)
+    } else {
+      // Menü kapanırsa seçimi kaldır
+      setSeciliKategori(null)
+      setSeciliAltKategori(null)
     }
   }
 
   return (
     <aside className="hidden lg:block w-52 flex-shrink-0 sticky top-20 self-start h-fit">
-      {/* Atölyeleri Gör Linki */}
       <Link
         to="/atolyeler"
         className="flex items-center gap-2 w-full mb-6 px-3 py-2.5 rounded-md bg-stone-800 text-white text-xs font-bold tracking-widest uppercase hover:bg-stone-900 transition-colors group"
@@ -233,24 +238,24 @@ function Sidebar({ aktifFiltre, setAktifFiltre }) {
             className="relative"
           >
             <button
-              onClick={() => {
-                setAcik(acik === i ? null : i)
-                if (kat.vitrinId) scrollToSection(kat.vitrinId)
-              }}
+              onClick={() => kategoriTikla(i, kat)}
               className={`w-full flex justify-between items-center text-left py-2 px-3 rounded-md text-sm font-semibold tracking-wide transition-colors ${
-                acik === i ? 'bg-stone-100 ' + kat.renk : 'text-stone-700 hover:bg-stone-50'
+                seciliKategori === kat.baslik ? 'bg-stone-200 ' + kat.renk : (acik === i ? 'bg-stone-100 ' + kat.renk : 'text-stone-700 hover:bg-stone-50')
               }`}
             >
               {kat.baslik}
               <span className={`transition-transform duration-200 text-xs ${acik === i ? 'rotate-90' : ''}`}>›</span>
             </button>
 
-            {/* İçerik açılıp kapanma animasyonu */}
             <div className={`overflow-hidden transition-all duration-300 ease-in-out ${acik === i ? 'max-h-48 opacity-100 mt-1 mb-1' : 'max-h-0 opacity-0'}`}>
               <div className="ml-3 flex flex-col gap-0.5 pb-1">
                 {kat.alt.map((alt, j) => (
                   <button
                     key={j}
+                    onClick={() => {
+                      setSeciliKategori(kat.baslik)
+                      setSeciliAltKategori(alt)
+                    }}
                     className="text-left text-[11px] text-stone-500 hover:text-stone-800 py-1 px-2 rounded hover:bg-stone-100 transition-colors"
                   >
                     {alt}
@@ -290,6 +295,7 @@ function Sidebar({ aktifFiltre, setAktifFiltre }) {
       </div>
     </aside>
   )
+
 }
 /* ─── Kampanya Slider ────────────────────────────────────────── */
 function KampanyaSlider() {
@@ -453,10 +459,42 @@ function VitrinSlider({ baslik, urunlerListesi, id, aktifFiltre }) {
     </div>
   )
 }
-
 /* ─── Ana Bileşen (Atolye) ───────────────────────────────────── */
 function Atolye() {
   const [aktifFiltre, setAktifFiltre] = useState(null)
+  
+  // Seçili kategori durumlarını tutan State'ler
+  const [seciliKategori, setSeciliKategori] = useState(null)
+  const [seciliAltKategori, setSeciliAltKategori] = useState(null)
+
+  // Tüm ürünleri tek bir dizide topluyoruz
+  const tumUrunler = [...urunler, ...cokSatanlar, ...yeniTasarimlar]
+
+  // Seçili kategoriye göre ürünleri filtreliyoruz
+  const filtrelenmisKategoriUrunleri = tumUrunler.filter(urun => {
+    let kategoriUyuyor = true;
+    let altKategoriUyuyor = true;
+
+    if (seciliKategori) {
+      kategoriUyuyor = urun.kategori === seciliKategori;
+    }
+    if (seciliAltKategori) {
+      altKategoriUyuyor = urun.altKategori === seciliAltKategori;
+    }
+
+    return kategoriUyuyor && altKategoriUyuyor;
+  })
+
+  // Fiyat/Tarih filtrelemesini bu filtrelenmiş listeye uyguluyoruz
+  if (aktifFiltre) {
+    filtrelenmisKategoriUrunleri.sort((a, b) => {
+      const fiyatA = parseInt(a.fiyat.replace(/\D/g, ''));
+      const fiyatB = parseInt(b.fiyat.replace(/\D/g, ''));
+      if (aktifFiltre === 'Fiyat: Artan') return fiyatA - fiyatB;
+      if (aktifFiltre === 'Fiyat: Azalan') return fiyatB - fiyatA;
+      return 0;
+    })
+  }
 
   return (
     <div className="bg-stone-50">
@@ -479,7 +517,7 @@ function Atolye() {
         </div>
       </div>
 
-      {/* Kayan Yazı — Kampanya bilgisi de dahil */}
+      {/* Kayan Yazı */}
       <div className="w-full bg-stone-100/80 border-y border-stone-200 py-2.5 overflow-hidden flex items-center">
         <div className="animate-marquee text-[11px] tracking-[0.25em] text-stone-600 font-medium uppercase">
           <span className="mx-12">✧ Ürünlerimiz özenle el emeği ile hazırlandığından, kişiselleştirme süresi, teslimat ve stok durumu değişiklik gösterebilir ✧</span>
@@ -493,24 +531,60 @@ function Atolye() {
         </div>
       </div>
 
-      {/* İçerik: Sidebar + Sağ alan */}
       <div className="max-w-7xl mx-auto px-6 py-12 flex gap-10 items-start">
 
         {/* ── Sidebar ── */}
-        <Sidebar aktifFiltre={aktifFiltre} setAktifFiltre={setAktifFiltre} />
+        <Sidebar 
+          aktifFiltre={aktifFiltre} 
+          setAktifFiltre={setAktifFiltre} 
+          seciliKategori={seciliKategori}
+          setSeciliKategori={setSeciliKategori}
+          setSeciliAltKategori={setSeciliAltKategori}
+        />
 
         {/* ── Sağ taraf ── */}
         <div className="flex-1 min-w-0">
 
-          {/* Kampanya Slider */}
           <KampanyaSlider />
 
-          {/* Dinamik Vitrinler */}
-          <VitrinSlider id="bu-hafta" baslik="BU HAFTA ÖNE ÇIKANLAR :" urunlerListesi={urunler} aktifFiltre={aktifFiltre} />
-          <VitrinSlider id="cok-satanlar" baslik="EN ÇOK SATANLAR :" urunlerListesi={cokSatanlar} aktifFiltre={aktifFiltre} />
-          <VitrinSlider id="yeni-tasarimlar" baslik="YENİ TASARIMLAR :" urunlerListesi={yeniTasarimlar} aktifFiltre={aktifFiltre} />
+          {/* EĞER BİR KATEGORİ SEÇİLDİYSE SADECE O ÜRÜNLERİ GÖSTER */}
+          {seciliKategori ? (
+            <div className="mb-14 min-h-[400px]">
+              <div className="flex items-center justify-between mb-8 border-b border-stone-200 pb-4">
+                <h2 className="text-sm font-bold tracking-widest uppercase text-stone-800">
+                  {seciliAltKategori ? `${seciliKategori} > ${seciliAltKategori}` : seciliKategori}
+                </h2>
+                <button 
+                  onClick={() => {setSeciliKategori(null); setSeciliAltKategori(null)}} 
+                  className="text-[11px] font-semibold text-stone-500 hover:text-stone-800 flex items-center gap-1 transition-colors"
+                >
+                  ✕ Temizle ve Tümüne Dön
+                </button>
+              </div>
+              
+              {filtrelenmisKategoriUrunleri.length > 0 ? (
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-y-10 gap-x-6">
+                  {filtrelenmisKategoriUrunleri.map((urun, idx) => (
+                    <UrunKarti key={idx} urun={urun} />
+                  ))}
+                </div>
+              ) : (
+                <div className="flex flex-col items-center justify-center py-20 text-center bg-white rounded-lg border border-stone-100">
+                  <p className="text-stone-400 text-lg mb-2">Bu kategoride henüz ürün bulunmuyor.</p>
+                  <button onClick={() => {setSeciliKategori(null); setSeciliAltKategori(null)}} className="text-sm text-stone-600 underline">Ana sayfaya dön</button>
+                </div>
+              )}
+            </div>
+          ) : (
+            /* HİÇBİR KATEGORİ SEÇİLMEDİYSE NORMAL VİTRİNLERİ GÖSTER */
+            <>
+              <VitrinSlider id="bu-hafta" baslik="BU HAFTA ÖNE ÇIKANLAR :" urunlerListesi={urunler} aktifFiltre={aktifFiltre} />
+              <VitrinSlider id="cok-satanlar" baslik="EN ÇOK SATANLAR :" urunlerListesi={cokSatanlar} aktifFiltre={aktifFiltre} />
+              <VitrinSlider id="yeni-tasarimlar" baslik="YENİ TASARIMLAR :" urunlerListesi={yeniTasarimlar} aktifFiltre={aktifFiltre} />
+            </>
+          )}
 
-          {/* Öne Çıkan Atölyeler */}
+          {/* Öne Çıkan Atölyeler (Aynı Kalıyor) */}
           <div className="py-20 border-t border-stone-200/60 mt-8">
             <div className="flex flex-col md:flex-row justify-between items-end mb-16 gap-6">
               <div>
