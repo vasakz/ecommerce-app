@@ -42,7 +42,6 @@ function Navbar() {
               />
               <Search size={16} className="text-stone-400" />
             </div>
-<<<<<<< HEAD
             <Link to="/begendiklerim" aria-label="Beğendiklerim">
               <Heart size={20} className="cursor-pointer hover:text-red-500 transition" />
             </Link>
@@ -52,21 +51,6 @@ function Navbar() {
             <User size={20} className="cursor-pointer hover:text-amber-500 transition" />
             <Link to="/giris-yap" className="text-sm font-medium hover:text-amber-500 transition">GİRİŞ YAP</Link>
             <Link to="/kayit-ol" className="text-sm font-medium hover:text-amber-500 transition">KAYIT OL</Link>
-=======
-            
-            <div className="flex items-center gap-4">
-              <Heart size={20} className="cursor-pointer hover:text-red-500 transition" />
-              <ShoppingCart size={20} className="cursor-pointer hover:text-amber-500 transition" />
-              <User size={20} className="cursor-pointer hover:text-amber-500 transition" />
-              
-              <div className="h-6 w-[1px] bg-stone-200 dark:bg-stone-800 mx-1"></div>
-              
-              <div className="flex items-center gap-3">
-                <Link to="/giris-yap" className="text-xs font-bold hover:text-amber-500 transition">GİRİŞ YAP</Link>
-                <Link to="/kayit-ol" className="text-xs font-bold hover:text-amber-500 transition">KAYIT OL</Link>
-              </div>
-            </div>
->>>>>>> origin/main
           </div>
 
         </div>
