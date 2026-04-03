@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react'
 import { Link } from 'react-router-dom'
+
 import deri1 from '../../assets/deri-1.jpeg'
 import deri2 from '../../assets/deri-2.jpeg'
 import deri3 from '../../assets/deri-3.jpeg'
@@ -135,10 +136,10 @@ const kategoriler = [
     vitrinId: null,
   },
 ]
-
-/* ─── Ürün Kartı ─────────────────────────────────────────────── */
+/* ─── Güncellenmiş Ürün Kartı ────────────────────────────────────────── */
 function UrunKarti({ urun }) {
   const [aktifIndex, setAktifIndex] = useState(0)
+  const [isFavorited, setIsFavorited] = useState(false) // Favori durumu
   const tekGorselMi = urun.gorseller.length <= 1
 
   const gosterGorsel = (index) => {
@@ -149,6 +150,14 @@ function UrunKarti({ urun }) {
     e.stopPropagation()
     e.preventDefault()
     gosterGorsel(aktifIndex + yon)
+  }
+
+  // Favori butonuna tıklandığında çalışacak fonksiyon
+  const favoriToggle = (e) => {
+    e.stopPropagation()
+    e.preventDefault()
+    setIsFavorited(!isFavorited)
+    // Burada favoriler sayfasına veri gönderen bir fonksiyon çağrılabilir
   }
 
   const renderYildizlar = () =>
@@ -166,6 +175,25 @@ function UrunKarti({ urun }) {
           alt={urun.isim}
           className="object-cover w-full h-full transition duration-500 group-hover:scale-105"
         />
+        
+        {/* Favori Butonu - Sağ Üst Köşe */}
+        <button 
+          onClick={favoriToggle}
+          className="absolute top-3 right-3 z-20 p-2 rounded-full bg-white/40 backdrop-blur-sm hover:bg-white/70 transition-all duration-300 group/fav shadow-sm"
+          title={isFavorited ? "Favorilerden Çıkar" : "Favorilere Ekle"}
+        >
+          <svg 
+            xmlns="http://www.w3.org/2000/svg" 
+            fill={isFavorited ? "#b91c1c" : "none"} // Rose-700 rengine yakın kırmızı
+            viewBox="0 0 24 24" 
+            strokeWidth={1.5} 
+            stroke={isFavorited ? "#b91c1c" : "currentColor"} 
+            className={`w-5 h-5 transition-transform duration-300 ${isFavorited ? 'scale-110' : 'text-stone-800 group-hover/fav:scale-110'}`}
+          >
+            <path strokeLinecap="round" strokeLinejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z" />
+          </svg>
+        </button>
+
         {!tekGorselMi && (
           <>
             <button onClick={(e) => okTikla(-1, e)} className="absolute left-2 top-1/2 -translate-y-1/2 bg-white/50 hover:bg-white/90 rounded-full w-7 h-7 flex items-center justify-center text-stone-800 shadow transition-all duration-300 opacity-0 group-hover:opacity-100">‹</button>
@@ -178,6 +206,8 @@ function UrunKarti({ urun }) {
           </>
         )}
       </div>
+      
+      {/* Alt kısımdaki içerik alanı (isim, fiyat vb.) aynı kalıyor */}
       <div className="flex flex-col px-1">
         <p className="font-medium tracking-wide text-sm text-stone-800 line-clamp-1">{urun.isim}</p>
         <div className="flex items-center gap-1 mt-1 mb-2">

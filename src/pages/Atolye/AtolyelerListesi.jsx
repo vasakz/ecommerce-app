@@ -1,5 +1,6 @@
 import { useState, useRef } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
+//import { useDispatch } from 'react-redux' // Sepet işlemleri için hazırlık
 
 // --- Senin Projendeki Görseller ---
 import deri1 from '../../assets/deri-1.jpeg'
@@ -27,7 +28,6 @@ const atolyelerVerisi = [
     puan: '4.9',
     degerlendirmeSayisi: 128,
     avatar: deriAtolye1,
-    // Hero banner için — mevcut import'lardan biri veya kendi görselin ile değiştir
     heroBanner: deriAtolye1,
     heroBannerAlt: 'Mila Vintage Deri Atölye',
     aciklama: 'Derinin yaşanmışlığını ve karakterini yansıtan koleksiyonlarımız, ustamızın yıllara dayanan tecrübesiyle şekilleniyor. Arkasındaki devasa renk paletinden özenle seçilen her bir deri parçası, zamana meydan okuyan tasarımlara dönüşüyor.',
@@ -73,6 +73,77 @@ const atolyelerVerisi = [
   }
 ]
 
+// ─── Mini Ürün Kartı (Slider İçin) ───
+function MiniUrunKarti({ urun }) {
+  const [isFavorited, setIsFavorited] = useState(false)
+  const navigate = useNavigate()
+  // const dispatch = useDispatch() // Sepet action'ı geldiğinde yorumdan çıkarırsın
+
+  const renderYildizlar = () => (
+    Array.from({ length: 5 }).map((_, i) => (
+      <svg key={i} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-3 h-3 text-amber-500">
+        <path fillRule="evenodd" d="M10.788 3.21c.448-1.077 1.976-1.077 2.424 0l2.082 5.007 5.404.433c1.164.093 1.636 1.545.749 2.305l-4.117 3.527 1.257 5.273c.271 1.136-.964 2.033-1.96 1.425L12 18.354 7.373 21.18c-.996.608-2.231-.29-1.96-1.425l1.257-5.273-4.117-3.527c-.887-.76-.415-2.212.749-2.305l5.404-.433 2.082-5.006z" clipRule="evenodd" />
+      </svg>
+    ))
+  )
+
+  const kartaTikla = () => {
+    // URL'de boşluk olmaması için düzenliyoruz
+    const urunSlug = urun.isim.toLowerCase().replace(/ /g, '-').replace(/\./g, '')
+    navigate(`/urun/${urunSlug}`, { state: { urun } })
+  }
+
+  return (
+    <div onClick={kartaTikla} className="snap-start shrink-0 w-[200px] cursor-pointer group/card flex flex-col">
+      <div className="w-full h-[200px] bg-stone-100 mb-3 overflow-hidden rounded-lg relative shadow-sm">
+        <img src={urun.gorsel} alt={urun.isim} className="w-full h-full object-cover transition duration-700 group-hover/card:scale-110" />
+
+        {/* Favori Butonu */}
+        <button
+          onClick={(e) => {
+            e.stopPropagation()
+            e.preventDefault()
+            setIsFavorited(!isFavorited)
+          }}
+          className="absolute top-2 right-2 p-1.5 rounded-full bg-white/60 backdrop-blur-md hover:bg-white/90 transition-all shadow-sm z-10"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" fill={isFavorited ? "#b91c1c" : "none"} viewBox="0 0 24 24" strokeWidth={1.5} stroke={isFavorited ? "#b91c1c" : "currentColor"} className="w-4 h-4 transition-colors">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z" />
+          </svg>
+        </button>
+      </div>
+
+      <div className="flex flex-col px-1 flex-grow">
+        <p className="font-medium tracking-wide text-xs text-stone-800 line-clamp-1">{urun.isim}</p>
+        
+        {/* Yıldızlar ve Yorum Sayısı */}
+        <div className="flex items-center gap-1 mt-1 mb-1.5">
+          <div className="flex">{renderYildizlar()}</div>
+          <span className="text-[9px] text-stone-400 font-medium">(12)</span>
+        </div>
+
+        {/* Fiyat ve Sepet Butonu */}
+        <div className="flex items-center justify-between mt-auto">
+          <p className="font-bold text-stone-700 text-sm">{urun.fiyat}</p>
+          <button
+            onClick={(e) => {
+              e.stopPropagation()
+              e.preventDefault()
+              // dispatch(addToCart(urun)) // Sepet entegrasyonu
+              alert(`${urun.isim} sepete eklendi!`)
+            }}
+            className="p-1.5 rounded-full bg-stone-100 hover:bg-stone-800 hover:text-white text-stone-700 transition-colors"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-3.5 h-3.5">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 10.5V6a3.75 3.75 0 10-7.5 0v4.5m11.356-1.993l1.263 12c.07.665-.45 1.243-1.119 1.243H4.25a1.125 1.125 0 01-1.12-1.243l1.264-12A1.125 1.125 0 015.513 7.5h12.974c.576 0 1.059.435 1.119 1.007zM8.625 10.5a.375.375 0 11-.75 0 .375.375 0 01.75 0zm7.5 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z" />
+            </svg>
+          </button>
+        </div>
+      </div>
+    </div>
+  )
+}
+
 // ─── Atölye Vitrin Bileşeni ───
 function AtolyeVitrin({ atolye }) {
   const sliderRef = useRef(null)
@@ -85,7 +156,6 @@ function AtolyeVitrin({ atolye }) {
 
   return (
     <div className="mb-10 bg-white rounded-xl shadow-sm border border-stone-100 overflow-hidden">
-
       {/* ── Hero Banner ── */}
       <div className="relative w-full h-52 overflow-hidden">
         {atolye.heroBanner ? (
@@ -95,12 +165,10 @@ function AtolyeVitrin({ atolye }) {
             className="w-full h-full object-cover"
           />
         ) : (
-          // Placeholder: Kendi görselin eklemek için heroBanner alanına import et
           <div className="w-full h-full bg-gradient-to-br from-stone-300 to-stone-500 flex items-center justify-center">
             <p className="text-white/60 text-xs tracking-widest uppercase">Buraya fotoğraf ekle</p>
           </div>
         )}
-        {/* Koyu overlay + atölye adı */}
         <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
         <div className="absolute bottom-4 left-6 right-6 flex items-end justify-between">
           <div>
@@ -117,25 +185,14 @@ function AtolyeVitrin({ atolye }) {
         </div>
       </div>
 
-      {/* ── İçerik: Avatar + Açıklama + Butonlar ── */}
+      {/* ── İçerik ── */}
       <div className="flex flex-col md:flex-row gap-6 items-start md:items-center px-8 pt-6 pb-4 border-b border-stone-100">
-
-        {/* Avatar */}
-        <div className="w-16 h-16 flex-shrink-0 relative -mt-10 md:-mt-12 ml-0 ring-4 ring-white rounded-full shadow-md overflow-hidden">
+        <div className="w-16 h-16 flex-shrink-0 relative -mt-10 md:-mt-12 ml-0 ring-4 ring-white rounded-full shadow-md overflow-hidden bg-white">
           <img src={atolye.avatar} alt={atolye.isim} className="w-full h-full object-cover" />
-          <div className="absolute bottom-0.5 right-0.5 w-4 h-4 bg-stone-800 rounded-full border-2 border-white flex items-center justify-center">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="w-2.5 h-2.5 text-white">
-              <path fillRule="evenodd" d="M16.704 4.153a.75.75 0 01.143 1.052l-8 10.5a.75.75 0 01-1.127.075l-4.5-4.5a.75.75 0 011.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 011.05-.143z" clipRule="evenodd" />
-            </svg>
-          </div>
         </div>
-
-        {/* Açıklama */}
         <p className="text-stone-600 text-sm leading-relaxed flex-1 pt-2 md:pt-0">
           {atolye.aciklama}
         </p>
-
-        {/* Butonlar */}
         <div className="flex flex-col gap-2.5 flex-shrink-0 w-full md:w-auto pt-0 md:pt-2">
           <Link
             to={`/atolyeler/${atolye.id}`}
@@ -144,9 +201,6 @@ function AtolyeVitrin({ atolye }) {
             Atölyeyi Ziyaret Et
           </Link>
           <button className="flex items-center justify-center gap-2 text-xs font-semibold tracking-widest text-stone-600 uppercase bg-white border border-stone-200 px-7 py-3 rounded-full hover:bg-stone-50 hover:border-stone-300 transition-colors">
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-3.5 h-3.5">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z" />
-            </svg>
             Takip Et
           </button>
         </div>
@@ -154,20 +208,15 @@ function AtolyeVitrin({ atolye }) {
 
       {/* ── Ürünler Slider ── */}
       <div className="px-8 py-6 relative group">
-        <button onClick={() => manuelKaydir(-1)} className="absolute left-2 top-[50%] -translate-y-1/2 z-10 bg-white/90 shadow-lg border border-stone-100 text-stone-600 rounded-full w-9 h-9 flex items-center justify-center hover:bg-stone-800 hover:text-white transition-all opacity-0 group-hover:opacity-100">‹</button>
-        <button onClick={() => manuelKaydir(1)} className="absolute right-2 top-[50%] -translate-y-1/2 z-10 bg-white/90 shadow-lg border border-stone-100 text-stone-600 rounded-full w-9 h-9 flex items-center justify-center hover:bg-stone-800 hover:text-white transition-all opacity-0 group-hover:opacity-100">›</button>
+        <button onClick={() => manuelKaydir(-1)} className="absolute left-2 top-[40%] -translate-y-1/2 z-10 bg-white/90 shadow-lg border border-stone-100 text-stone-600 rounded-full w-9 h-9 flex items-center justify-center hover:bg-stone-800 hover:text-white transition-all opacity-0 group-hover:opacity-100">‹</button>
+        <button onClick={() => manuelKaydir(1)} className="absolute right-2 top-[40%] -translate-y-1/2 z-10 bg-white/90 shadow-lg border border-stone-100 text-stone-600 rounded-full w-9 h-9 flex items-center justify-center hover:bg-stone-800 hover:text-white transition-all opacity-0 group-hover:opacity-100">›</button>
 
         <div ref={sliderRef} className="flex gap-5 overflow-x-auto pb-2 scroll-smooth snap-x snap-mandatory" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
           <style>{`.hide-scroll-inner::-webkit-scrollbar { display: none; }`}</style>
 
+          {/* Mini Ürün Kartlarını Map Ediyoruz */}
           {atolye.urunler.map((urun, index) => (
-            <div key={index} className="snap-start shrink-0 w-[200px] cursor-pointer group/card">
-              <div className="w-full h-[200px] bg-stone-100 mb-3 overflow-hidden rounded-lg relative shadow-sm">
-                <img src={urun.gorsel} alt={urun.isim} className="w-full h-full object-cover transition duration-700 group-hover/card:scale-110" />
-              </div>
-              <p className="font-medium tracking-wide text-xs text-stone-800 line-clamp-1">{urun.isim}</p>
-              <p className="font-bold text-stone-600 mt-1 text-sm">{urun.fiyat}</p>
-            </div>
+            <MiniUrunKarti key={index} urun={urun} />
           ))}
 
           {/* Tümünü Gör */}
@@ -196,15 +245,19 @@ function AtolyelerListesi() {
     : atolyelerVerisi.filter(a => a.kategori === seciliKategori)
 
   return (
-    <div className="bg-stone-50 min-h-screen pt-24 pb-20">
+    <div className="bg-stone-50 min-h-screen pb-20">
 
-      {/* Başlık */}
-      <div className="max-w-4xl mx-auto text-center px-6 mb-12">
-        <span className="text-[10px] tracking-[0.4em] text-stone-400 mb-4 block uppercase font-bold">Zanaatkarlarımız</span>
-        <h1 className="text-4xl md:text-5xl font-serif text-stone-800 mb-6">Atölyeleri Keşfet</h1>
-        <p className="text-sm text-stone-500 max-w-2xl mx-auto leading-relaxed">
-          Her biri kendi alanında usta zanaatkarlarımızın atölyelerine konuk olun. Hikayelerini okuyun, özenle hazırladıkları eşsiz koleksiyonları inceleyin ve favori zanaatkarlarınızı takip edin.
-        </p>
+      {/* ── YENİ: Hero Banner Alanı ── */}
+      <div className="relative w-full h-[350px] mb-12 overflow-hidden">
+        {/* Buradaki deriAtolye1 resmini dilersen başka bir importla değiştirebilirsin */}
+        <img src={deriAtolye1} alt="Atölyeleri Keşfet" className="w-full h-full object-cover" />
+        <div className="absolute inset-0 bg-black/60 flex flex-col items-center justify-center text-center px-6">
+          <span className="text-[10px] tracking-[0.4em] text-amber-400 mb-4 block uppercase font-bold">Zanaatkarlarımız</span>
+          <h1 className="text-4xl md:text-5xl font-serif text-white mb-6">Atölyeleri Keşfet</h1>
+          <p className="text-sm text-stone-200 max-w-2xl mx-auto leading-relaxed">
+            Her biri kendi alanında usta zanaatkarlarımızın atölyelerine konuk olun. Hikayelerini okuyun, özenle hazırladıkları eşsiz koleksiyonları inceleyin ve favori zanaatkarlarınızı takip edin.
+          </p>
+        </div>
       </div>
 
       {/* Kategori Filtreleri */}
@@ -240,4 +293,4 @@ function AtolyelerListesi() {
   )
 }
 
-export default AtolyelerListesi
+export default AtolyelerListesi//
