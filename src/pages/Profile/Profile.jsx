@@ -129,7 +129,6 @@ function ProfilBilgilerim() {
 
     return (
         <div className="space-y-8">
-            {/* Profil Formu */}
             <div>
                 <p className="text-[10px] font-bold tracking-[0.3em] text-stone-400 uppercase mb-6">Profil Bilgilerim</p>
                 {hata && <p className="text-xs text-red-500 mb-4 tracking-wide">{hata}</p>}
@@ -194,7 +193,6 @@ function ProfilBilgilerim() {
 
             <div className="border-t border-stone-100" />
 
-            {/* Şifre Değiştir */}
             <div>
                 <p className="text-[10px] font-bold tracking-[0.3em] text-stone-400 uppercase mb-6">Şifre Değiştir</p>
                 <div className="space-y-4">
@@ -334,6 +332,18 @@ function Adreslerim() {
     const [adresler, setAdresler] = useState([])
     const [yukleniyor, setYukleniyor] = useState(true)
     const [yeniForm, setYeniForm] = useState(false)
+    const [form, setForm] = useState({
+        baslik: 'Ev',
+        ad: '',
+        telefon: '',
+        il: '',
+        ilce: '',
+        mahalle: '',
+        adres: '',
+        posta: '',
+        varsayilan: false,
+    })
+    const [kaydedildi, setKaydedildi] = useState(false)
 
     useEffect(() => {
         adresService.getAdresler()
@@ -355,19 +365,49 @@ function Adreslerim() {
         } catch (err) { console.error(err) }
     }
 
+    const handleKaydet = async (e) => {
+        e.preventDefault()
+        // TODO: Firebase'e ekle → addDoc(collection(db, 'users', userId, 'adresler'), form)
+        const yeniAdres = {
+            id: String(Date.now()),
+            baslik: form.baslik,
+            ad: form.ad,
+            adres: `${form.mahalle} ${form.adres}`,
+            ilce: form.ilce,
+            sehir: form.il,
+            posta: form.posta,
+            varsayilan: form.varsayilan,
+        }
+        if (form.varsayilan) {
+            setAdresler(prev => [...prev.map(a => ({ ...a, varsayilan: false })), yeniAdres])
+        } else {
+            setAdresler(prev => [...prev, yeniAdres])
+        }
+        setKaydedildi(true)
+        setTimeout(() => {
+            setKaydedildi(false)
+            setYeniForm(false)
+            setForm({ baslik: 'Ev', ad: '', telefon: '', il: '', ilce: '', mahalle: '', adres: '', posta: '', varsayilan: false })
+        }, 1500)
+    }
+
     if (yukleniyor) return <Yukleniyor />
+
+    const inputClass = "w-full border border-stone-200 bg-white px-4 py-2.5 text-sm text-stone-800 rounded-md focus:outline-none focus:ring-1 focus:ring-stone-400 transition placeholder:text-stone-300"
 
     return (
         <div>
             <div className="flex items-center justify-between mb-6">
                 <p className="text-[10px] font-bold tracking-[0.3em] text-stone-400 uppercase">Adreslerim</p>
-                <button onClick={() => setYeniForm(!yeniForm)}
-                    className="flex items-center gap-1.5 text-[10px] tracking-widest text-stone-600 hover:text-stone-800 uppercase font-medium border-b border-stone-300 hover:border-stone-700 pb-0.5 transition">
+                <button
+                    onClick={() => setYeniForm(!yeniForm)}
+                    className="flex items-center gap-1.5 text-[10px] tracking-widest text-stone-600 hover:text-stone-800 uppercase font-medium border-b border-stone-300 hover:border-stone-700 pb-0.5 transition"
+                >
                     <Plus size={12} /> Yeni Adres
                 </button>
             </div>
 
-            {adresler.length === 0
+            {adresler.length === 0 && !yeniForm
                 ? <BosEkran mesaj="Kayıtlı adresiniz bulunmuyor" />
                 : (
                     <div className="space-y-3">
@@ -404,9 +444,99 @@ function Adreslerim() {
                 )
             }
 
+            {/* Yeni Adres Formu */}
             {yeniForm && (
-                <div className="mt-4 border border-dashed border-stone-200 rounded-sm p-6 text-center">
-                    <p className="text-[10px] tracking-widest text-stone-400 uppercase">Yeni adres formu buraya eklenecek</p>
+                <div className="mt-4 border border-stone-200 rounded-sm p-6">
+                    <p className="text-[10px] font-bold tracking-[0.3em] text-stone-400 uppercase mb-5">Yeni Adres Ekle</p>
+
+                    <form onSubmit={handleKaydet} className="space-y-4">
+                        {/* Adres Başlığı */}
+                        <div>
+                            <label className="text-[10px] tracking-widest text-stone-400 uppercase mb-1.5 block">Adres Başlığı</label>
+                            <div className="flex gap-3">
+                                {['Ev', 'İş', 'Diğer'].map(b => (
+                                    <button
+                                        key={b}
+                                        type="button"
+                                        onClick={() => setForm({ ...form, baslik: b })}
+                                        className={`px-4 py-2 rounded-sm text-xs tracking-widest uppercase font-medium transition border ${form.baslik === b ? 'bg-stone-800 text-white border-stone-800' : 'border-stone-200 text-stone-500 hover:border-stone-400'}`}
+                                    >
+                                        {b}
+                                    </button>
+                                ))}
+                            </div>
+                        </div>
+
+                        {/* Ad Soyad + Telefon */}
+                        <div className="grid grid-cols-2 gap-4">
+                            <div>
+                                <label className="text-[10px] tracking-widest text-stone-400 uppercase mb-1.5 block">Ad Soyad</label>
+                                <input required value={form.ad} onChange={e => setForm({ ...form, ad: e.target.value })}
+                                    placeholder="Başak Şimşek" className={inputClass} />
+                            </div>
+                            <div>
+                                <label className="text-[10px] tracking-widest text-stone-400 uppercase mb-1.5 block">Telefon</label>
+                                <input required value={form.telefon} onChange={e => setForm({ ...form, telefon: e.target.value })}
+                                    placeholder="+90 555 000 00 00" className={inputClass} />
+                            </div>
+                        </div>
+
+                        {/* İl + İlçe */}
+                        <div className="grid grid-cols-2 gap-4">
+                            <div>
+                                <label className="text-[10px] tracking-widest text-stone-400 uppercase mb-1.5 block">İl</label>
+                                <input required value={form.il} onChange={e => setForm({ ...form, il: e.target.value })}
+                                    placeholder="İstanbul" className={inputClass} />
+                            </div>
+                            <div>
+                                <label className="text-[10px] tracking-widest text-stone-400 uppercase mb-1.5 block">İlçe</label>
+                                <input required value={form.ilce} onChange={e => setForm({ ...form, ilce: e.target.value })}
+                                    placeholder="Üsküdar" className={inputClass} />
+                            </div>
+                        </div>
+
+                        {/* Mahalle */}
+                        <div>
+                            <label className="text-[10px] tracking-widest text-stone-400 uppercase mb-1.5 block">Mahalle</label>
+                            <input required value={form.mahalle} onChange={e => setForm({ ...form, mahalle: e.target.value })}
+                                placeholder="Mimar Sinan Mah." className={inputClass} />
+                        </div>
+
+                        {/* Açık Adres */}
+                        <div>
+                            <label className="text-[10px] tracking-widest text-stone-400 uppercase mb-1.5 block">Açık Adres</label>
+                            <textarea required value={form.adres} onChange={e => setForm({ ...form, adres: e.target.value })}
+                                placeholder="Sokak, Bina No, Daire No..." rows={2}
+                                className={`${inputClass} resize-none`} />
+                        </div>
+
+                        {/* Posta Kodu */}
+                        <div>
+                            <label className="text-[10px] tracking-widest text-stone-400 uppercase mb-1.5 block">Posta Kodu</label>
+                            <input value={form.posta} onChange={e => setForm({ ...form, posta: e.target.value })}
+                                placeholder="34664" className={inputClass} />
+                        </div>
+
+                        {/* Varsayılan checkbox */}
+                        <label className="flex items-center gap-3 cursor-pointer">
+                            <input type="checkbox" checked={form.varsayilan}
+                                onChange={e => setForm({ ...form, varsayilan: e.target.checked })}
+                                className="accent-stone-800 w-4 h-4" />
+                            <span className="text-sm text-stone-600 tracking-wide">Varsayılan adres olarak ayarla</span>
+                        </label>
+
+                        {/* Butonlar */}
+                        <div className="flex items-center justify-end gap-3 pt-2">
+                            <button type="button" onClick={() => setYeniForm(false)}
+                                className="text-[10px] tracking-widest uppercase text-stone-400 hover:text-stone-600 transition">
+                                İptal
+                            </button>
+                            <button type="submit"
+                                className="flex items-center gap-2 bg-stone-800 hover:bg-stone-700 text-white text-[11px] tracking-widest uppercase font-medium px-6 py-2.5 rounded-sm transition">
+                                {kaydedildi ? <><CheckCircle size={13} /> Kaydedildi</> : 'Adresi Kaydet'}
+                            </button>
+                        </div>
+                    </form>
                 </div>
             )}
         </div>
@@ -419,9 +549,6 @@ function Ayarlar() {
         yeniUrunler: true, favoriFiyat: true,
         eposta: true, sms: false,
     })
-
-    // TODO: useEffect → getDoc(doc(db, 'users', userId, 'ayarlar', 'bildirimler'))
-    // TODO: toggle sonrası → updateDoc(...)
 
     const toggle = (key) => setBildirimler(prev => ({ ...prev, [key]: !prev[key] }))
 
@@ -522,7 +649,6 @@ function Profile() {
                             <div className="w-16 h-16 rounded-full bg-stone-100 flex items-center justify-center mb-3 ring-2 ring-stone-200">
                                 <User size={28} className="text-stone-400" />
                             </div>
-                            {/* TODO: {displayName} ve {email} */}
                             <h2 className="text-sm font-semibold text-stone-800 tracking-wide">Başak Şimşek</h2>
                             <p className="text-[10px] text-stone-400 tracking-wider mt-0.5">basak.simsek@gmail.com</p>
                         </div>
