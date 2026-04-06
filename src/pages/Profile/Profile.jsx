@@ -2,16 +2,13 @@ import { useState, useEffect } from 'react'
 import {
     User, ShoppingBag, Heart, MapPin, Settings, LogOut,
     Mail, Phone, Calendar, Eye, EyeOff, Star,
-    Plus, Trash2, Edit2, CheckCircle, Loader2
+    Plus, Trash2, Edit2, CheckCircle, Loader2,
+    ChevronDown, Package, Truck, RotateCcw
 } from 'lucide-react'
 
 // ─────────────────────────────────────────────────────────────
 // SERVİS KATMANI — Firebase bağlandığında sadece burası değişir
 // ─────────────────────────────────────────────────────────────
-
-// TODO: import { db, auth } from '../../firebase'
-// TODO: import { doc, getDoc, updateDoc, collection, getDocs, deleteDoc } from 'firebase/firestore'
-// TODO: import { updatePassword } from 'firebase/auth'
 
 const profileService = {
     getUser: async () => ({
@@ -25,40 +22,48 @@ const profileService = {
 }
 
 const siparisService = {
-    // TODO: getDocs(collection(db, 'users', userId, 'siparisler'))
     getSiparisler: async () => ([
-        { id: '#SP-1042', urun: 'Seramik Kupa Seti',   fiyat: '₺320', tarih: '28 Mar 2025', durum: 'Teslim Edildi', gorsel: 'https://images.unsplash.com/photo-1514228742587-6b1558fcca3d?w=200&q=80' },
-        { id: '#SP-1031', urun: 'Makrome Duvar Süsü',  fiyat: '₺185', tarih: '14 Mar 2025', durum: 'Kargoda',       gorsel: 'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=200&q=80' },
-        { id: '#SP-1019', urun: 'Deri Cüzdan',         fiyat: '₺450', tarih: '02 Mar 2025', durum: 'Teslim Edildi', gorsel: 'https://images.unsplash.com/photo-1548036328-c9fa89d128fa?w=200&q=80' },
-        { id: '#SP-1008', urun: 'Keten Yastık Kılıfı', fiyat: '₺145', tarih: '18 Şub 2025', durum: 'Teslim Edildi', gorsel: 'https://images.unsplash.com/photo-1592789705501-f9ae4278a9f9?w=200&q=80' },
+        {
+            id: '#SP-1042', urun: 'Seramik Kupa Seti', fiyat: '₺320', tarih: '28 Mar 2025', durum: 'Teslim Edildi',
+            kargoFirma: 'Yurtiçi Kargo', kargoNo: 'YK-482910374', tahminiTeslimat: '30 Mar 2025',
+            teslimatAdresi: 'Mimar Sinan Mah. Karacaahmet Sok. No:8 D:3, Üsküdar / İstanbul', adet: 1,
+        },
+        {
+            id: '#SP-1031', urun: 'Makrome Duvar Süsü', fiyat: '₺185', tarih: '14 Mar 2025', durum: 'Kargoda',
+            kargoFirma: 'Aras Kargo', kargoNo: 'AR-293847561', tahminiTeslimat: '17 Mar 2025',
+            teslimatAdresi: 'Mimar Sinan Mah. Karacaahmet Sok. No:8 D:3, Üsküdar / İstanbul', adet: 1,
+        },
+        {
+            id: '#SP-1019', urun: 'Deri Cüzdan', fiyat: '₺450', tarih: '02 Mar 2025', durum: 'Teslim Edildi',
+            kargoFirma: 'MNG Kargo', kargoNo: 'MNG-187364920', tahminiTeslimat: '05 Mar 2025',
+            teslimatAdresi: 'Mimar Sinan Mah. Karacaahmet Sok. No:8 D:3, Üsküdar / İstanbul', adet: 1,
+        },
+        {
+            id: '#SP-1008', urun: 'Keten Yastık Kılıfı', fiyat: '₺145', tarih: '18 Şub 2025', durum: 'Teslim Edildi',
+            kargoFirma: 'Yurtiçi Kargo', kargoNo: 'YK-374820193', tahminiTeslimat: '21 Şub 2025',
+            teslimatAdresi: 'Mimar Sinan Mah. Karacaahmet Sok. No:8 D:3, Üsküdar / İstanbul', adet: 2,
+        },
     ]),
 }
 
 const favoriService = {
-    // TODO: getDocs(collection(db, 'users', userId, 'favoriler'))
     getFavoriler: async () => ([
         { id: '1', isim: 'El Yapımı Ahşap Tabak', fiyat: '₺280', puan: 4.8, gorsel: 'https://images.unsplash.com/photo-1604709177225-055f99402ea3?w=300&q=80' },
         { id: '2', isim: "Mum Seti (3'lü)",        fiyat: '₺220', puan: 4.9, gorsel: 'https://images.unsplash.com/photo-1603905424690-64e1d0e9f74a?w=300&q=80' },
         { id: '3', isim: 'Kumaş Çanta',            fiyat: '₺375', puan: 4.7, gorsel: 'https://images.unsplash.com/photo-1594938298603-c8148c4b8f15?w=300&q=80' },
         { id: '4', isim: 'Oyuncak Tavşan',         fiyat: '₺165', puan: 5.0, gorsel: 'https://images.unsplash.com/photo-1558171813-64da07b2b3b0?w=300&q=80' },
     ]),
-    // TODO: deleteDoc(doc(db, 'users', userId, 'favoriler', favoriId))
     removeFavori: async (favoriId) => console.log('removeFavori ->', favoriId),
 }
 
 const adresService = {
-    // TODO: getDocs(collection(db, 'users', userId, 'adresler'))
     getAdresler: async () => ([
         { id: '1', baslik: 'Ev', ad: 'Başak Şimşek', adres: 'Mimar Sinan Mah. Karacaahmet Sok. No:8 D:3', ilce: 'Üsküdar', sehir: 'İstanbul', posta: '34664', varsayilan: true },
         { id: '2', baslik: 'İş', ad: 'Başak Şimşek', adres: 'Bağlarbaşı Mah. Hakimiyet Cad. No:22 Kat:2', ilce: 'Üsküdar', sehir: 'İstanbul', posta: '34672', varsayilan: false },
     ]),
-    // TODO: deleteDoc(doc(db, 'users', userId, 'adresler', adresId))
     deleteAdres: async (adresId) => console.log('deleteAdres ->', adresId),
-    // TODO: updateDoc(doc(db, 'users', userId), { varsayilanAdres: adresId })
     setVarsayilan: async (adresId) => console.log('setVarsayilan ->', adresId),
 }
-
-// TODO: Firebase Auth'dan gerçek userId al → const userId = auth.currentUser?.uid
 
 // ─────────────────────────────────────────────────────────────
 // YARDIMCI BİLEŞENLER
@@ -132,7 +137,6 @@ function ProfilBilgilerim() {
             <div>
                 <p className="text-[10px] font-bold tracking-[0.3em] text-stone-400 uppercase mb-6">Profil Bilgilerim</p>
                 {hata && <p className="text-xs text-red-500 mb-4 tracking-wide">{hata}</p>}
-
                 <form onSubmit={handleKaydet} className="space-y-4">
                     <div className="grid grid-cols-2 gap-4">
                         <div>
@@ -144,7 +148,6 @@ function ProfilBilgilerim() {
                             <input value={form.soyad} onChange={e => setForm({ ...form, soyad: e.target.value })} className={inputClass} />
                         </div>
                     </div>
-
                     <div>
                         <label className="text-[10px] tracking-widest text-stone-400 uppercase mb-1.5 block">E-posta</label>
                         <div className="relative">
@@ -152,7 +155,6 @@ function ProfilBilgilerim() {
                             <input value={form.email} onChange={e => setForm({ ...form, email: e.target.value })} className={`${inputClass} pl-9`} />
                         </div>
                     </div>
-
                     <div>
                         <label className="text-[10px] tracking-widest text-stone-400 uppercase mb-1.5 block">Telefon</label>
                         <div className="relative">
@@ -160,7 +162,6 @@ function ProfilBilgilerim() {
                             <input value={form.telefon} onChange={e => setForm({ ...form, telefon: e.target.value })} className={`${inputClass} pl-9`} />
                         </div>
                     </div>
-
                     <div className="grid grid-cols-2 gap-4">
                         <div>
                             <label className="text-[10px] tracking-widest text-stone-400 uppercase mb-1.5 block">Cinsiyet</label>
@@ -182,7 +183,6 @@ function ProfilBilgilerim() {
                             </div>
                         </div>
                     </div>
-
                     <div className="flex justify-end pt-2">
                         <button type="submit" className="flex items-center gap-2 bg-stone-800 hover:bg-stone-700 text-white text-[11px] tracking-widest uppercase font-medium px-6 py-2.5 rounded-sm transition">
                             {kaydedildi ? <><CheckCircle size={13} /> Kaydedildi</> : 'Kaydet'}
@@ -233,12 +233,15 @@ function ProfilBilgilerim() {
 function Siparislerim() {
     const [siparisler, setSiparisler] = useState([])
     const [yukleniyor, setYukleniyor] = useState(true)
+    const [acikId, setAcikId] = useState(null)
 
     useEffect(() => {
         siparisService.getSiparisler()
             .then(setSiparisler)
             .finally(() => setYukleniyor(false))
     }, [])
+
+    const toggleDetay = (id) => setAcikId(prev => prev === id ? null : id)
 
     if (yukleniyor) return <Yukleniyor />
 
@@ -250,18 +253,82 @@ function Siparislerim() {
                 : (
                     <div className="space-y-3">
                         {siparisler.map(s => (
-                            <div key={s.id} className="flex items-center gap-4 border border-stone-100 rounded-sm p-4 hover:border-stone-300 transition group">
-                                <img src={s.gorsel} alt={s.urun} className="w-16 h-16 rounded-sm object-cover flex-shrink-0 grayscale-[20%] group-hover:grayscale-0 transition" />
-                                <div className="flex-1 min-w-0">
-                                    <p className="text-sm font-medium text-stone-800 tracking-wide truncate">{s.urun}</p>
-                                    <p className="text-[10px] tracking-widest text-stone-400 uppercase mt-1">{s.id} · {s.tarih}</p>
-                                </div>
-                                <div className="text-right flex-shrink-0">
-                                    <p className="text-sm font-semibold text-stone-800">{s.fiyat}</p>
-                                    <span className={`text-[10px] tracking-wider px-2 py-0.5 rounded-sm font-medium mt-1 inline-block uppercase ${durumuStil[s.durum] || 'bg-stone-100 text-stone-500'}`}>
-                                        {s.durum}
-                                    </span>
-                                </div>
+                            <div key={s.id} className={`border rounded-sm transition ${acikId === s.id ? 'border-stone-300' : 'border-stone-100 hover:border-stone-200'}`}>
+
+                                {/* Sipariş Özet Satırı */}
+                                <button onClick={() => toggleDetay(s.id)} className="w-full flex items-center gap-4 p-4 text-left">
+                                    {/* İkon Placeholder */}
+                                    <div className="w-14 h-14 rounded-sm bg-stone-100 flex items-center justify-center flex-shrink-0">
+                                        <Package size={22} className="text-stone-400" />
+                                    </div>
+                                    <div className="flex-1 min-w-0">
+                                        <p className="text-sm font-medium text-stone-800 tracking-wide truncate">{s.urun}</p>
+                                        <p className="text-[10px] tracking-widest text-stone-400 uppercase mt-1">{s.id} · {s.tarih}</p>
+                                    </div>
+                                    <div className="text-right flex-shrink-0 mr-2">
+                                        <p className="text-sm font-semibold text-stone-800">{s.fiyat}</p>
+                                        <span className={`text-[10px] tracking-wider px-2 py-0.5 rounded-sm font-medium mt-1 inline-block uppercase ${durumuStil[s.durum] || 'bg-stone-100 text-stone-500'}`}>
+                                            {s.durum}
+                                        </span>
+                                    </div>
+                                    <ChevronDown size={14} className={`text-stone-400 flex-shrink-0 transition-transform duration-300 ${acikId === s.id ? 'rotate-180' : ''}`} />
+                                </button>
+
+                                {/* Genişleyen Detay */}
+                                {acikId === s.id && (
+                                    <div className="border-t border-stone-100 px-4 pb-5 pt-4 bg-stone-50/50">
+                                        <div className="grid grid-cols-2 gap-6">
+                                            <div className="space-y-4">
+                                                <div>
+                                                    <p className="text-[9px] tracking-[0.25em] text-stone-400 uppercase mb-2">Kargo Bilgileri</p>
+                                                    <div className="space-y-2">
+                                                        <div className="flex items-center gap-2">
+                                                            <Truck size={13} className="text-stone-400 flex-shrink-0" />
+                                                            <div>
+                                                                <p className="text-[10px] text-stone-400 uppercase tracking-wider">Kargo Firması</p>
+                                                                <p className="text-sm text-stone-700 font-medium">{s.kargoFirma}</p>
+                                                            </div>
+                                                        </div>
+                                                        <div className="flex items-center gap-2">
+                                                            <Package size={13} className="text-stone-400 flex-shrink-0" />
+                                                            <div>
+                                                                <p className="text-[10px] text-stone-400 uppercase tracking-wider">Takip Numarası</p>
+                                                                <p className="text-sm text-stone-700 font-medium font-mono">{s.kargoNo}</p>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div>
+                                                    <p className="text-[9px] tracking-[0.25em] text-stone-400 uppercase mb-2">Tahmini Teslimat</p>
+                                                    <p className="text-sm text-stone-700 font-medium">{s.tahminiTeslimat}</p>
+                                                </div>
+                                            </div>
+                                            <div className="space-y-4">
+                                                <div>
+                                                    <p className="text-[9px] tracking-[0.25em] text-stone-400 uppercase mb-2">Teslimat Adresi</p>
+                                                    <p className="text-sm text-stone-600 leading-relaxed">{s.teslimatAdresi}</p>
+                                                </div>
+                                                <div>
+                                                    <p className="text-[9px] tracking-[0.25em] text-stone-400 uppercase mb-2">Sipariş Özeti</p>
+                                                    <div className="flex items-center justify-between">
+                                                        <span className="text-sm text-stone-600">{s.adet} × {s.urun}</span>
+                                                        <span className="text-sm font-semibold text-stone-800">{s.fiyat}</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div className="flex items-center gap-3 mt-5 pt-4 border-t border-stone-100">
+                                            <button className="flex items-center gap-1.5 text-[10px] tracking-widest uppercase text-stone-500 hover:text-stone-800 transition border-b border-transparent hover:border-stone-400 pb-0.5">
+                                                <RotateCcw size={11} /> Tekrar Sipariş Ver
+                                            </button>
+                                            {s.durum === 'Kargoda' && (
+                                                <button className="flex items-center gap-1.5 text-[10px] tracking-widest uppercase text-amber-600 hover:text-amber-800 transition border-b border-transparent hover:border-amber-400 pb-0.5">
+                                                    <Truck size={11} /> Kargo Takip Et
+                                                </button>
+                                            )}
+                                        </div>
+                                    </div>
+                                )}
                             </div>
                         ))}
                     </div>
@@ -333,15 +400,8 @@ function Adreslerim() {
     const [yukleniyor, setYukleniyor] = useState(true)
     const [yeniForm, setYeniForm] = useState(false)
     const [form, setForm] = useState({
-        baslik: 'Ev',
-        ad: '',
-        telefon: '',
-        il: '',
-        ilce: '',
-        mahalle: '',
-        adres: '',
-        posta: '',
-        varsayilan: false,
+        baslik: 'Ev', ad: '', telefon: '', il: '', ilce: '',
+        mahalle: '', adres: '', posta: '', varsayilan: false,
     })
     const [kaydedildi, setKaydedildi] = useState(false)
 
@@ -367,16 +427,12 @@ function Adreslerim() {
 
     const handleKaydet = async (e) => {
         e.preventDefault()
-        // TODO: Firebase'e ekle → addDoc(collection(db, 'users', userId, 'adresler'), form)
         const yeniAdres = {
             id: String(Date.now()),
-            baslik: form.baslik,
-            ad: form.ad,
+            baslik: form.baslik, ad: form.ad,
             adres: `${form.mahalle} ${form.adres}`,
-            ilce: form.ilce,
-            sehir: form.il,
-            posta: form.posta,
-            varsayilan: form.varsayilan,
+            ilce: form.ilce, sehir: form.il,
+            posta: form.posta, varsayilan: form.varsayilan,
         }
         if (form.varsayilan) {
             setAdresler(prev => [...prev.map(a => ({ ...a, varsayilan: false })), yeniAdres])
@@ -399,10 +455,8 @@ function Adreslerim() {
         <div>
             <div className="flex items-center justify-between mb-6">
                 <p className="text-[10px] font-bold tracking-[0.3em] text-stone-400 uppercase">Adreslerim</p>
-                <button
-                    onClick={() => setYeniForm(!yeniForm)}
-                    className="flex items-center gap-1.5 text-[10px] tracking-widest text-stone-600 hover:text-stone-800 uppercase font-medium border-b border-stone-300 hover:border-stone-700 pb-0.5 transition"
-                >
+                <button onClick={() => setYeniForm(!yeniForm)}
+                    className="flex items-center gap-1.5 text-[10px] tracking-widest text-stone-600 hover:text-stone-800 uppercase font-medium border-b border-stone-300 hover:border-stone-700 pb-0.5 transition">
                     <Plus size={12} /> Yeni Adres
                 </button>
             </div>
@@ -418,9 +472,7 @@ function Adreslerim() {
                                         <div className="flex items-center gap-3 mb-1.5">
                                             <span className="text-sm font-semibold text-stone-800 tracking-wide">{a.baslik}</span>
                                             {a.varsayilan && (
-                                                <span className="text-[9px] bg-stone-800 text-white px-2 py-0.5 rounded-sm tracking-widest uppercase font-medium">
-                                                    Varsayılan
-                                                </span>
+                                                <span className="text-[9px] bg-stone-800 text-white px-2 py-0.5 rounded-sm tracking-widest uppercase font-medium">Varsayılan</span>
                                             )}
                                         </div>
                                         <p className="text-sm text-stone-600">{a.ad}</p>
@@ -444,88 +496,58 @@ function Adreslerim() {
                 )
             }
 
-            {/* Yeni Adres Formu */}
             {yeniForm && (
                 <div className="mt-4 border border-stone-200 rounded-sm p-6">
                     <p className="text-[10px] font-bold tracking-[0.3em] text-stone-400 uppercase mb-5">Yeni Adres Ekle</p>
-
                     <form onSubmit={handleKaydet} className="space-y-4">
-                        {/* Adres Başlığı */}
                         <div>
                             <label className="text-[10px] tracking-widest text-stone-400 uppercase mb-1.5 block">Adres Başlığı</label>
                             <div className="flex gap-3">
                                 {['Ev', 'İş', 'Diğer'].map(b => (
-                                    <button
-                                        key={b}
-                                        type="button"
-                                        onClick={() => setForm({ ...form, baslik: b })}
-                                        className={`px-4 py-2 rounded-sm text-xs tracking-widest uppercase font-medium transition border ${form.baslik === b ? 'bg-stone-800 text-white border-stone-800' : 'border-stone-200 text-stone-500 hover:border-stone-400'}`}
-                                    >
+                                    <button key={b} type="button" onClick={() => setForm({ ...form, baslik: b })}
+                                        className={`px-4 py-2 rounded-sm text-xs tracking-widest uppercase font-medium transition border ${form.baslik === b ? 'bg-stone-800 text-white border-stone-800' : 'border-stone-200 text-stone-500 hover:border-stone-400'}`}>
                                         {b}
                                     </button>
                                 ))}
                             </div>
                         </div>
-
-                        {/* Ad Soyad + Telefon */}
                         <div className="grid grid-cols-2 gap-4">
                             <div>
                                 <label className="text-[10px] tracking-widest text-stone-400 uppercase mb-1.5 block">Ad Soyad</label>
-                                <input required value={form.ad} onChange={e => setForm({ ...form, ad: e.target.value })}
-                                    placeholder="Başak Şimşek" className={inputClass} />
+                                <input required value={form.ad} onChange={e => setForm({ ...form, ad: e.target.value })} placeholder="Başak Şimşek" className={inputClass} />
                             </div>
                             <div>
                                 <label className="text-[10px] tracking-widest text-stone-400 uppercase mb-1.5 block">Telefon</label>
-                                <input required value={form.telefon} onChange={e => setForm({ ...form, telefon: e.target.value })}
-                                    placeholder="+90 555 000 00 00" className={inputClass} />
+                                <input required value={form.telefon} onChange={e => setForm({ ...form, telefon: e.target.value })} placeholder="+90 555 000 00 00" className={inputClass} />
                             </div>
                         </div>
-
-                        {/* İl + İlçe */}
                         <div className="grid grid-cols-2 gap-4">
                             <div>
                                 <label className="text-[10px] tracking-widest text-stone-400 uppercase mb-1.5 block">İl</label>
-                                <input required value={form.il} onChange={e => setForm({ ...form, il: e.target.value })}
-                                    placeholder="İstanbul" className={inputClass} />
+                                <input required value={form.il} onChange={e => setForm({ ...form, il: e.target.value })} placeholder="İstanbul" className={inputClass} />
                             </div>
                             <div>
                                 <label className="text-[10px] tracking-widest text-stone-400 uppercase mb-1.5 block">İlçe</label>
-                                <input required value={form.ilce} onChange={e => setForm({ ...form, ilce: e.target.value })}
-                                    placeholder="Üsküdar" className={inputClass} />
+                                <input required value={form.ilce} onChange={e => setForm({ ...form, ilce: e.target.value })} placeholder="Üsküdar" className={inputClass} />
                             </div>
                         </div>
-
-                        {/* Mahalle */}
                         <div>
                             <label className="text-[10px] tracking-widest text-stone-400 uppercase mb-1.5 block">Mahalle</label>
-                            <input required value={form.mahalle} onChange={e => setForm({ ...form, mahalle: e.target.value })}
-                                placeholder="Mimar Sinan Mah." className={inputClass} />
+                            <input required value={form.mahalle} onChange={e => setForm({ ...form, mahalle: e.target.value })} placeholder="Mimar Sinan Mah." className={inputClass} />
                         </div>
-
-                        {/* Açık Adres */}
                         <div>
                             <label className="text-[10px] tracking-widest text-stone-400 uppercase mb-1.5 block">Açık Adres</label>
                             <textarea required value={form.adres} onChange={e => setForm({ ...form, adres: e.target.value })}
-                                placeholder="Sokak, Bina No, Daire No..." rows={2}
-                                className={`${inputClass} resize-none`} />
+                                placeholder="Sokak, Bina No, Daire No..." rows={2} className={`${inputClass} resize-none`} />
                         </div>
-
-                        {/* Posta Kodu */}
                         <div>
                             <label className="text-[10px] tracking-widest text-stone-400 uppercase mb-1.5 block">Posta Kodu</label>
-                            <input value={form.posta} onChange={e => setForm({ ...form, posta: e.target.value })}
-                                placeholder="34664" className={inputClass} />
+                            <input value={form.posta} onChange={e => setForm({ ...form, posta: e.target.value })} placeholder="34664" className={inputClass} />
                         </div>
-
-                        {/* Varsayılan checkbox */}
                         <label className="flex items-center gap-3 cursor-pointer">
-                            <input type="checkbox" checked={form.varsayilan}
-                                onChange={e => setForm({ ...form, varsayilan: e.target.checked })}
-                                className="accent-stone-800 w-4 h-4" />
+                            <input type="checkbox" checked={form.varsayilan} onChange={e => setForm({ ...form, varsayilan: e.target.checked })} className="accent-stone-800 w-4 h-4" />
                             <span className="text-sm text-stone-600 tracking-wide">Varsayılan adres olarak ayarla</span>
                         </label>
-
-                        {/* Butonlar */}
                         <div className="flex items-center justify-end gap-3 pt-2">
                             <button type="button" onClick={() => setYeniForm(false)}
                                 className="text-[10px] tracking-widest uppercase text-stone-400 hover:text-stone-600 transition">
@@ -588,10 +610,8 @@ function Ayarlar() {
                                     <p className="text-sm font-medium text-stone-700 tracking-wide">{item.label}</p>
                                     <p className="text-[11px] text-stone-400 mt-0.5">{item.aciklama}</p>
                                 </div>
-                                <button
-                                    onClick={() => toggle(item.key)}
-                                    className={`relative w-10 h-5 rounded-full transition-colors flex-shrink-0 ${bildirimler[item.key] ? 'bg-stone-700' : 'bg-stone-200'}`}
-                                >
+                                <button onClick={() => toggle(item.key)}
+                                    className={`relative w-10 h-5 rounded-full transition-colors flex-shrink-0 ${bildirimler[item.key] ? 'bg-stone-700' : 'bg-stone-200'}`}>
                                     <span className={`absolute top-0.5 left-0.5 w-4 h-4 bg-white rounded-full shadow transition-transform ${bildirimler[item.key] ? 'translate-x-5' : ''}`} />
                                 </button>
                             </div>
@@ -622,10 +642,6 @@ const menuItems = [
 function Profile() {
     const [aktif, setAktif] = useState('profil')
 
-    // TODO: const [user] = useAuthState(auth)
-    // TODO: const displayName = user?.displayName || 'Kullanıcı'
-    // TODO: const email = user?.email || ''
-
     const renderIcerik = () => {
         switch (aktif) {
             case 'profil':     return <ProfilBilgilerim />
@@ -640,11 +656,8 @@ function Profile() {
     return (
         <div className="bg-stone-50 min-h-screen">
             <div className="max-w-5xl mx-auto px-6 py-14 flex gap-10 items-start">
-
-                {/* Sol: Sidebar */}
                 <aside className="w-52 flex-shrink-0 sticky top-20 self-start">
                     <div className="bg-white border border-stone-100 rounded-sm p-6 shadow-sm">
-                        {/* Avatar */}
                         <div className="flex flex-col items-center mb-8">
                             <div className="w-16 h-16 rounded-full bg-stone-100 flex items-center justify-center mb-3 ring-2 ring-stone-200">
                                 <User size={28} className="text-stone-400" />
@@ -652,43 +665,27 @@ function Profile() {
                             <h2 className="text-sm font-semibold text-stone-800 tracking-wide">Başak Şimşek</h2>
                             <p className="text-[10px] text-stone-400 tracking-wider mt-0.5">basak.simsek@gmail.com</p>
                         </div>
-
-                        {/* Menü */}
                         <nav className="flex flex-col gap-0.5">
                             {menuItems.map((item) => {
                                 const MenuIcon = item.icon
                                 return (
-                                    <button
-                                        key={item.key}
-                                        onClick={() => setAktif(item.key)}
+                                    <button key={item.key} onClick={() => setAktif(item.key)}
                                         className={`flex items-center gap-3 px-3 py-2.5 rounded-sm text-left text-[12px] tracking-wide transition-colors w-full
-                                            ${aktif === item.key
-                                                ? 'bg-stone-100 text-stone-800 font-semibold'
-                                                : 'text-stone-500 hover:text-stone-800 hover:bg-stone-50'
-                                            }`}
-                                    >
+                                            ${aktif === item.key ? 'bg-stone-100 text-stone-800 font-semibold' : 'text-stone-500 hover:text-stone-800 hover:bg-stone-50'}`}>
                                         <MenuIcon size={14} />
                                         {item.label}
                                     </button>
                                 )
                             })}
-
                             <div className="border-t border-stone-100 mt-3 pt-3">
-                                <button
-                                    onClick={() => {
-                                        // TODO: await signOut(auth); navigate('/login')
-                                        console.log('Çıkış yapıldı')
-                                    }}
-                                    className="flex items-center gap-3 px-3 py-2.5 rounded-sm text-[12px] tracking-wide text-red-400 hover:text-red-600 hover:bg-red-50 transition-colors w-full"
-                                >
+                                <button onClick={() => console.log('Çıkış yapıldı')}
+                                    className="flex items-center gap-3 px-3 py-2.5 rounded-sm text-[12px] tracking-wide text-red-400 hover:text-red-600 hover:bg-red-50 transition-colors w-full">
                                     <LogOut size={14} /> Çıkış Yap
                                 </button>
                             </div>
                         </nav>
                     </div>
                 </aside>
-
-                {/* Sağ: İçerik */}
                 <main className="flex-1 min-w-0 bg-white border border-stone-100 rounded-sm p-8 shadow-sm">
                     {renderIcerik()}
                 </main>
