@@ -48,7 +48,9 @@ function Navbar() {
             <Link to="/sepet" aria-label="Sepet">
               <ShoppingCart size={20} className="cursor-pointer hover:text-amber-500 transition" />
             </Link>
-            <User size={20} className="cursor-pointer hover:text-amber-500 transition" />
+            <Link to="/profil" aria-label="Profil">
+              <User size={20} className="cursor-pointer hover:text-amber-500 transition" />
+            </Link>
             <Link to="/giris-yap" className="text-sm font-medium hover:text-amber-500 transition">GİRİŞ YAP</Link>
             <Link to="/kayit-ol" className="text-sm font-medium hover:text-amber-500 transition">KAYIT OL</Link>
           </div>
@@ -114,7 +116,7 @@ function Navbar() {
             </Link>
           </li>
 
-          {/* Ayarlar Bölümü (Cyber/Sidebar Settings) */}
+          {/* Ayarlar Bölümü */}
           <li className="mt-8 px-6">
             <h3 className="text-[10px] font-black text-stone-400 uppercase tracking-[0.2em] mb-4">AYARLAR</h3>
             <div className="flex items-center justify-between p-4 bg-stone-50 dark:bg-stone-800/50 rounded-2xl border border-stone-100 dark:border-stone-700/50">
