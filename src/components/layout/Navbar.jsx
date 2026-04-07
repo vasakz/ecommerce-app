@@ -48,7 +48,9 @@ function Navbar() {
             <Link to="/sepet" aria-label="Sepet">
               <ShoppingCart size={20} className="cursor-pointer hover:text-amber-500 transition" />
             </Link>
-            <User size={20} className="cursor-pointer hover:text-amber-500 transition" />
+            <Link to="/profil" aria-label="Profil">
+              <User size={20} className="cursor-pointer hover:text-amber-500 transition" />
+            </Link>
             <Link to="/giris-yap" className="text-sm font-medium hover:text-amber-500 transition">GİRİŞ YAP</Link>
             <Link to="/kayit-ol" className="text-sm font-medium hover:text-amber-500 transition">KAYIT OL</Link>
           </div>
@@ -68,7 +70,7 @@ function Navbar() {
       <div className={`fixed top-0 left-0 h-full w-72 bg-white dark:bg-stone-900 dark:text-white z-50 shadow-2xl transform transition-transform duration-300 ${menuOpen ? 'translate-x-0' : '-translate-x-full'}`}>
 
         {/* Sidebar Başlık */}
-        <div className="flex items-center justify-between px-6 py-5 border-b border-stone-200">
+        <div className="flex items-center justify-between px-6 py-5 border-b border-stone-200 dark:border-stone-700">
           <h2 className="text-base font-bold tracking-widest">KATEGORİLER</h2>
           <button onClick={() => setMenuOpen(false)} className="hover:text-amber-500 transition">
             <X size={20} />
@@ -76,7 +78,7 @@ function Navbar() {
         </div>
 
         {/* Sidebar Menü */}
-        <ul className="py-4 text-sm font-medium text-stone-800">
+        <ul className="py-4 text-sm font-medium text-stone-800 dark:text-stone-100">
           {[
             { label: 'Tüm Ürünler', to: '/urunler' },
             { label: 'Yeni Gelenler', to: '/urunler?category=Yeni Gelenler' },
@@ -91,16 +93,16 @@ function Navbar() {
               <Link
                 to={item.to}
                 onClick={() => setMenuOpen(false)}
-                className="flex items-center justify-between px-6 py-3 hover:bg-stone-100 hover:text-amber-500 transition"
+                className="flex items-center justify-between px-6 py-3 hover:bg-stone-100 dark:hover:bg-stone-800 hover:text-amber-500 transition"
               >
                 {item.label}
-                <ChevronRight size={14} className="text-stone-400" />
+                <ChevronRight size={14} className="text-stone-400 dark:text-stone-500" />
               </Link>
             </li>
           ))}
 
           {/* Ayraç */}
-          <li className="border-t border-stone-200 my-3" />
+          <li className="border-t border-stone-200 dark:border-stone-700 my-3" />
 
           {/* Kampanyalar - kırmızı */}
           <li>
@@ -114,7 +116,7 @@ function Navbar() {
             </Link>
           </li>
 
-          {/* Ayarlar Bölümü (Cyber/Sidebar Settings) */}
+          {/* Ayarlar Bölümü */}
           <li className="mt-8 px-6">
             <h3 className="text-[10px] font-black text-stone-400 uppercase tracking-[0.2em] mb-4">AYARLAR</h3>
             <div className="flex items-center justify-between p-4 bg-stone-50 dark:bg-stone-800/50 rounded-2xl border border-stone-100 dark:border-stone-700/50">
