@@ -15,8 +15,10 @@ import ThemeToggle from './ThemeToggle'
 
 function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false)
+
   const cartItems = useSelector(state => state.cart.items)
   const favoritesItems = useSelector(state => state.favorites.items)
+
   const cartCount = cartItems.reduce((sum, item) => sum + item.quantity, 0)
   const favoritesCount = favoritesItems.length
 
@@ -31,7 +33,7 @@ function Navbar() {
       <div className="bg-white dark:bg-stone-900 text-stone-900 dark:text-white border-b border-stone-200 dark:border-stone-800 transition-colors duration-300">
         <div className="px-6 py-4 flex items-center gap-8">
 
-          {/* Left: Menu + Logo */}
+          {/* Left */}
           <div className="flex items-center gap-3">
             <button
               onClick={() => setMenuOpen(true)}
@@ -42,15 +44,15 @@ function Navbar() {
             <h1 className="text-xl font-bold tracking-widest">BRAND</h1>
           </div>
 
-          {/* Center: Navigation */}
+          {/* Center */}
           <nav className="flex gap-8 text-sm font-medium flex-1 justify-center">
-            <Link to="/" className="hover:text-amber-500 transition">ANASAYFA</Link>
-            <Link to="/atolye" className="hover:text-amber-500 transition">ATÖLYEDEN</Link>
-            <Link to="/urunler" className="hover:text-amber-500 transition">ÜRÜNLER</Link>
-            <Link to="/kampanyalar" className="hover:text-red-500 transition">KAMPANYALAR</Link>
+            <Link to="/" className="hover:text-amber-500">ANASAYFA</Link>
+            <Link to="/atolye" className="hover:text-amber-500">ATÖLYEDEN</Link>
+            <Link to="/urunler" className="hover:text-amber-500">ÜRÜNLER</Link>
+            <Link to="/kampanyalar" className="hover:text-red-500">KAMPANYALAR</Link>
           </nav>
 
-          {/* Right: Search + Actions */}
+          {/* Right */}
           <div className="flex items-center gap-4">
 
             {/* Search */}
@@ -63,40 +65,42 @@ function Navbar() {
               <Search size={16} className="text-stone-400" />
             </div>
 
-            {/* Icons */}
-            <div className="flex items-center gap-4">
-              <Link to="/begendiklerim" className="relative">
-                <Heart className="cursor-pointer hover:text-red-500 transition" size={20} />
-                {favoritesCount > 0 && (
-                  <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
-                    {favoritesCount}
-                  </span>
-                )}
+            {/* Favorites */}
+            <Link to="/begendiklerim" className="relative">
+              <Heart className="hover:text-red-500" size={20} />
+              {favoritesCount > 0 && (
+                <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
+                  {favoritesCount}
+                </span>
+              )}
+            </Link>
+
+            {/* Cart */}
+            <Link to="/sepet" className="relative">
+              <ShoppingCart className="hover:text-amber-500" size={20} />
+              {cartCount > 0 && (
+                <span className="absolute -top-2 -right-2 bg-amber-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
+                  {cartCount}
+                </span>
+              )}
+            </Link>
+
+            {/* Profile */}
+            <Link to="/profil">
+              <User className="hover:text-amber-500" size={20} />
+            </Link>
+
+            {/* Divider */}
+            <div className="h-6 w-[1px] bg-stone-200 dark:bg-stone-800"></div>
+
+            {/* Auth */}
+            <div className="flex items-center gap-3 text-xs font-bold">
+              <Link to="/giris-yap" className="hover:text-amber-500">
+                GİRİŞ YAP
               </Link>
-
-              <Link to="/sepet" className="relative">
-                <ShoppingCart className="cursor-pointer hover:text-amber-500 transition" size={20} />
-                {cartCount > 0 && (
-                  <span className="absolute -top-2 -right-2 bg-amber-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
-                    {cartCount}
-                  </span>
-                )}
+              <Link to="/kayit-ol" className="hover:text-amber-500">
+                KAYIT OL
               </Link>
-
-              <User className="cursor-pointer hover:text-amber-500 transition" size={20} />
-
-              {/* Divider */}
-              <div className="h-6 w-[1px] bg-stone-200 dark:bg-stone-800"></div>
-
-              {/* Auth */}
-              <div className="flex items-center gap-3 text-xs font-bold">
-                <Link to="/giris-yap" className="hover:text-amber-500 transition">
-                  GİRİŞ YAP
-                </Link>
-                <Link to="/kayit-ol" className="hover:text-amber-500 transition">
-                  KAYIT OL
-                </Link>
-              </div>
             </div>
           </div>
         </div>
@@ -117,19 +121,16 @@ function Navbar() {
         }`}
       >
 
-        {/* Sidebar Header */}
-        <div className="flex items-center justify-between px-6 py-5 border-b border-stone-200">
+        {/* Header */}
+        <div className="flex items-center justify-between px-6 py-5 border-b border-stone-200 dark:border-stone-700">
           <h2 className="text-base font-bold tracking-widest">KATEGORİLER</h2>
-          <button
-            onClick={() => setMenuOpen(false)}
-            className="hover:text-amber-500 transition"
-          >
+          <button onClick={() => setMenuOpen(false)}>
             <X size={20} />
           </button>
         </div>
 
-        {/* Sidebar Menu */}
-        <ul className="py-4 text-sm font-medium text-stone-800 dark:text-white">
+        {/* Menu */}
+        <ul className="py-4 text-sm font-medium">
           {[
             { label: 'Tüm Ürünler', to: '/urunler' },
             { label: 'Yeni Gelenler', to: '/urunler?category=Yeni Gelenler' },
@@ -139,49 +140,41 @@ function Navbar() {
             { label: 'Elektronik', to: '/urunler?category=Elektronik' },
             { label: 'Aksesuarlar', to: '/urunler?category=Aksesuarlar' },
             { label: 'Ev & Yaşam', to: '/urunler?category=Ev %26 Yaşam' },
-          ].map((item) => (
+          ].map(item => (
             <li key={item.to}>
               <Link
                 to={item.to}
                 onClick={() => setMenuOpen(false)}
-                className="flex items-center justify-between px-6 py-3 hover:bg-stone-100 dark:hover:bg-stone-800 hover:text-amber-500 transition"
+                className="flex justify-between px-6 py-3 hover:bg-stone-100 dark:hover:bg-stone-800 hover:text-amber-500"
               >
                 {item.label}
-                <ChevronRight size={14} className="text-stone-400" />
+                <ChevronRight size={14} />
               </Link>
             </li>
           ))}
 
-          {/* Divider */}
-          <li className="border-t border-stone-200 dark:border-stone-700 my-3" />
+          <li className="border-t my-3" />
 
-          {/* Campaigns */}
+          {/* Campaign */}
           <li>
             <Link
               to="/kampanyalar"
               onClick={() => setMenuOpen(false)}
-              className="flex items-center justify-between px-6 py-3 text-red-500 font-semibold hover:bg-red-50 dark:hover:bg-red-950/20 transition"
+              className="flex justify-between px-6 py-3 text-red-500 font-semibold hover:bg-red-50"
             >
               Kampanyalar
-              <ChevronRight size={14} className="text-red-400" />
+              <ChevronRight size={14} />
             </Link>
           </li>
 
           {/* Settings */}
           <li className="mt-8 px-6">
-            <h3 className="text-[10px] font-black text-stone-400 uppercase tracking-widest mb-4">
-              AYARLAR
-            </h3>
+            <h3 className="text-xs text-stone-400 mb-4">AYARLAR</h3>
 
-            <div className="flex items-center justify-between p-4 bg-stone-50 dark:bg-stone-800/50 rounded-2xl border border-stone-100 dark:border-stone-700/50">
+            <div className="flex items-center justify-between p-4 bg-stone-50 dark:bg-stone-800 rounded-xl">
               <div className="flex items-center gap-3">
-                <div className="p-2 bg-white dark:bg-stone-700 rounded-lg shadow-sm">
-                  <Settings size={18} />
-                </div>
-                <div>
-                  <p className="text-xs font-bold">Görünüm</p>
-                  <p className="text-[10px] text-stone-400">Koyu / Aydınlık</p>
-                </div>
+                <Settings size={18} />
+                <span className="text-sm">Görünüm</span>
               </div>
 
               <ThemeToggle />

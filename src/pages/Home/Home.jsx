@@ -8,7 +8,33 @@ import phone2 from '../../assets/phone-2.jpeg'
 import hphone1 from '../../assets/hphone-1.jpeg'
 import clock1 from '../../assets/clock-1.jpeg'
 
-// Get specific featured products from centralized data
+const heroContent = [
+  {
+    img: phone1,
+    tag: "ONLİNE ALIŞVERİŞTE",
+    title: <>En Yeni Ürün,<br />En İyi Fiyat.</>,
+    desc: "Hayatınızı kolaylaştıran ürünleri keşfedin. Binlerce ürün, güvenli alışveriş."
+  },
+  {
+    img: phone2,
+    tag: "PRO TEKNOLOJİ",
+    title: <>Sınırları Zorlayan<br />Teknoloji Burada.</>,
+    desc: "Geleceğin dünyasını bugünden yaşayın. En gelişmiş akıllı telefonlar."
+  },
+  {
+    img: hphone1,
+    tag: "ESTETİK & KONFOR",
+    title: <>Tarzınızı<br />Yansıtın.</>,
+    desc: "Hem şık hem kullanışlı aksesuarlar ile fark yaratın."
+  },
+  {
+    img: clock1,
+    tag: "ZAMANSIZ ŞIKLIK",
+    title: <>Zamanı<br />Yakalayın.</>,
+    desc: "Klasik ve modern tasarımların buluştuğu özel koleksiyonlar."
+  }
+];
+
 const techProducts   = MOCK_PRODUCTS.filter(p => [201, 202, 203, 204].includes(p.id));
 const cosmeticProducts = MOCK_PRODUCTS.filter(p => [211, 212, 213, 214].includes(p.id));
 const accessoryProducts = MOCK_PRODUCTS.filter(p => [221, 222, 223, 224].includes(p.id));
@@ -20,7 +46,7 @@ function ProductCard({ product }) {
 
   return (
     <div className="w-64 flex-shrink-0 group flex flex-col h-full bg-white dark:bg-stone-800/50 rounded-2xl p-3 border border-stone-100 dark:border-stone-700/50 hover:shadow-xl hover:shadow-amber-500/5 transition-all duration-300">
-      <Link to={`/urunler/${product.id}`} className="block flex-1 flex flex-col">
+      <Link to={`/urunler/${product.id}`} className="flex-1 flex flex-col">
         {/* Image */}
         <div className="relative w-full h-64 bg-stone-50 dark:bg-stone-800 overflow-hidden rounded-xl mb-4">
           <img
@@ -60,7 +86,6 @@ function ProductCard({ product }) {
 
         {/* Info Area */}
         <div className="px-1 flex flex-col flex-1">
-          {/* Name & Details Stacked */}
           <div className="mb-2">
             <p className="text-sm font-bold text-stone-800 dark:text-stone-100 line-clamp-1 leading-tight group-hover:text-amber-600 transition-colors uppercase tracking-tight">
               {product.name}
@@ -70,10 +95,8 @@ function ProductCard({ product }) {
             </p>
           </div>
 
-          {/* Price and Stars Side-by-Side */}
           <div className="mt-auto pt-2 border-t border-stone-50 dark:border-stone-800/50">
             <div className="flex items-center justify-between gap-2">
-              {/* Price */}
               <div className="flex items-baseline gap-1">
                 <span className="text-base font-black text-stone-900 dark:text-white tracking-tighter">
                   {product.price.toLocaleString('tr-TR')} <span className="text-xs">₺</span>
@@ -85,14 +108,12 @@ function ProductCard({ product }) {
                 )}
               </div>
 
-              {/* Rating/Stars next to price */}
               <div className="flex items-center gap-1 bg-stone-50 dark:bg-stone-800 px-1.5 py-0.5 rounded-lg border border-stone-100/50 dark:border-stone-700/50">
                 <Star className="w-3 h-3 fill-amber-400 text-amber-400" />
                 <span className="text-[10px] font-bold text-stone-700 dark:text-stone-200">{product.rating}</span>
               </div>
             </div>
 
-            {/* Optional Small Meta */}
             <div className="flex items-center justify-between mt-2">
               <div className="h-4">
                 {product.isFreeShipping && (
@@ -144,32 +165,6 @@ function SectionRow({ title, products, filterCategory }) {
 
 function Home() {
   const [currentHero, setCurrentHero] = useState(0);
-  const heroContent = [
-    {
-      img: phone1,
-      tag: "ONLİNE ALIŞVERİŞTE",
-      title: <>En Yeni Ürün,<br />En İyi Fiyat.</>,
-      desc: "Hayatınızı kolaylaştıran ürünleri keşfedin. Binlerce ürün, güvenli alışveriş."
-    },
-    {
-      img: phone2,
-      tag: "PRO TEKNOLOJİ",
-      title: <>Sınırları Zorlayan<br />Teknoloji Burada.</>,
-      desc: "Geleceğin dünyasını bugünden yaşayın. En gelişmiş akıllı telefonlar."
-    },
-    {
-      img: hphone1,
-      tag: "ESTETİK & KONFOR",
-      title: <>Tarzınızı<br />Yansıtın.</>,
-      desc: "Hem şık hem kullanışlı aksesuarlar ile fark yaratın."
-    },
-    {
-      img: clock1,
-      tag: "ZAMANSIZ ŞIKLIK",
-      title: <>Zamanı<br />Yakalayın.</>,
-      desc: "Klasik ve modern tasarımların buluştuğu özel koleksiyonlar."
-    }
-  ];
 
   useEffect(() => {
     const timer = setInterval(() => {
