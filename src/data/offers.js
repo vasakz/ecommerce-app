@@ -1,6 +1,7 @@
 export const OFFERS = [
   {
     id: 1,
+    productId: 1,
     title: 'Bahar İndirimi',
     description: 'Tüm ürünlerde %40 indirim',
     category: 'Genel',
@@ -12,6 +13,7 @@ export const OFFERS = [
   },
   {
     id: 2,
+    productId: 5,
     title: 'Al 2 Öde 1',
     description: 'Seçili çantalarda 2. Ürün bedava',
     category: 'Çantalar',
@@ -23,6 +25,7 @@ export const OFFERS = [
   },
   {
     id: 3,
+    productId: 10,
     title: 'Kargo Bedava',
     description: '200₺ ve üzeri siparişlerde ücretsiz kargo',
     category: 'Genel',
@@ -34,6 +37,7 @@ export const OFFERS = [
   },
   {
     id: 4,
+    productId: 20,
     title: 'Elektronik Sepeti',
     description: 'Elektronik kategorisinde %30 indirim',
     category: 'Elektronik',
@@ -45,6 +49,7 @@ export const OFFERS = [
   },
   {
     id: 5,
+    productId: 30,
     title: 'Aksesuar Festivali',
     description: 'Aksesuar ürünlerinde %25 indirim',
     category: 'Aksesuarlar',
@@ -56,6 +61,7 @@ export const OFFERS = [
   },
   {
     id: 6,
+    productId: 40,
     title: 'Hafta Sonu Fırsatı',
     description: '500₺ üzeri siparişlerde ek %10 indirim',
     category: 'Genel',

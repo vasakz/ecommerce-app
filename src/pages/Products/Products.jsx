@@ -1,5 +1,7 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
+import { toast } from 'react-toastify';
 import { 
   Heart, 
   Search, 
@@ -23,12 +25,14 @@ import {
   CATEGORY_TREE,
   CATEGORY_BANNERS,
 } from '../../data/products';
+import { addToFavorites } from '../../store/slices/favoritesSlice';
 
 
 const Products = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const [gridCols, setGridCols] = useState(3);
   const [sortBy, setSortBy] = useState('best-seller');
+  const dispatch = useDispatch();
   
   // URL'den State okuma fonksiyonları
   const getArrayParam = (key) => searchParams.getAll(key);
@@ -466,7 +470,19 @@ const Products = () => {
                         )}
                       </div>
 
-                      <button className="absolute top-3 right-3 z-10 p-2.5 rounded-full bg-white/90 backdrop-blur-md text-gray-400 hover:text-red-500 shadow-sm opacity-0 group-hover:opacity-100 translate-y-2 group-hover:translate-y-0 transition-all duration-300">
+                      <button 
+                        onClick={() => {
+                          dispatch(addToFavorites({
+                            id: product.id,
+                            name: product.name,
+                            price: product.price,
+                            category: product.category,
+                            image: product.image
+                          }));
+                          toast.success('Beğendiklere eklendi');
+                        }}
+                        className="absolute top-3 right-3 z-10 p-2.5 rounded-full bg-white/90 backdrop-blur-md text-gray-400 hover:text-red-500 shadow-sm opacity-0 group-hover:opacity-100 translate-y-2 group-hover:translate-y-0 transition-all duration-300"
+                      >
                         <Heart className="w-5 h-5" />
                       </button>
                       
