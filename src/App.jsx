@@ -4,19 +4,21 @@ import NotFound from './pages/NotFound/NotFound'
 import Register from './pages/Auth/Register/Register'
 import Login from './pages/Auth/Login/Login'
 import Atolye from './pages/Atolye/Atolye'
-<<<<<<< HEAD
+
 import Cart from './pages/Cart/Cart'
 import Favorites from './pages/Favorites/Favorites'
 import Payment from './pages/Payment/Payment'
-=======
+
 import Products from './pages/Products/Products'
 import ProductDetail from './pages/ProductDetail/ProductDetail'
 import Kampanyalar from './pages/Kampanyalar/Kampanyalar'
 import KampanyaDetail from './pages/Kampanyalar/KampanyaDetail'
->>>>>>> origin/main
+
+import ProductManagement from './pages/Seller/ProductManagement'
+import AddProduct from './pages/Seller/AddProduct'
+
 import Navbar from './components/layout/Navbar'
 import Footer from './components/layout/Footer'
-
 
 function Layout() {
   const location = useLocation()
@@ -24,35 +26,39 @@ function Layout() {
 
   return (
     <>
-    <Navbar />
-    <Routes>
-      <Route path="/" element={<Home />} />
-      <Route path="/kayit-ol" element={<Register />} />
-      <Route path="/giris-yap" element={<Login />} />
-      <Route path="/atolye" element={<Atolye />} />
-<<<<<<< HEAD
-      <Route path="/sepet" element={<Cart />} />
-      <Route path="/odeme" element={<Payment />} />
-      <Route path="/odeme/" element={<Payment />} />
-      <Route path="/sepetim/odeme" element={<Payment />} />
-      <Route path="/begendiklerim" element={<Favorites />} />
-=======
-      <Route path="/urunler" element={<Products />} />
-      <Route path="/urunler/:id" element={<ProductDetail />} />
-      <Route path="/kampanyalar" element={<Kampanyalar />} />
-      <Route path="/kampanyalar/:id" element={<KampanyaDetail />} />
->>>>>>> origin/main
-      <Route path="*" element={<NotFound />} />
-    </Routes>
-    {!footerGizle.includes(location.pathname) && <Footer />}
-      </>
+      <Navbar />
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/kayit-ol" element={<Register />} />
+        <Route path="/giris-yap" element={<Login />} />
+        <Route path="/atolye" element={<Atolye />} />
+        <Route path="/sepet" element={<Cart />} />
+        <Route path="/odeme" element={<Payment />} />
+        <Route path="/odeme/" element={<Payment />} />
+        <Route path="/sepetim/odeme" element={<Payment />} />
+        <Route path="/begendiklerim" element={<Favorites />} />
+
+        <Route path="/urunler" element={<Products />} />
+        <Route path="/urunler/:id" element={<ProductDetail />} />
+        <Route path="/kampanyalar" element={<Kampanyalar />} />
+        <Route path="/kampanyalar/:id" element={<KampanyaDetail />} />
+
+        {/* Seller Routes */}
+        <Route path="/satici/urunler" element={<ProductManagement />} />
+        <Route path="/satici/urun-ekle" element={<AddProduct />} />
+        <Route path="/satici/urun-duzenle/:id" element={<AddProduct />} />
+
+        <Route path="*" element={<NotFound />} />
+      </Routes>
+      {!footerGizle.includes(location.pathname) && <Footer />}
+    </>
   )
 }
 
 function App() {
   return (
     <BrowserRouter>
-    <Layout />
+      <Layout />
     </BrowserRouter>
   )
 }

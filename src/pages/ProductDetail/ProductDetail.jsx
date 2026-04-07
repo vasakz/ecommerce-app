@@ -1,5 +1,8 @@
 import React, { useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
+import { addToCart } from '../../store/slices/cartSlice';
+import { addToFavorites, removeFromFavorites } from '../../store/slices/favoritesSlice';
 import { 
   Heart, 
   Share2, 
@@ -16,6 +19,8 @@ import { MOCK_PRODUCTS, COLORS } from '../../data/products';
 
 const ProductDetail = () => {
   const { id } = useParams();
+  const dispatch = useDispatch();
+  const favorites = useSelector(state => state.favorites.items);
   
   const productData = MOCK_PRODUCTS.find(p => p.id === Number(id)) || MOCK_PRODUCTS[0];
   
@@ -147,7 +152,16 @@ const ProductDetail = () => {
               <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-2">{MOCK_PRODUCT.name}</h1>
             </div>
             <div className="flex gap-2">
-              <button className="p-3 rounded-full hover:bg-gray-100 text-gray-500 hover:text-red-500 transition-colors">
+              <button 
+                onClick={() => dispatch(addToFavorites({
+                  id: MOCK_PRODUCT.id,
+                  name: MOCK_PRODUCT.name,
+                  price: MOCK_PRODUCT.price,
+                  category: MOCK_PRODUCT.category,
+                  image: MOCK_PRODUCT.image
+                }))}
+                className="p-3 rounded-full hover:bg-gray-100 text-gray-500 hover:text-red-500 transition-colors"
+              >
                 <Heart className="w-6 h-6" />
               </button>
               <button className="p-3 rounded-full hover:bg-gray-100 text-gray-500 transition-colors">
@@ -247,7 +261,15 @@ const ProductDetail = () => {
             </div>
 
             {/* Action Buttons */}
-            <button className="flex-1 bg-black text-white hover:bg-gray-800 rounded-xl font-bold text-lg flex items-center justify-center gap-2 transition-transform active:scale-95 shadow-xl shadow-black/20">
+            <button 
+              onClick={() => dispatch(addToCart({
+                id: MOCK_PRODUCT.id,
+                isim: MOCK_PRODUCT.name,
+                fiyat: `${MOCK_PRODUCT.price} ₺`,
+                image: MOCK_PRODUCT.image
+              }))}
+              className="flex-1 bg-black text-white hover:bg-gray-800 rounded-xl font-bold text-lg flex items-center justify-center gap-2 transition-transform active:scale-95 shadow-xl shadow-black/20"
+            >
               <ShoppingBag className="w-6 h-6" />
               Sepete Ekle
             </button>
@@ -372,7 +394,19 @@ const ProductDetail = () => {
             <Link key={product.id} to={`/urunler/${product.id}`} className="group block bg-white border border-gray-100 rounded-2xl overflow-hidden hover:shadow-2xl transition-all duration-300">
               <div className="aspect-[4/5] overflow-hidden relative bg-gray-50">
                 <img src={product.image} alt={product.name} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
-                <button className="absolute top-3 right-3 p-2 rounded-full bg-white/80 backdrop-blur text-gray-400 hover:text-red-500 hover:bg-white transition-all opacity-0 group-hover:opacity-100 translate-y-2 group-hover:translate-y-0">
+                <button 
+                  onClick={(e) => {
+                    e.preventDefault();
+                    dispatch(addToFavorites({
+                      id: product.id,
+                      name: product.name,
+                      price: product.price,
+                      category: product.category,
+                      image: product.image
+                    }));
+                  }}
+                  className="absolute top-3 right-3 p-2 rounded-full bg-white/80 backdrop-blur text-gray-400 hover:text-red-500 hover:bg-white transition-all opacity-0 group-hover:opacity-100 translate-y-2 group-hover:translate-y-0"
+                >
                   <Heart className="w-5 h-5" />
                 </button>
               </div>
