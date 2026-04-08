@@ -1,6 +1,9 @@
 import React, { useEffect, useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
+import { useDispatch } from 'react-redux'
 import { OFFERS } from '../../data/offers'
+import { MOCK_PRODUCTS } from '../../data/products'
+import { addToCart } from '../../store/slices/cartSlice'
 
 const formatRemaining = (endsAt) => {
   const ms = new Date(endsAt).getTime() - Date.now()
@@ -22,9 +25,36 @@ const formatRemaining = (endsAt) => {
 }
 
 function Kampanyalar() {
+  const dispatch = useDispatch()
   const [search, setSearch] = useState('')
   const [category, setCategory] = useState('Tümü')
   const [tick, setTick] = useState(0)
+
+  const addOfferToCart = (offer) => {
+    const product = MOCK_PRODUCTS.find((p) => p.id === offer.productId)
+    if (product) {
+      const discountedPrice = Math.round(product.price * (1 - offer.discount / 100))
+      dispatch(
+        addToCart({
+          id: product.id,
+          isim: product.name,
+          fiyat: `${discountedPrice}TL`,
+          image: product.image,
+        })
+      )
+      return
+    }
+
+    // fallback kalau product yok
+    dispatch(
+      addToCart({
+        id: `offer-${offer.id}`,
+        isim: offer.title,
+        fiyat: `${offer.discount > 0 ? 100 - offer.discount : 100}TL`,
+        image: offer.image,
+      })
+    )
+  }
 
   useEffect(() => {
     const timer = setInterval(() => setTick((t) => t + 1), 1000)
@@ -103,7 +133,7 @@ function Kampanyalar() {
                     Teklifi Gör
                   </Link>
                   <button
-                    onClick={() => alert(`${offer.title} için sepete eklendi (örnek).`)}
+                    onClick={() => addOfferToCart(offer)}
                     className="flex-1 text-center rounded-md border border-amber-500 text-amber-600 dark:text-amber-300 px-3 py-2 text-sm font-semibold hover:bg-amber-50 dark:hover:bg-amber-500/20 transition"
                   >
                     Sepete Ekle
