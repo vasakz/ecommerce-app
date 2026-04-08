@@ -39,7 +39,7 @@ function UrunKarti({ urun }) {
     e.stopPropagation()
     e.preventDefault()
 
-    // ÇEVİRMEN: Arkadaşının Favoriler sistemine uygun format
+    // ÇEVİRMEN: Favoriler sistemine uygun format
     const arkadasinFormatindaUrun = {
       id: urun.id,
       name: urun.isim,
