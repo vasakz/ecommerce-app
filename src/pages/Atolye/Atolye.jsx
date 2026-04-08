@@ -71,16 +71,24 @@ function UrunKarti({ urun }) {
     
     // Şık bildirim
     toast.success(`${urun.isim} sepete eklendi!`, {
-      style: {
-        background: '#292524',
-        color: '#f5f5f4',
-        border: '1px solid #44403c',
-        borderRadius: '8px',
-      },
-      iconTheme: { primary: '#d97706', secondary: '#fff' }
-    })
+  style: {
+    background: 'rgba(41, 37, 36, 0.95)', // Hafif transparan stone-800
+    color: '#f5f5f4',
+    backdropFilter: 'blur(8px)', // Şık bir cam efekti
+    padding: '16px 24px',
+    fontSize: '13px',
+    fontWeight: '500',
+    letterSpacing: '0.05em',
+    borderRadius: '12px',
+    border: '1px solid rgba(255, 255, 255, 0.1)',
+    boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)',
+  },
+  iconTheme: {
+    primary: '#d97706', // Kehribar (Amber) tonu
+    secondary: '#fff',
+  },
+});
   }
-
   const kartaTikla = () => {
     navigate(`/urun/${urun.id}`, { state: { urun } })
   }

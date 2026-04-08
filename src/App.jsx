@@ -1,5 +1,5 @@
 import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom'
-
+import { Toaster } from 'react-hot-toast';
 // Pages
 import Home from './pages/Home/Home'
 import NotFound from './pages/NotFound/NotFound'
@@ -90,6 +90,16 @@ function Layout() {
 function App() {
   return (
     <BrowserRouter>
+    <Toaster position="top-center" // Bildirim artık üst ortada çıkacak
+  reverseOrder={false} 
+  toastOptions={{
+    // Varsayılan font ve estetik ayarları buraya da ekleyebiliriz
+    duration: 3000,
+    style: {
+      fontFamily: "'Inter', sans-serif", // Varsa projenin özel fontu
+    },
+  }}
+/>
       <Layout />
     </BrowserRouter>
   )
