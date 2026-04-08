@@ -15,6 +15,7 @@ import ProductDetail from './pages/ProductDetail/ProductDetail'
 import Kampanyalar from './pages/Kampanyalar/Kampanyalar'
 import KampanyaDetail from './pages/Kampanyalar/KampanyaDetail'
 import Profile from './pages/Profile/Profile'
+import SaticiKayit from './pages/Satici/SaticiKayit'
 
 // Seller Pages
 import ProductManagement from './pages/Seller/ProductManagement'
@@ -28,11 +29,14 @@ function Layout() {
   const location = useLocation()
 
   const hideFooterRoutes = ['/kayit-ol', '/giris-yap']
+  const hideNavbarRoutes = ['/satici-kayit', '/satici-panel', '/satici-giris']
+
   const shouldHideFooter = hideFooterRoutes.includes(location.pathname)
+  const shouldHideNavbar = hideNavbarRoutes.some(r => location.pathname.startsWith(r))
 
   return (
     <>
-      <Navbar />
+      {!shouldHideNavbar && <Navbar />}
 
       <Routes>
         {/* Ana Sayfa */}
@@ -69,12 +73,16 @@ function Layout() {
         <Route path="/satici/urunler" element={<ProductManagement />} />
         <Route path="/satici/urun-ekle" element={<AddProduct />} />
         <Route path="/satici/urun-duzenle/:id" element={<AddProduct />} />
+         
+        {/* Satici*/}
+        <Route path="/satici-kayit" element={<SaticiKayit />} />
+        
 
         {/* 404 */}
         <Route path="*" element={<NotFound />} />
       </Routes>
 
-      {!shouldHideFooter && <Footer />}
+      {!shouldHideFooter && !shouldHideNavbar && <Footer />}
     </>
   )
 }
