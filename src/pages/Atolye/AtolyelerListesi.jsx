@@ -3,7 +3,7 @@ import { Link, useNavigate } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 import toast from 'react-hot-toast'
 
-// Redux Actions (Senin Dosya Yollarına Uygun)
+// Redux Actions 
 import { addToCart } from '../../store/slices/cartSlice'
 import { addToFavorites, removeFromFavorites } from '../../store/slices/favoritesSlice'
 
@@ -64,7 +64,7 @@ function MiniUrunKarti({ urun, atolyeKategori }) {
   style: {
     background: 'rgba(41, 37, 36, 0.95)', // Hafif transparan stone-800
     color: '#f5f5f4',
-    backdropFilter: 'blur(8px)', // Şık bir cam efekti
+    backdropFilter: 'blur(8px)', // cam efekti
     padding: '16px 24px',
     fontSize: '13px',
     fontWeight: '500',
@@ -238,9 +238,8 @@ function AtolyelerListesi() {
   return (
     <div className="bg-stone-50 min-h-screen pb-20">
 
-      {/* ── YENİ: Hero Banner Alanı ── */}
+      {/* ── Hero Banner Alanı ── */}
       <div className="relative w-full h-[350px] mb-12 overflow-hidden">
-        {/* Buradaki deriAtolye1 resmini dilersen başka bir importla değiştirebilirsin */}
         <img src={deriAtolye1} alt="Atölyeleri Keşfet" className="w-full h-full object-cover" />
         <div className="absolute inset-0 bg-black/60 flex flex-col items-center justify-center text-center px-6">
           <span className="text-[10px] tracking-[0.4em] text-amber-400 mb-4 block uppercase font-bold">Zanaatkarlarımız</span>
