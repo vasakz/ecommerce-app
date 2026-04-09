@@ -126,9 +126,13 @@ function UrunKarti({ urun }) {
           <span className="text-[10px] text-stone-500 font-medium">(12 Yorum)</span>
         </div>
         <div className="flex justify-between items-center mt-1">
-          <p className="font-semibold text-stone-900">{urun.fiyat}</p>
-          <button onClick={sepeteEkle} className="p-1.5 rounded-full bg-stone-100 hover:bg-stone-200 text-stone-700 transition-colors" title="Sepete Ekle">
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4">
+         <div className="flex items-baseline gap-1">
+  <p className="font-bold text-stone-900">{urun.fiyat}</p>
+  <span className="text-[10px] font-medium text-stone-500 tracking-wide">'den başlayan</span>
+</div>
+          
+          <button onClick={sepeteEkle} className="p-2.5 rounded-full bg-stone-100 hover:bg-stone-200 text-stone-700 transition-colors shadow-sm" title="Sepete Ekle">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5">
               <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 10.5V6a3.75 3.75 0 10-7.5 0v4.5m11.356-1.993l1.263 12c.07.665-.45 1.243-1.119 1.243H4.25a1.125 1.125 0 01-1.12-1.243l1.264-12A1.125 1.125 0 015.513 7.5h12.974c.576 0 1.059.435 1.119 1.007zM8.625 10.5a.375.375 0 11-.75 0 .375.375 0 01.75 0zm7.5 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z" />
             </svg>
           </button>
