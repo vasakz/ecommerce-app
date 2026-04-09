@@ -15,10 +15,17 @@ import ProductDetail from './pages/ProductDetail/ProductDetail'
 import Kampanyalar from './pages/Kampanyalar/Kampanyalar'
 import KampanyaDetail from './pages/Kampanyalar/KampanyaDetail'
 import Profile from './pages/Profile/Profile'
+import MyOrders from './pages/Orders/MyOrders'
+import OrderDetail from './pages/Orders/OrderDetail'
+import Support from './pages/Support/Support'
 
 // Seller Pages
 import ProductManagement from './pages/Seller/ProductManagement'
 import AddProduct from './pages/Seller/AddProduct'
+import OrderManagement from './pages/Seller/OrderManagement'
+import StoreCalendar from './pages/Seller/StoreCalendar'
+import StatisticsDashboard from './pages/Seller/StatisticsDashboard'
+import FinancialManagement from './pages/Seller/FinancialManagement'
 
 // Layout
 import Navbar from './components/layout/Navbar'
@@ -65,10 +72,21 @@ function Layout() {
         {/* Profil */}
         <Route path="/profil" element={<Profile />} />
 
+        {/* Siparişler */}
+        <Route path="/siparislerim" element={<MyOrders />} />
+        <Route path="/siparislerim/:id" element={<OrderDetail />} />
+
+        {/* Destek */}
+        <Route path="/destek" element={<Support />} />
+
         {/* Seller */}
         <Route path="/satici/urunler" element={<ProductManagement />} />
         <Route path="/satici/urun-ekle" element={<AddProduct />} />
         <Route path="/satici/urun-duzenle/:id" element={<AddProduct />} />
+        <Route path="/satici/siparisler" element={<OrderManagement />} />
+        <Route path="/satici/takvim" element={<StoreCalendar />} />
+        <Route path="/satici/istatistikler" element={<StatisticsDashboard />} />
+        <Route path="/satici/finans" element={<FinancialManagement />} />
 
         {/* 404 */}
         <Route path="*" element={<NotFound />} />

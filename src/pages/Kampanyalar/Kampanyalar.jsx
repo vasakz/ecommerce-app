@@ -30,6 +30,27 @@ function Kampanyalar() {
   const [category, setCategory] = useState('Tümü')
   const [tick, setTick] = useState(0)
 
+  // Dynamic state simulation
+  const [offers, setOffers] = useState([])
+  const [isLoading, setIsLoading] = useState(true)
+
+  useEffect(() => {
+    // Simulate API fetch
+    const fetchOffers = async () => {
+      setIsLoading(true)
+      try {
+        // Mock network delay
+        await new Promise(resolve => setTimeout(resolve, 800))
+        setOffers(OFFERS)
+      } catch (error) {
+        console.error("Failed to fetch campaigns", error)
+      } finally {
+        setIsLoading(false)
+      }
+    }
+    fetchOffers()
+  }, [])
+
   const addOfferToCart = (offer) => {
     const product = MOCK_PRODUCTS.find((p) => p.id === offer.productId)
     if (product) {
@@ -61,18 +82,18 @@ function Kampanyalar() {
     return () => clearInterval(timer)
   }, [])
 
-  const categories = useMemo(() => ['Tümü', ...new Set(OFFERS.map((offer) => offer.category))], [])
+  const categories = useMemo(() => ['Tümü', ...new Set(offers.map((offer) => offer.category))], [offers])
 
   const filtered = useMemo(
     () =>
-      OFFERS.filter((offer) => {
+      offers.filter((offer) => {
         const matchesCategory = category === 'Tümü' || offer.category === category
         const matchesSearch =
           offer.title.toLowerCase().includes(search.toLowerCase()) ||
           offer.description.toLowerCase().includes(search.toLowerCase())
         return matchesCategory && matchesSearch
       }),
-    [category, search]
+    [category, search, offers]
   )
 
   return (
@@ -105,13 +126,35 @@ function Kampanyalar() {
         </div>
 
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {filtered.length === 0 && (
+          {isLoading && (
+            // Skeleton loader
+            Array.from({ length: 6 }).map((_, i) => (
+              <div key={i} className="border border-stone-200 dark:border-stone-800 rounded-xl p-5 bg-white dark:bg-stone-900 shadow-sm animate-pulse">
+                <div className="h-6 bg-stone-200 dark:bg-stone-800 rounded w-3/4 mb-3"></div>
+                <div className="h-4 bg-stone-200 dark:bg-stone-800 rounded w-full mb-3"></div>
+                <div className="flex flex-wrap gap-2 mb-3">
+                  <div className="h-4 bg-stone-200 dark:bg-stone-800 rounded w-16"></div>
+                  <div className="h-4 bg-stone-200 dark:bg-stone-800 rounded w-24"></div>
+                </div>
+                <div className="mt-4 flex flex-col gap-3">
+                  <div className="h-4 bg-stone-200 dark:bg-stone-800 rounded w-1/2"></div>
+                  <div className="h-6 bg-stone-200 dark:bg-stone-800 rounded w-1/3"></div>
+                  <div className="flex gap-2">
+                    <div className="flex-1 h-10 bg-stone-200 dark:bg-stone-800 rounded"></div>
+                    <div className="flex-1 h-10 bg-stone-200 dark:bg-stone-800 rounded"></div>
+                  </div>
+                </div>
+              </div>
+            ))
+          )}
+
+          {!isLoading && filtered.length === 0 && (
             <div className="col-span-full text-center text-sm text-stone-500 dark:text-stone-400">
               Aradığınız kriterlere uygun kampanya bulunamadı.
             </div>
           )}
 
-          {filtered.map((offer) => (
+          {!isLoading && filtered.map((offer) => (
             <article
               key={offer.id}
               className="border border-stone-200 dark:border-stone-800 rounded-xl p-5 bg-white dark:bg-stone-900 shadow-sm"
