@@ -1,9 +1,21 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
+import toast from 'react-hot-toast';
+
+// Redux Actions 
+import { addToCart } from '../../store/slices/cartSlice';
+import { addToFavorites, removeFromFavorites } from '../../store/slices/favoritesSlice';
 
 function AtolyeUrunDetay() {
   const location = useLocation();
   const urun = location.state?.urun;
+
+  // -- REDUX BAĞLANTILARI --
+  const dispatch = useDispatch();
+  const favoriler = useSelector((state) => state.favorites.items);
+  // Bu ürün favorilerde var mı kontrolü
+  const isFavorited = favoriler.some((item) => item.id === urun?.id);
 
   // -- 1. TEMEL STATELER (Galeri ve Zoom) --
   const [seciliGorsel, setSeciliGorsel] = useState(0);
@@ -18,12 +30,32 @@ function AtolyeUrunDetay() {
   // -- 3. MODAL STATE'İ --
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  // Sayfa yüklendiğinde en üste scroll olması
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
 
-  // -- ÖZELLEŞTİRME SEÇENEKLERİ (Bunlar ileride veritabanından çekilecek şimdilik statik) --
+  useEffect(() => {
+    if (urun) {
+      setSeciliBoyut(BOYUTLAR[0]);
+      setSeciliRenk(RENKLER[0]);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [urun]);
+
+  if (!urun) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-[60vh] p-10 text-stone-500">
+        <h2 className="text-xl font-medium mb-4">Ürün yüklenemedi.</h2>
+        <button onClick={() => window.history.back()} className="underline hover:text-stone-800">Geri Dön</button>
+      </div>
+    );
+  }
+
+  const tumGorseller = urun.gorseller && urun.gorseller.length > 0 ? urun.gorseller : (urun.gorsel ? [urun.gorsel] : []);
+
+  // Fiyatı sayıya çevir (Örn: "1200 TL" -> 1200)
+  const tabanFiyat = parseInt(urun.fiyat?.replace(/\D/g, '') || 1200);
+
   const BOYUTLAR = [
     { id: 's', isim: 'Standart', ekUcret: 0 },
     { id: 'm', isim: 'Büyük Boy', ekUcret: 300 },
@@ -41,34 +73,11 @@ function AtolyeUrunDetay() {
     { id: 'hediye', isim: 'Premium Hediye Paketi', ekUcret: 50 },
   ];
 
-  // Sayfa ilk yüklendiğinde varsayılan boyut ve rengi seç
-  useEffect(() => {
-    setSeciliBoyut(BOYUTLAR[0]);
-    setSeciliRenk(RENKLER[0]);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  if (!urun) {
-    return (
-      <div className="flex flex-col items-center justify-center min-h-[60vh] p-10 text-stone-500">
-        <h2 className="text-xl font-medium mb-4">Ürün yüklenemedi.</h2>
-        <button onClick={() => window.history.back()} className="underline hover:text-stone-800">Geri Dön</button>
-      </div>
-    );
-  }
-
-  const tumGorseller = urun.gorseller && urun.gorseller.length > 0 ? urun.gorseller : (urun.gorsel ? [urun.gorsel] : []);
-
-  // Fiyatı sayıya çevir (Örn: "1200 TL" -> 1200)
-  const tabanFiyat = parseInt(urun.fiyat?.replace(/\D/g, '') || 1200);
-
-  // -- TOPLAM FİYAT HESAPLAMA --
   const toplamFiyat = tabanFiyat 
     + (seciliBoyut?.ekUcret || 0) 
     + (seciliRenk?.ekUcret || 0) 
     + seciliEkstralar.reduce((toplam, ekstra) => toplam + ekstra.ekUcret, 0);
 
-  // Ekstra Ekle/Çıkar Fonksiyonu
   const toggleEkstra = (ekstra) => {
     if (seciliEkstralar.some(e => e.id === ekstra.id)) {
       setSeciliEkstralar(seciliEkstralar.filter(e => e.id !== ekstra.id));
@@ -84,17 +93,56 @@ function AtolyeUrunDetay() {
     setMousePos({ x, y });
   };
 
-  // Sepete Ekle Fonksiyonu Simülasyonu
+  // -- FONKSİYON 1: SEPETE EKLE --
   const sepeteEkle = () => {
-    const sepetUrunu = {
-      ...urun,
-      fiyat: toplamFiyat,
-      seciliBoyut: seciliBoyut.isim,
-      seciliRenk: seciliRenk.isim,
-      ekstralar: seciliEkstralar.map(e => e.isim),
+    const sepeteUygunUrun = {
+      id: urun.id, // Varsa ekstra seçeneğe göre id benzersizleştirilebilir
+      isim: urun.isim,
+      fiyat: `${toplamFiyat} TL`, // Dinamik hesaplanan fiyatı gönderiyoruz
+      image: tumGorseller[0],
+      // Sepette görünmesi için özellikleri de ekliyoruz
+      ozellikler: {
+        boyut: seciliBoyut.isim,
+        renk: seciliRenk.isim,
+        ekstralar: seciliEkstralar.map(e => e.isim)
+      }
     };
-    console.log("Sepete Eklenen Ürün Özeti:", sepetUrunu);
-    // Buraya redux toast bildirim kodunu ekleyebilirsin
+
+    dispatch(addToCart(sepeteUygunUrun));
+    
+    // bildirim tasarımın
+    toast.success(`${urun.isim} sepete eklendi!`, {
+      style: {
+        background: 'rgba(41, 37, 36, 0.95)',
+        color: '#f5f5f4',
+        backdropFilter: 'blur(8px)',
+        padding: '16px 24px',
+        fontSize: '13px',
+        fontWeight: '500',
+        letterSpacing: '0.05em',
+        borderRadius: '12px',
+        border: '1px solid rgba(255, 255, 255, 0.1)',
+        boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)',
+      },
+      iconTheme: { primary: '#d97706', secondary: '#fff' },
+    });
+  };
+
+  // -- FONKSİYON 2: FAVORİLERE EKLE / ÇIKAR --
+  const favoriToggle = () => {
+    const arkadasinFormatindaUrun = {
+      id: urun.id,
+      name: urun.isim,
+      price: parseInt(urun.fiyat.replace(/\D/g, '')), 
+      image: tumGorseller[0],
+      category: urun.kategori || urun.altKategori || 'Özel Tasarım'
+    };
+
+    if (isFavorited) {
+      dispatch(removeFromFavorites(urun.id));
+    } else {
+      dispatch(addToFavorites(arkadasinFormatindaUrun));
+    }
   };
 
   return (
@@ -266,8 +314,20 @@ function AtolyeUrunDetay() {
               <span>Sepete Ekle</span>
               <span className="font-light">{toplamFiyat.toLocaleString('tr-TR')} ₺</span>
             </button>
-            <button className="w-14 h-14 flex items-center justify-center border border-stone-200 rounded-md hover:bg-stone-50 transition-colors group">
-              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6 text-stone-400 group-hover:text-red-600 transition-colors">
+            <button 
+              onClick={favoriToggle}
+              className={`w-14 h-14 flex items-center justify-center border rounded-md transition-all duration-300 group ${
+                isFavorited ? 'border-red-200 bg-red-50' : 'border-stone-200 hover:bg-stone-50'
+              }`}
+            >
+              <svg 
+                xmlns="http://www.w3.org/2000/svg" 
+                fill={isFavorited ? "#b91c1c" : "none"} 
+                viewBox="0 0 24 24" 
+                strokeWidth={1.5} 
+                stroke={isFavorited ? "#b91c1c" : "currentColor"} 
+                className={`w-6 h-6 transition-all duration-300 ${isFavorited ? 'scale-110' : 'text-stone-400 group-hover:text-red-600'}`}
+              >
                 <path strokeLinecap="round" strokeLinejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z" />
               </svg>
             </button>
