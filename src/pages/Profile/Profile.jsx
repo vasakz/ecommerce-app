@@ -8,9 +8,10 @@ import {
     ChevronDown, Package, Truck, RotateCcw
 } from 'lucide-react'
 
-// ─────────────────────────────────────────────────────────────
-// SERVİS KATMANI — Firebase bağlandığında sadece burası değişir
-// ─────────────────────────────────────────────────────────────
+import ahsapTahta from '../../assets/ahsap-tahta.jpg'
+import mumSeti from '../../assets/mum-seti.jpg'
+import kumasCanta from '../../assets/kumas-canta.jpg'
+import oyuncakTavsan from '../../assets/oyuncak-tavsan.jpg'
 
 const profileService = {
     getUser: async () => ({
@@ -40,10 +41,10 @@ const siparisService = {
 
 const favoriService = {
     getFavoriler: async () => ([
-        { id: '1', isim: 'El Yapımı Ahşap Tabak', fiyat: '₺280', puan: 4.8, gorsel: 'https://images.unsplash.com/photo-1604709177225-055f99402ea3?w=300&q=80' },
-        { id: '2', isim: "Mum Seti (3'lü)",        fiyat: '₺220', puan: 4.9, gorsel: 'https://images.unsplash.com/photo-1603905424690-64e1d0e9f74a?w=300&q=80' },
-        { id: '3', isim: 'Kumaş Çanta',            fiyat: '₺375', puan: 4.7, gorsel: 'https://images.unsplash.com/photo-1594938298603-c8148c4b8f15?w=300&q=80' },
-        { id: '4', isim: 'Oyuncak Tavşan',         fiyat: '₺165', puan: 5.0, gorsel: 'https://images.unsplash.com/photo-1558171813-64da07b2b3b0?w=300&q=80' },
+        { id: '1', isim: 'El Yapımı Ahşap Tabak', fiyat: '₺280', puan: 4.8, gorsel: ahsapTahta },
+        { id: '2', isim: "Mum Seti (3'lü)",        fiyat: '₺220', puan: 4.9, gorsel: mumSeti },
+        { id: '3', isim: 'Kumaş Çanta',            fiyat: '₺375', puan: 4.7, gorsel: kumasCanta },
+        { id: '4', isim: 'Oyuncak Tavşan',         fiyat: '₺165', puan: 5.0, gorsel: oyuncakTavsan },
     ]),
     removeFavori: async (favoriId) => console.log('removeFavori ->', favoriId),
 }
@@ -249,10 +250,7 @@ function Siparislerim() {
                     <div className="space-y-3">
                         {siparisler.map(s => (
                             <div key={s.id} className={`border rounded-sm transition ${acikId === s.id ? 'border-stone-300' : 'border-stone-100 hover:border-stone-200'}`}>
-
-                                {/* Sipariş Özet Satırı */}
                                 <button onClick={() => toggleDetay(s.id)} className="w-full flex items-center gap-4 p-4 text-left">
-                                    {/* İkon Placeholder */}
                                     <div className="w-14 h-14 rounded-sm bg-stone-100 flex items-center justify-center flex-shrink-0">
                                         <Package size={22} className="text-stone-400" />
                                     </div>
@@ -272,7 +270,6 @@ function Siparislerim() {
                                     <ChevronDown size={14} className={`text-stone-400 flex-shrink-0 transition-transform duration-300 ${acikId === s.id ? 'rotate-180' : ''}`} />
                                 </button>
 
-                                {/* Genişleyen Detay */}
                                 {acikId === s.id && (
                                     <div className="border-t border-stone-100 px-4 pb-5 pt-4 bg-stone-50/50">
                                         <div className="grid grid-cols-2 gap-6">
@@ -368,14 +365,14 @@ function Favorilerim() {
                             <div key={f.id} className="relative group cursor-pointer">
                                 <div className="aspect-[4/3] overflow-hidden rounded-sm bg-stone-100 mb-3 relative">
                                     <img src={f.gorsel} alt={f.isim} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
-                                    <div className="absolute inset-0 bg-stone-900/0 group-hover:bg-stone-900/40 transition-colors duration-500 flex items-center justify-center">
-                                        <button
-                                            onClick={() => kaldir(f.id)}
-                                            className="opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-white/90 text-red-500 hover:bg-red-50 rounded-sm px-4 py-2 text-[10px] tracking-widest uppercase font-medium flex items-center gap-2"
-                                        >
-                                            <Trash2 size={12} /> Kaldır
-                                        </button>
-                                    </div>
+                                    {/* Sağ üst köşe kalp ikonu */}
+                                    <button
+                                        onClick={() => kaldir(f.id)}
+                                        className="absolute top-2 right-2 bg-white/80 hover:bg-white text-red-400 hover:text-red-600 rounded-full p-1.5 transition-all duration-200 shadow-sm"
+                                        title="Favorilerden çıkar"
+                                    >
+                                        <Heart size={14} className="fill-red-400 hover:fill-red-600" />
+                                    </button>
                                 </div>
                                 <p className="text-sm font-medium text-stone-800 tracking-wide line-clamp-1">{f.isim}</p>
                                 <div className="flex items-center justify-between mt-1">
@@ -621,10 +618,6 @@ function Ayarlar() {
     )
 }
 
-// ─────────────────────────────────────────────────────────────
-// MENÜ
-// ─────────────────────────────────────────────────────────────
-
 const menuItems = [
     { key: 'profil',     label: 'Profil Bilgilerim', icon: User },
     { key: 'siparisler', label: 'Siparişlerim',      icon: ShoppingBag },
@@ -632,10 +625,6 @@ const menuItems = [
     { key: 'adresler',   label: 'Adreslerim',         icon: MapPin },
     { key: 'ayarlar',    label: 'Ayarlar',            icon: Settings },
 ]
-
-// ─────────────────────────────────────────────────────────────
-// ANA BİLEŞEN
-// ─────────────────────────────────────────────────────────────
 
 function Profile() {
     const [aktif, setAktif] = useState('profil')

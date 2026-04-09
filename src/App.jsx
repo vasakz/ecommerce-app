@@ -1,4 +1,5 @@
 import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom'
+import { Toaster } from 'react-hot-toast'
 
 // Pages
 import Home from './pages/Home/Home'
@@ -18,6 +19,7 @@ import Profile from './pages/Profile/Profile'
 import MyOrders from './pages/Orders/MyOrders'
 import OrderDetail from './pages/Orders/OrderDetail'
 import Support from './pages/Support/Support'
+import SaticiKayit from './pages/Satici/SaticiKayit'
 
 // Seller Pages
 import ProductManagement from './pages/Seller/ProductManagement'
@@ -35,11 +37,16 @@ function Layout() {
   const location = useLocation()
 
   const hideFooterRoutes = ['/kayit-ol', '/giris-yap']
+  const hideNavbarRoutes = ['/satici-kayit', '/satici-panel', '/satici-giris']
+
   const shouldHideFooter = hideFooterRoutes.includes(location.pathname)
+  const shouldHideNavbar = hideNavbarRoutes.some(r =>
+    location.pathname.startsWith(r)
+  )
 
   return (
     <>
-      <Navbar />
+      {!shouldHideNavbar && <Navbar />}
 
       <Routes>
         {/* Ana Sayfa */}
@@ -88,11 +95,14 @@ function Layout() {
         <Route path="/satici/istatistikler" element={<StatisticsDashboard />} />
         <Route path="/satici/finans" element={<FinancialManagement />} />
 
+        {/* Satici */}
+        <Route path="/satici-kayit" element={<SaticiKayit />} />
+
         {/* 404 */}
         <Route path="*" element={<NotFound />} />
       </Routes>
 
-      {!shouldHideFooter && <Footer />}
+      {!shouldHideFooter && !shouldHideNavbar && <Footer />}
     </>
   )
 }
@@ -100,6 +110,16 @@ function Layout() {
 function App() {
   return (
     <BrowserRouter>
+      <Toaster
+        position="top-center"
+        reverseOrder={false}
+        toastOptions={{
+          duration: 3000,
+          style: {
+            fontFamily: "'Inter', sans-serif",
+          },
+        }}
+      />
       <Layout />
     </BrowserRouter>
   )

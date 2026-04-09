@@ -1,83 +1,89 @@
 import { useState, useRef } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-//import { useDispatch } from 'react-redux' // Sepet işlemleri için hazırlık
+import { useDispatch, useSelector } from 'react-redux'
+import toast from 'react-hot-toast'
 
-// --- Senin Projendeki Görseller ---
-import deri1 from '../../assets/deri-1.jpeg'
-import deri5 from '../../assets/deri-5.jpeg'
-import deri8 from '../../assets/deri-8.jpeg'
-import deri11 from '../../assets/deri-11.jpeg'
-import deriCuzdan from '../../assets/deri-cuzdan.jpg'
+// Redux Actions 
+import { addToCart } from '../../store/slices/cartSlice'
+import { addToFavorites, removeFromFavorites } from '../../store/slices/favoritesSlice'
 
+// Merkezi Veri Depomuz
+import { atolyelerVerisi } from '../../data/atolyeData'
+
+// Sadece bu sayfanın Hero banner'ında kullanılacak görsel
 import deriAtolye1 from '../../assets/deri-atolye1.jpg'
-import terzi from '../../assets/terzi.jpeg'
-import oyuncak1 from '../../assets/oyuncak1.jpg'
-
-import oyuncakTavsan from '../../assets/oyuncak-tavsan.jpg'
-import kumasCanta from '../../assets/kumas-canta.jpg'
-import ketenYastik from '../../assets/keten-yastik.jpg'
-import makromeSusu from '../../assets/makrome-susu.jpg'
-
-// ─── Veri ───
-const atolyelerVerisi = [
-  {
-    id: 'mila-deri',
-    isim: 'Mila Vintage Deri',
-    kategori: 'Deri',
-    lokasyon: 'İstanbul',
-    puan: '4.9',
-    degerlendirmeSayisi: 128,
-    avatar: deriAtolye1,
-    heroBanner: deriAtolye1,
-    heroBannerAlt: 'Mila Vintage Deri Atölye',
-    aciklama: 'Derinin yaşanmışlığını ve karakterini yansıtan koleksiyonlarımız, ustamızın yıllara dayanan tecrübesiyle şekilleniyor. Arkasındaki devasa renk paletinden özenle seçilen her bir deri parçası, zamana meydan okuyan tasarımlara dönüşüyor.',
-    urunler: [
-      { isim: 'DERİ ÇANTA NO.1', fiyat: '1200TL', gorsel: deri1 },
-      { isim: 'DERİ ÇANTA NO.2', fiyat: '950TL', gorsel: deri5 },
-      { isim: 'DERİ ÇANTA NO.3', fiyat: '1100TL', gorsel: deri8 },
-      { isim: 'DERİ ÇANTA NO.4', fiyat: '850TL', gorsel: deri11 },
-      { isim: 'VINTAGE DERİ CÜZDAN', fiyat: '600TL', gorsel: deriCuzdan },
-    ]
-  },
-  {
-    id: 'ozel-dikim',
-    isim: 'Özel Dikim Terzihanesi',
-    kategori: 'Tekstil & Giyim',
-    lokasyon: 'İzmir',
-    puan: '4.7',
-    degerlendirmeSayisi: 85,
-    avatar: terzi,
-    heroBanner: terzi,
-    heroBannerAlt: 'Özel Dikim Terzihanesi',
-    aciklama: 'Milimetrik hesaplamalar, usta işi tebeşir çizgileri ve birinci sınıf kumaşların kusursuz buluşma noktası. Standart kalıpların ötesine geçerek bedeninize ve karakterinize tam oturan tasarımlar.',
-    urunler: [
-      { isim: 'ÖZEL DİKİM KUMAŞ ÇANTA', fiyat: '750TL', gorsel: kumasCanta },
-      { isim: 'KETEN YASTIK KILIFI', fiyat: '300TL', gorsel: ketenYastik },
-      { isim: 'MAKROME DUVAR SÜSÜ', fiyat: '550TL', gorsel: makromeSusu },
-    ]
-  },
-  {
-    id: 'amigurumi',
-    isim: 'Amigurumi Tales',
-    kategori: 'Oyuncak & Çocuk',
-    lokasyon: 'Ankara',
-    puan: '5.0',
-    degerlendirmeSayisi: 240,
-    avatar: oyuncak1,
-    heroBanner: oyuncak1,
-    heroBannerAlt: 'Amigurumi Tales Atölye',
-    aciklama: 'Çocuklar ve ruhu çocuk kalanlar için, organik pamuk iplerle örülmüş uyku arkadaşları. Hiçbir zararlı madde içermeyen, tamamen doğal amigurumi oyuncaklarımız sevgiyle ilmek ilmek işleniyor.',
-    urunler: [
-      { isim: 'AMİGURUMİ TAVŞAN', fiyat: '350TL', gorsel: oyuncakTavsan },
-    ]
-  }
-]
 
 // ─── Mini Ürün Kartı (Slider İçin) ───
-function MiniUrunKarti({ urun }) {
-  const [isFavorited, setIsFavorited] = useState(false)
+function MiniUrunKarti({ urun, atolyeKategori }) {
   const navigate = useNavigate()
-  // const dispatch = useDispatch() // Sepet action'ı geldiğinde yorumdan çıkarırsın
+  const dispatch = useDispatch()
+
+  // Redux üzerinden favori kontrolü
+  const favoriler = useSelector((state) => state.favorites.items)
+  const isFavorited = favoriler.some((item) => item.id === urun.id)
+
+  // Veri yapı görseli alınır 
+  const gorsel = urun.gorseller ? urun.gorseller[0] : urun.gorsel
+
+  const favoriToggle = (e) => {
+    e.stopPropagation()
+    e.preventDefault()
+
+    // ÇEVİRMEN: Favoriler sistemine uygun format
+    const arkadasinFormatindaUrun = {
+      id: urun.id,
+      name: urun.isim,
+      price: parseInt(urun.fiyat.replace(/\D/g, '')), // "1200TL" -> 1200
+      image: gorsel,
+      category: urun.kategori || urun.altKategori || atolyeKategori
+    }
+
+    if (isFavorited) {
+      dispatch(removeFromFavorites(urun.id))
+    } else {
+      dispatch(addToFavorites(arkadasinFormatindaUrun))
+    }
+  }
+
+  const sepeteEkle = (e) => {
+    e.stopPropagation()
+    e.preventDefault()
+
+    // ÇEVİRMEN: Sepet sistemine uygun format
+    const sepeteUygunUrun = {
+      id: urun.id,
+      isim: urun.isim,
+      fiyat: urun.fiyat,
+      image: gorsel,
+    }
+
+    dispatch(addToCart(sepeteUygunUrun))
+
+    // Şık bildirim
+    toast.success(`${urun.isim} sepete eklendi!`, {
+  style: {
+    background: 'rgba(41, 37, 36, 0.95)', // Hafif transparan stone-800
+    color: '#f5f5f4',
+    backdropFilter: 'blur(8px)', // cam efekti
+    padding: '16px 24px',
+    fontSize: '13px',
+    fontWeight: '500',
+    letterSpacing: '0.05em',
+    borderRadius: '12px',
+    border: '1px solid rgba(255, 255, 255, 0.1)',
+    boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)',
+  },
+  iconTheme: {
+    primary: '#d97706', // Kehribar (Amber) tonu
+    secondary: '#fff',
+  },
+});
+  }
+
+  const kartaTikla = () => {
+    // Tutarlılık için slug yerine ID bazlı yönlendirme
+    navigate(`/urun/${urun.id}`, { state: { urun } })
+  }
 
   const renderYildizlar = () => (
     Array.from({ length: 5 }).map((_, i) => (
@@ -87,24 +93,14 @@ function MiniUrunKarti({ urun }) {
     ))
   )
 
-  const kartaTikla = () => {
-    // URL'de boşluk olmaması için düzenliyoruz
-    const urunSlug = urun.isim.toLowerCase().replace(/ /g, '-').replace(/\./g, '')
-    navigate(`/urun/${urunSlug}`, { state: { urun } })
-  }
-
   return (
     <div onClick={kartaTikla} className="snap-start shrink-0 w-[200px] cursor-pointer group/card flex flex-col">
       <div className="w-full h-[200px] bg-stone-100 mb-3 overflow-hidden rounded-lg relative shadow-sm">
-        <img src={urun.gorsel} alt={urun.isim} className="w-full h-full object-cover transition duration-700 group-hover/card:scale-110" />
+        <img src={gorsel} alt={urun.isim} className="w-full h-full object-cover transition duration-700 group-hover/card:scale-110" />
 
         {/* Favori Butonu */}
         <button
-          onClick={(e) => {
-            e.stopPropagation()
-            e.preventDefault()
-            setIsFavorited(!isFavorited)
-          }}
+          onClick={favoriToggle}
           className="absolute top-2 right-2 p-1.5 rounded-full bg-white/60 backdrop-blur-md hover:bg-white/90 transition-all shadow-sm z-10"
         >
           <svg xmlns="http://www.w3.org/2000/svg" fill={isFavorited ? "#b91c1c" : "none"} viewBox="0 0 24 24" strokeWidth={1.5} stroke={isFavorited ? "#b91c1c" : "currentColor"} className="w-4 h-4 transition-colors">
@@ -126,12 +122,7 @@ function MiniUrunKarti({ urun }) {
         <div className="flex items-center justify-between mt-auto">
           <p className="font-bold text-stone-700 text-sm">{urun.fiyat}</p>
           <button
-            onClick={(e) => {
-              e.stopPropagation()
-              e.preventDefault()
-              // dispatch(addToCart(urun)) // Sepet entegrasyonu
-              alert(`${urun.isim} sepete eklendi!`)
-            }}
+            onClick={sepeteEkle}
             className="p-1.5 rounded-full bg-stone-100 hover:bg-stone-800 hover:text-white text-stone-700 transition-colors"
           >
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-3.5 h-3.5">
@@ -216,7 +207,7 @@ function AtolyeVitrin({ atolye }) {
 
           {/* Mini Ürün Kartlarını Map Ediyoruz */}
           {atolye.urunler.map((urun, index) => (
-            <MiniUrunKarti key={index} urun={urun} />
+            <MiniUrunKarti key={index} urun={urun} atolyeKategori={atolye.kategori} />
           ))}
 
           {/* Tümünü Gör */}
@@ -247,9 +238,8 @@ function AtolyelerListesi() {
   return (
     <div className="bg-stone-50 min-h-screen pb-20">
 
-      {/* ── YENİ: Hero Banner Alanı ── */}
+      {/* ── Hero Banner Alanı ── */}
       <div className="relative w-full h-[350px] mb-12 overflow-hidden">
-        {/* Buradaki deriAtolye1 resmini dilersen başka bir importla değiştirebilirsin */}
         <img src={deriAtolye1} alt="Atölyeleri Keşfet" className="w-full h-full object-cover" />
         <div className="absolute inset-0 bg-black/60 flex flex-col items-center justify-center text-center px-6">
           <span className="text-[10px] tracking-[0.4em] text-amber-400 mb-4 block uppercase font-bold">Zanaatkarlarımız</span>
@@ -293,4 +283,4 @@ function AtolyelerListesi() {
   )
 }
 
-export default AtolyelerListesi//
+export default AtolyelerListesi

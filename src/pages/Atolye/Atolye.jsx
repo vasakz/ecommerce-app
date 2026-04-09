@@ -1,163 +1,96 @@
 import { useState, useEffect, useRef } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
+import { useDispatch, useSelector } from 'react-redux'
+import toast from 'react-hot-toast'
 
-import deri1 from '../../assets/deri-1.jpeg'
-import deri2 from '../../assets/deri-2.jpeg'
-import deri3 from '../../assets/deri-3.jpeg'
-import deri4 from '../../assets/deri-4.jpeg'
-import deri5 from '../../assets/deri-5.jpeg'
-import deri6 from '../../assets/deri-6.jpeg'
-import deri7 from '../../assets/deri-7.jpeg'
-import deri8 from '../../assets/deri-8.jpeg'
-import deri9 from '../../assets/deri-9.jpeg'
-import deri10 from '../../assets/deri-10.jpeg'
-import deri11 from '../../assets/deri-11.jpeg'
-import deri12 from '../../assets/deri-12.jpeg'
+// Redux bağlantıları
+import { addToCart } from '../../store/slices/cartSlice' 
+import { addToFavorites, removeFromFavorites } from '../../store/slices/favoritesSlice'
+
+// Verilerimiz
+import { urunler, cokSatanlar, yeniTasarimlar, kampanyalar, kategoriler } from '../../data/atolyeData'
+
+// Görsellerimiz
 import atolyeden from '../../assets/atolyeden.jpeg'
-import oyuncak1 from '../../assets/oyuncak1.jpg'
 import deriAtolye1 from '../../assets/deri-atolye1.jpg'
 import terzi from '../../assets/terzi.jpeg'
+import oyuncak1 from '../../assets/oyuncak1.jpg'
 
-// Çok Satanlar 
-import seramikKupa from '../../assets/seramik-kupa.jpg'
-import deriCuzdan from '../../assets/deri-cuzdan.jpg'
-import ahsapTahta from '../../assets/ahsap-tahta.jpg'
-import oyuncakTavsan from '../../assets/oyuncak-tavsan.jpg'
-
-// Yeni Tasarımlar 
-import ketenYastik from '../../assets/keten-yastik.jpg'
-import kumasCanta from '../../assets/kumas-canta.jpg'
-import makromeSusu from '../../assets/makrome-susu.jpg'
-import mumSeti from '../../assets/mum-seti.jpg'
-
-
-const urunler = [
-  { isim: 'DERİ ÇANTA NO.1', fiyat: '1200TL', kategori: 'Deri', altKategori: 'Çanta & Cüzdan', gorseller: [deri1, deri2, deri3, deri4] },
-  { isim: 'DERİ ÇANTA NO.2', fiyat: '950TL',  kategori: 'Deri', altKategori: 'Çanta & Cüzdan', gorseller: [deri5, deri6, deri7] },
-  { isim: 'DERİ ÇANTA NO.3', fiyat: '1100TL', kategori: 'Deri', altKategori: 'Çanta & Cüzdan', gorseller: [deri8, deri9, deri10] },
-  { isim: 'DERİ ÇANTA NO.4', fiyat: '850TL',  kategori: 'Deri', altKategori: 'Çanta & Cüzdan', gorseller: [deri11, deri12] },
-]
-
-const cokSatanlar = [
-  { isim: 'EL YAPIMI SERAMİK KUPA', fiyat: '450TL', kategori: 'Mutfak & Sofra', altKategori: 'El Yapımı Seramik', gorseller: [seramikKupa] },
-  { isim: 'VINTAGE DERİ CÜZDAN', fiyat: '600TL', kategori: 'Deri', altKategori: 'Çanta & Cüzdan', gorseller: [deriCuzdan] },
-  { isim: 'AHŞAP KESME TAHTASI', fiyat: '850TL', kategori: 'Mutfak & Sofra', altKategori: 'Ahşap Mutfak Gereçleri', gorseller: [ahsapTahta] },
-  { isim: 'AMİGURUMİ TAVŞAN', fiyat: '350TL', kategori: 'Oyuncak & Çocuk', altKategori: 'Amigurumi Oyuncak', gorseller: [oyuncakTavsan] },
-]
-
-const yeniTasarimlar = [
-  { isim: 'KETEN YASTIK KILIFI', fiyat: '300TL', kategori: 'Ev Yaşam & Dekor', altKategori: 'El Yapımı Yastık', gorseller: [ketenYastik] },
-  { isim: 'ÖZEL DİKİM KUMAŞ ÇANTA', fiyat: '750TL', kategori: 'Tekstil & Giyim', altKategori: 'Ismarlama Dikiş', gorseller: [kumasCanta] },
-  { isim: 'MAKROME DUVAR SÜSÜ', fiyat: '550TL', kategori: 'Ev Yaşam & Dekor', altKategori: 'Makrome & Dokuma', gorseller: [makromeSusu] },
-  { isim: 'DOĞAL MUM SETİ', fiyat: '400TL', kategori: 'Ev Yaşam & Dekor', altKategori: 'Mum & Oda Kokusu', gorseller: [mumSeti] },
-]
-
-// Kampanyalar verisi
-const kampanyalar = [
-  {
-    baslik: 'YAZ KOLEKSİYONU',
-    altBaslik: '%30\'a Kadar İndirim',
-    aciklama: 'Seçili deri çanta ve aksesuarlarda yaz sezonu indirimleri başladı.',
-    renk: 'from-amber-900 to-stone-800',
-    rozet: 'SINIRLI SÜRE',
-    rozetRenk: 'bg-amber-500',
-    gorsel: deriAtolye1,
-  },
-  {
-    baslik: 'İLK SİPARİŞİNE ÖZEL',
-    altBaslik: '%15 İndirim Kodu',
-    aciklama: 'ATOLYE15 koduyla ilk siparişinde anında indirim kazan.',
-    renk: 'from-teal-900 to-stone-800',
-    rozet: 'YENİ ÜYE',
-    rozetRenk: 'bg-teal-500',
-    gorsel: oyuncak1,
-  },
-  {
-    baslik: 'ÖZEL DİKİM HAFTALARI',
-    altBaslik: 'Ücretsiz Kargo + Hediye Paket',
-    aciklama: 'Terzihane koleksiyonunda bu hafta tüm siparişlerde ücretsiz kargo.',
-    renk: 'from-rose-900 to-stone-800',
-    rozet: 'BU HAFTA',
-    rozetRenk: 'bg-rose-500',
-    gorsel: terzi,
-  },
-  {
-    baslik: 'ATÖLYE PAZAR GÜNÜ',
-    altBaslik: 'Canlı Üretim & Tanışma',
-    aciklama: 'Her pazar ustalarımızla canlı atölye deneyimi yaşa, sınırlı kontenjan.',
-    renk: 'from-sky-900 to-stone-800',
-    rozet: 'ETKİNLİK',
-    rozetRenk: 'bg-sky-500',
-    gorsel: deriAtolye1,
-  },
-]
-
-const kategoriler = [
-  {
-    baslik: 'Deri',
-    renk: 'text-stone-800',
-    alt: ['Çanta & Cüzdan', 'Kemer & Aksesuar', 'Deri Defter Kapağı', 'Özel Baskılı Deri'],
-    vitrinId: 'bu-hafta',
-  },
-  {
-    baslik: 'Mutfak & Sofra',
-    renk: 'text-amber-700',
-    alt: ['Ahşap Mutfak Gereçleri', 'El Yapımı Seramik', 'Özel Reçel & Konserve', 'Organik Baharat Setleri'],
-    vitrinId: 'cok-satanlar',
-  },
-  {
-    baslik: 'Ev Yaşam & Dekor',
-    renk: 'text-teal-700',
-    alt: ['Mum & Oda Kokusu', 'Makrome & Dokuma', 'Dekoratif Objeler', 'El Yapımı Yastık'],
-    vitrinId: 'yeni-tasarimlar',
-  },
-  {
-    baslik: 'Tekstil & Giyim',
-    renk: 'text-rose-700',
-    alt: ['Örgü & Tığ İşi', 'Ismarlama Dikiş', 'Pamuklu Çocuk Giyim', 'Vintage Yeniden Tasarım'],
-    vitrinId: null,
-  },
-  {
-    baslik: 'Oyuncak & Çocuk',
-    renk: 'text-rose-700',
-    alt: ['Amigurumi Oyuncak', 'Ahşap Oyun Seti', 'El Yapımı Bebek', 'Çocuk Odası Dekoru'],
-    vitrinId: null,
-  },
-  {
-    baslik: 'Takı & Aksesuar',
-    renk: 'text-rose-700',
-    alt: ['El Yapımı Takı', 'Doğal Taş Aksesuar', 'Kişiye Özel İsim Kolye', 'Vintage Broş & Yüzük'],
-    vitrinId: null,
-  },
-  {
-    baslik: 'Ahşap & Mobilya',
-    renk: 'text-rose-700',
-    alt: ['Ahşap Sehpa & Raf', 'El Yapımı Sandalye', 'Özel Tasarım Masa', 'Ahşap Dekoratif Objeler'],
-    vitrinId: null,
-  },
-]
-/* ─── Güncellenmiş Ürün Kartı ────────────────────────────────────────── */
+/* ─── ÜRÜN KARTI ────────────────────────────────────────── */
 function UrunKarti({ urun }) {
   const [aktifIndex, setAktifIndex] = useState(0)
-  const [isFavorited, setIsFavorited] = useState(false) // Favori durumu
+  const navigate = useNavigate()
+  const dispatch = useDispatch()
+  
+  const favoriler = useSelector((state) => state.favorites.items)
+  const isFavorited = favoriler.some((item) => item.id === urun.id)
+
   const tekGorselMi = urun.gorseller.length <= 1
 
-  const gosterGorsel = (index) => {
-    setAktifIndex((index + urun.gorseller.length) % urun.gorseller.length)
-  }
-
+  const gosterGorsel = (index) => setAktifIndex((index + urun.gorseller.length) % urun.gorseller.length)
+  
   const okTikla = (yon, e) => {
     e.stopPropagation()
     e.preventDefault()
     gosterGorsel(aktifIndex + yon)
   }
 
-  // Favori butonuna tıklandığında çalışacak fonksiyon
   const favoriToggle = (e) => {
     e.stopPropagation()
     e.preventDefault()
-    setIsFavorited(!isFavorited)
-    // Burada favoriler sayfasına veri gönderen bir fonksiyon çağrılabilir
+
+    // ÇEVİRMEN: Favoriler sistemine uygun format
+    const arkadasinFormatindaUrun = {
+      id: urun.id,
+      name: urun.isim,
+      price: parseInt(urun.fiyat.replace(/\D/g, '')), // "1200TL" yazısını 1200 sayısına çevirir
+      image: urun.gorseller[0],
+      category: urun.kategori || urun.altKategori
+    }
+
+    if (isFavorited) {
+      dispatch(removeFromFavorites(urun.id))
+    } else {
+      dispatch(addToFavorites(arkadasinFormatindaUrun))
+    }
+  }
+
+  const sepeteEkle = (e) => {
+    e.stopPropagation()
+    e.preventDefault()
+
+    // ÇEVİRMEN: Sepet sistemine uygun format
+    const sepeteUygunUrun = {
+      id: urun.id,
+      isim: urun.isim,
+      fiyat: urun.fiyat,
+      image: urun.gorseller[0]
+    }
+
+    dispatch(addToCart(sepeteUygunUrun))
+    
+    // Şık bildirim
+    toast.success(`${urun.isim} sepete eklendi!`, {
+  style: {
+    background: 'rgba(41, 37, 36, 0.95)', // Hafif transparan stone-800
+    color: '#f5f5f4',
+    backdropFilter: 'blur(8px)', // Şık bir cam efekti
+    padding: '16px 24px',
+    fontSize: '13px',
+    fontWeight: '500',
+    letterSpacing: '0.05em',
+    borderRadius: '12px',
+    border: '1px solid rgba(255, 255, 255, 0.1)',
+    boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)',
+  },
+  iconTheme: {
+    primary: '#d97706', // Kehribar (Amber) tonu
+    secondary: '#fff',
+  },
+});
+  }
+  const kartaTikla = () => {
+    navigate(`/urun/${urun.id}`, { state: { urun } })
   }
 
   const renderYildizlar = () =>
@@ -168,28 +101,12 @@ function UrunKarti({ urun }) {
     ))
 
   return (
-    <div className="w-[260px] flex-shrink-0 cursor-pointer group">
+    <div onClick={kartaTikla} className="w-[260px] flex-shrink-0 cursor-pointer group">
       <div className="relative bg-stone-100 w-[260px] h-[260px] mb-3 overflow-hidden rounded-md">
-        <img
-          src={urun.gorseller[aktifIndex]}
-          alt={urun.isim}
-          className="object-cover w-full h-full transition duration-500 group-hover:scale-105"
-        />
+        <img src={urun.gorseller[aktifIndex]} alt={urun.isim} className="object-cover w-full h-full transition duration-500 group-hover:scale-105" />
         
-        {/* Favori Butonu - Sağ Üst Köşe */}
-        <button 
-          onClick={favoriToggle}
-          className="absolute top-3 right-3 z-20 p-2 rounded-full bg-white/40 backdrop-blur-sm hover:bg-white/70 transition-all duration-300 group/fav shadow-sm"
-          title={isFavorited ? "Favorilerden Çıkar" : "Favorilere Ekle"}
-        >
-          <svg 
-            xmlns="http://www.w3.org/2000/svg" 
-            fill={isFavorited ? "#b91c1c" : "none"} // Rose-700 rengine yakın kırmızı
-            viewBox="0 0 24 24" 
-            strokeWidth={1.5} 
-            stroke={isFavorited ? "#b91c1c" : "currentColor"} 
-            className={`w-5 h-5 transition-transform duration-300 ${isFavorited ? 'scale-110' : 'text-stone-800 group-hover/fav:scale-110'}`}
-          >
+        <button onClick={favoriToggle} className="absolute top-3 right-3 z-20 p-2 rounded-full bg-white/40 backdrop-blur-sm hover:bg-white/70 transition-all duration-300 shadow-sm">
+          <svg xmlns="http://www.w3.org/2000/svg" fill={isFavorited ? "#b91c1c" : "none"} viewBox="0 0 24 24" strokeWidth={1.5} stroke={isFavorited ? "#b91c1c" : "currentColor"} className={`w-5 h-5 transition-transform duration-300 ${isFavorited ? 'scale-110' : 'text-stone-800'}`}>
             <path strokeLinecap="round" strokeLinejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z" />
           </svg>
         </button>
@@ -198,16 +115,10 @@ function UrunKarti({ urun }) {
           <>
             <button onClick={(e) => okTikla(-1, e)} className="absolute left-2 top-1/2 -translate-y-1/2 bg-white/50 hover:bg-white/90 rounded-full w-7 h-7 flex items-center justify-center text-stone-800 shadow transition-all duration-300 opacity-0 group-hover:opacity-100">‹</button>
             <button onClick={(e) => okTikla(1, e)} className="absolute right-2 top-1/2 -translate-y-1/2 bg-white/50 hover:bg-white/90 rounded-full w-7 h-7 flex items-center justify-center text-stone-800 shadow transition-all duration-300 opacity-0 group-hover:opacity-100">›</button>
-            <div className="absolute bottom-2 left-1/2 -translate-x-1/2 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-              {urun.gorseller.map((_, i) => (
-                <div key={i} className={`w-1.5 h-1.5 rounded-full transition ${i === aktifIndex ? 'bg-stone-800' : 'bg-white/70 shadow-sm'}`} />
-              ))}
-            </div>
           </>
         )}
       </div>
       
-      {/* Alt kısımdaki içerik alanı (isim, fiyat vb.) aynı kalıyor */}
       <div className="flex flex-col px-1">
         <p className="font-medium tracking-wide text-sm text-stone-800 line-clamp-1">{urun.isim}</p>
         <div className="flex items-center gap-1 mt-1 mb-2">
@@ -216,7 +127,7 @@ function UrunKarti({ urun }) {
         </div>
         <div className="flex justify-between items-center mt-1">
           <p className="font-semibold text-stone-900">{urun.fiyat}</p>
-          <button className="p-1.5 rounded-full bg-stone-100 hover:bg-stone-200 text-stone-700 transition-colors" title="Sepete Ekle">
+          <button onClick={sepeteEkle} className="p-1.5 rounded-full bg-stone-100 hover:bg-stone-200 text-stone-700 transition-colors" title="Sepete Ekle">
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4">
               <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 10.5V6a3.75 3.75 0 10-7.5 0v4.5m11.356-1.993l1.263 12c.07.665-.45 1.243-1.119 1.243H4.25a1.125 1.125 0 01-1.12-1.243l1.264-12A1.125 1.125 0 015.513 7.5h12.974c.576 0 1.059.435 1.119 1.007zM8.625 10.5a.375.375 0 11-.75 0 .375.375 0 01.75 0zm7.5 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z" />
             </svg>
@@ -227,18 +138,16 @@ function UrunKarti({ urun }) {
   )
 }
 
-/* ─── Sidebar Bileşeni ───────────────────────────────────────── */
+/* ─── SIDEBAR ───────────────────────────────────────── */
 function Sidebar({ aktifFiltre, setAktifFiltre, seciliKategori, setSeciliKategori, setSeciliAltKategori }) {
   const [acik, setAcik] = useState(null)
 
   const kategoriTikla = (i, kat) => {
     setAcik(acik === i ? null : i)
-    // Kategoriye tıklandığında ana kategoriyi seç, alt kategoriyi sıfırla
     if (acik !== i) {
       setSeciliKategori(kat.baslik)
       setSeciliAltKategori(null)
     } else {
-      // Menü kapanırsa seçimi kaldır
       setSeciliKategori(null)
       setSeciliAltKategori(null)
     }
@@ -246,48 +155,25 @@ function Sidebar({ aktifFiltre, setAktifFiltre, seciliKategori, setSeciliKategor
 
   return (
     <aside className="hidden lg:block w-52 flex-shrink-0 sticky top-20 self-start h-fit">
-      <Link
-        to="/atolyeler"
-        className="flex items-center gap-2 w-full mb-6 px-3 py-2.5 rounded-md bg-stone-800 text-white text-xs font-bold tracking-widest uppercase hover:bg-stone-900 transition-colors group"
-      >
+      <Link to="/atolyeler" className="flex items-center gap-2 w-full mb-6 px-3 py-2.5 rounded-md bg-stone-800 text-white text-xs font-bold tracking-widest uppercase hover:bg-stone-900 transition-colors group">
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4 flex-shrink-0">
           <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 21v-7.5a.75.75 0 01.75-.75h3a.75.75 0 01.75.75V21m-4.5 0H2.36m11.14 0H18m0 0h3.64m-1.39 0V9.349m-16.5 11.65V9.35m0 0a3.001 3.001 0 003.75-.615A2.993 2.993 0 009.75 9.75c.896 0 1.7-.393 2.25-1.016a2.993 2.993 0 002.25 1.016c.896 0 1.7-.393 2.25-1.016a3.001 3.001 0 003.75.614m-16.5 0a3.004 3.004 0 01-.621-4.72L4.318 3.44A1.5 1.5 0 015.378 3h13.243a1.5 1.5 0 011.06.44l1.19 1.189a3 3 0 01-.621 4.72m-13.5 8.65h3.75a.75.75 0 00.75-.75V13.5a.75.75 0 00-.75-.75H6.75a.75.75 0 00-.75.75v3.75c0 .415.336.75.75.75z" />
         </svg>
         Atölyeleri Gör
         <span className="ml-auto text-stone-300 group-hover:translate-x-0.5 transition-transform">›</span>
       </Link>
-
       <p className="text-[9px] font-bold tracking-[0.3em] text-stone-400 uppercase mb-4">Kategoriler</p>
-      
       <nav className="flex flex-col gap-1">
         {kategoriler.map((kat, i) => (
-          <div 
-            key={i} 
-            onMouseEnter={() => setAcik(i)} 
-            onMouseLeave={() => setAcik(null)}
-            className="relative"
-          >
-            <button
-              onClick={() => kategoriTikla(i, kat)}
-              className={`w-full flex justify-between items-center text-left py-2 px-3 rounded-md text-sm font-semibold tracking-wide transition-colors ${
-                seciliKategori === kat.baslik ? 'bg-stone-200 ' + kat.renk : (acik === i ? 'bg-stone-100 ' + kat.renk : 'text-stone-700 hover:bg-stone-50')
-              }`}
-            >
+          <div key={i} onMouseEnter={() => setAcik(i)} onMouseLeave={() => setAcik(null)} className="relative">
+            <button onClick={() => kategoriTikla(i, kat)} className={`w-full flex justify-between items-center text-left py-2 px-3 rounded-md text-sm font-semibold tracking-wide transition-colors ${seciliKategori === kat.baslik ? 'bg-stone-200 ' + kat.renk : (acik === i ? 'bg-stone-100 ' + kat.renk : 'text-stone-700 hover:bg-stone-50')}`}>
               {kat.baslik}
               <span className={`transition-transform duration-200 text-xs ${acik === i ? 'rotate-90' : ''}`}>›</span>
             </button>
-
             <div className={`overflow-hidden transition-all duration-300 ease-in-out ${acik === i ? 'max-h-48 opacity-100 mt-1 mb-1' : 'max-h-0 opacity-0'}`}>
               <div className="ml-3 flex flex-col gap-0.5 pb-1">
                 {kat.alt.map((alt, j) => (
-                  <button
-                    key={j}
-                    onClick={() => {
-                      setSeciliKategori(kat.baslik)
-                      setSeciliAltKategori(alt)
-                    }}
-                    className="text-left text-[11px] text-stone-500 hover:text-stone-800 py-1 px-2 rounded hover:bg-stone-100 transition-colors"
-                  >
+                  <button key={j} onClick={() => { setSeciliKategori(kat.baslik); setSeciliAltKategori(alt) }} className="text-left text-[11px] text-stone-500 hover:text-stone-800 py-1 px-2 rounded hover:bg-stone-100 transition-colors">
                     {alt}
                   </button>
                 ))}
@@ -296,54 +182,35 @@ function Sidebar({ aktifFiltre, setAktifFiltre, seciliKategori, setSeciliKategor
           </div>
         ))}
       </nav>
-
       <div className="mt-8 border-t border-stone-200 pt-5">
         <p className="text-[9px] font-bold tracking-[0.3em] text-stone-400 uppercase mb-3">Filtrele</p>
         <div className="flex flex-col gap-2">
           {['En Yeniler', 'En Çok Satanlar', 'Fiyat: Artan', 'Fiyat: Azalan'].map((f) => (
-            <button
-              key={f}
-              onClick={() => setAktifFiltre(aktifFiltre === f ? null : f)}
-              className={`text-left text-[11px] py-1 px-2 rounded transition-colors ${
-                aktifFiltre === f
-                  ? 'bg-stone-800 text-white font-semibold'
-                  : 'text-stone-500 hover:text-stone-800 hover:bg-stone-100'
-              }`}
-            >
+            <button key={f} onClick={() => setAktifFiltre(aktifFiltre === f ? null : f)} className={`text-left text-[11px] py-1 px-2 rounded transition-colors ${aktifFiltre === f ? 'bg-stone-800 text-white font-semibold' : 'text-stone-500 hover:text-stone-800 hover:bg-stone-100'}`}>
               {aktifFiltre === f ? '✓ ' : ''}{f}
             </button>
           ))}
         </div>
         {aktifFiltre && (
-          <button
-            onClick={() => setAktifFiltre(null)}
-            className="mt-3 text-[10px] text-stone-400 hover:text-stone-600 underline transition-colors"
-          >
-            Filtreyi Kaldır
-          </button>
+          <button onClick={() => setAktifFiltre(null)} className="mt-3 text-[10px] text-stone-400 hover:text-stone-600 underline transition-colors">Filtreyi Kaldır</button>
         )}
       </div>
     </aside>
   )
-
 }
-/* ─── Kampanya Slider ────────────────────────────────────────── */
+
+/* ─── KAMPANYALAR & VİTRİN SLIDER ────────────────────────────────────────── */
 function KampanyaSlider() {
   const [aktif, setAktif] = useState(0)
   const sliderRef = useRef(null)
 
   useEffect(() => {
-    const interval = setInterval(() => {
-      setAktif((prev) => (prev + 1) % kampanyalar.length)
-    }, 4000)
+    const interval = setInterval(() => setAktif((prev) => (prev + 1) % kampanyalar.length), 4000)
     return () => clearInterval(interval)
   }, [])
 
   useEffect(() => {
-    if (sliderRef.current) {
-      const kartGenisligi = sliderRef.current.offsetWidth
-      sliderRef.current.scrollTo({ left: aktif * kartGenisligi, behavior: 'smooth' })
-    }
+    if (sliderRef.current) sliderRef.current.scrollTo({ left: aktif * sliderRef.current.offsetWidth, behavior: 'smooth' })
   }, [aktif])
 
   return (
@@ -352,48 +219,23 @@ function KampanyaSlider() {
         <h2 className="text-sm font-bold tracking-widest uppercase">KAMPANYALAR & FIRSATLAR :</h2>
         <div className="flex gap-1.5">
           {kampanyalar.map((_, i) => (
-            <button
-              key={i}
-              onClick={() => setAktif(i)}
-              className={`rounded-full transition-all duration-300 ${i === aktif ? 'w-5 h-2 bg-stone-800' : 'w-2 h-2 bg-stone-300 hover:bg-stone-500'}`}
-            />
+            <button key={i} onClick={() => setAktif(i)} className={`rounded-full transition-all duration-300 ${i === aktif ? 'w-5 h-2 bg-stone-800' : 'w-2 h-2 bg-stone-300 hover:bg-stone-500'}`} />
           ))}
         </div>
       </div>
-
-      <div
-        ref={sliderRef}
-        className="flex overflow-x-hidden snap-x snap-mandatory rounded-xl"
-        style={{ scrollSnapType: 'x mandatory' }}
-      >
+      <div ref={sliderRef} className="flex overflow-x-hidden snap-x snap-mandatory rounded-xl" style={{ scrollSnapType: 'x mandatory' }}>
         {kampanyalar.map((k, i) => (
-          <div
-            key={i}
-            className={`snap-start shrink-0 w-full relative overflow-hidden rounded-xl bg-gradient-to-br ${k.renk} min-h-[200px] flex`}
-            style={{ minWidth: '100%' }}
-          >
-            {/* Arkaplan fotoğraf */}
-            <img
-              src={k.gorsel}
-              alt={k.baslik}
-              className="absolute inset-0 w-full h-full object-cover opacity-20"
-            />
-
-            {/* İçerik */}
+          <div key={i} className={`snap-start shrink-0 w-full relative overflow-hidden rounded-xl bg-gradient-to-br ${k.renk} min-h-[200px] flex`} style={{ minWidth: '100%' }}>
+            <img src={k.gorsel} alt={k.baslik} className="absolute inset-0 w-full h-full object-cover opacity-20" />
             <div className="relative z-10 flex flex-col justify-between p-8 w-full">
               <div>
-                <span className={`inline-block text-[9px] font-bold tracking-widest text-white px-3 py-1 rounded-full mb-4 ${k.rozetRenk}`}>
-                  {k.rozet}
-                </span>
+                <span className={`inline-block text-[9px] font-bold tracking-widest text-white px-3 py-1 rounded-full mb-4 ${k.rozetRenk}`}>{k.rozet}</span>
                 <h3 className="text-2xl font-bold text-white tracking-wider mb-1">{k.baslik}</h3>
                 <p className="text-white/80 font-semibold text-lg mb-3">{k.altBaslik}</p>
                 <p className="text-white/60 text-sm max-w-md">{k.aciklama}</p>
               </div>
               <div className="flex items-center justify-between mt-6">
-                {/* Buton yerine Link kullanıldı */}
-                <Link to="/kampanyalar" className="bg-white text-stone-800 text-xs font-bold tracking-widest uppercase px-6 py-2.5 rounded-full hover:bg-stone-100 transition-colors">
-                  Kampanyayı Keşfet →
-                </Link>
+                <Link to="/kampanyalar" className="bg-white text-stone-800 text-xs font-bold tracking-widest uppercase px-6 py-2.5 rounded-full hover:bg-stone-100 transition-colors">Kampanyayı Keşfet →</Link>
                 <span className="text-white/40 text-xs">{i + 1} / {kampanyalar.length}</span>
               </div>
             </div>
@@ -402,32 +244,20 @@ function KampanyaSlider() {
       </div>
     </div>
   )
-}/* ─── Vitrin Slider Bileşeni ─────────────────────────────────── */
+}
+
 function VitrinSlider({ baslik, urunlerListesi, id, aktifFiltre }) {
   const sliderRef = useRef(null)
 
-  // Filtreye göre sıralama mantığı eklendi
   const siraliUrunler = [...urunlerListesi].sort((a, b) => {
     if (!aktifFiltre) return 0;
-    
-    // Fiyatları "1200TL" formatından sadece sayıya dönüştürür
     const fiyatA = parseInt(a.fiyat.replace(/\D/g, ''));
     const fiyatB = parseInt(b.fiyat.replace(/\D/g, ''));
-
-    switch (aktifFiltre) {
-      case 'Fiyat: Artan':
-        return fiyatA - fiyatB;
-      case 'Fiyat: Azalan':
-        return fiyatB - fiyatA;
-      case 'En Yeniler':
-        // Gerçek tarih verisi olmadığı için diziyi ters çevirerek simüle ediyoruz
-        return -1; 
-      case 'En Çok Satanlar':
-        // Satış sayısı verisi olmadığı için geçici olarak alfabetik sıralama yapıyoruz
-        return a.isim.localeCompare(b.isim);
-      default:
-        return 0;
-    }
+    if (aktifFiltre === 'Fiyat: Artan') return fiyatA - fiyatB;
+    if (aktifFiltre === 'Fiyat: Azalan') return fiyatB - fiyatA;
+    if (aktifFiltre === 'En Yeniler') return -1; 
+    if (aktifFiltre === 'En Çok Satanlar') return a.isim.localeCompare(b.isim);
+    return 0;
   })
 
   useEffect(() => {
@@ -435,20 +265,15 @@ function VitrinSlider({ baslik, urunlerListesi, id, aktifFiltre }) {
     const otoKaydir = setInterval(() => {
       if (sliderRef.current) {
         const { scrollLeft, scrollWidth, clientWidth } = sliderRef.current
-        if (scrollLeft + clientWidth >= scrollWidth - 5) {
-          sliderRef.current.scrollTo({ left: 0, behavior: 'smooth' })
-        } else {
-          sliderRef.current.scrollBy({ left: 284, behavior: 'smooth' })
-        }
+        if (scrollLeft + clientWidth >= scrollWidth - 5) sliderRef.current.scrollTo({ left: 0, behavior: 'smooth' })
+        else sliderRef.current.scrollBy({ left: 284, behavior: 'smooth' })
       }
     }, randomSure)
     return () => clearInterval(otoKaydir)
   }, [])
 
   const manuelKaydir = (yon) => {
-    if (sliderRef.current) {
-      sliderRef.current.scrollBy({ left: yon * 284, behavior: 'smooth' })
-    }
+    if (sliderRef.current) sliderRef.current.scrollBy({ left: yon * 284, behavior: 'smooth' })
   }
 
   const vitrinGosterimi = [...siraliUrunler, ...siraliUrunler]
@@ -457,28 +282,12 @@ function VitrinSlider({ baslik, urunlerListesi, id, aktifFiltre }) {
     <div className="mb-14" id={id}>
       <div className="flex items-center justify-between mb-6">
         <h2 className="text-sm font-bold tracking-widest uppercase">{baslik}</h2>
-        {aktifFiltre && (
-          <span className="text-[10px] bg-stone-200 text-stone-600 px-2.5 py-1 rounded-full font-medium">
-            {aktifFiltre}
-          </span>
-        )}
+        {aktifFiltre && <span className="text-[10px] bg-stone-200 text-stone-600 px-2.5 py-1 rounded-full font-medium">{aktifFiltre}</span>}
       </div>
-
       <div className="relative group">
-        <button
-          onClick={() => manuelKaydir(-1)}
-          className="absolute left-0 top-[130px] -translate-y-1/2 -ml-5 z-10 bg-white/90 shadow-md border border-stone-200 text-stone-600 rounded-full w-10 h-10 flex items-center justify-center hover:bg-stone-800 hover:text-white transition-colors opacity-0 group-hover:opacity-100"
-        >‹</button>
-
-        <button
-          onClick={() => manuelKaydir(1)}
-          className="absolute right-0 top-[130px] -translate-y-1/2 -mr-5 z-10 bg-white/90 shadow-md border border-stone-200 text-stone-600 rounded-full w-10 h-10 flex items-center justify-center hover:bg-stone-800 hover:text-white transition-colors opacity-0 group-hover:opacity-100"
-        >›</button>
-
-        <div
-          ref={sliderRef}
-          className="flex gap-6 overflow-x-auto scrollbar-hide hide-scroll pb-4 scroll-smooth snap-x snap-mandatory"
-        >
+        <button onClick={() => manuelKaydir(-1)} className="absolute left-0 top-[130px] -translate-y-1/2 -ml-5 z-10 bg-white/90 shadow-md border border-stone-200 text-stone-600 rounded-full w-10 h-10 flex items-center justify-center hover:bg-stone-800 hover:text-white transition-colors opacity-0 group-hover:opacity-100">‹</button>
+        <button onClick={() => manuelKaydir(1)} className="absolute right-0 top-[130px] -translate-y-1/2 -mr-5 z-10 bg-white/90 shadow-md border border-stone-200 text-stone-600 rounded-full w-10 h-10 flex items-center justify-center hover:bg-stone-800 hover:text-white transition-colors opacity-0 group-hover:opacity-100">›</button>
+        <div ref={sliderRef} className="flex gap-6 overflow-x-auto scrollbar-hide hide-scroll pb-4 scroll-smooth snap-x snap-mandatory">
           {vitrinGosterimi.map((urun, index) => (
             <div key={index} className="snap-start shrink-0">
               <UrunKarti urun={urun} />
@@ -489,33 +298,22 @@ function VitrinSlider({ baslik, urunlerListesi, id, aktifFiltre }) {
     </div>
   )
 }
-/* ─── Ana Bileşen (Atolye) ───────────────────────────────────── */
+
+/* ─── ANA BİLEŞEN ───────────────────────────────────── */
 function Atolye() {
   const [aktifFiltre, setAktifFiltre] = useState(null)
-  
-  // Seçili kategori durumlarını tutan State'ler
   const [seciliKategori, setSeciliKategori] = useState(null)
   const [seciliAltKategori, setSeciliAltKategori] = useState(null)
 
-  // Tüm ürünleri tek bir dizide topluyoruz
   const tumUrunler = [...urunler, ...cokSatanlar, ...yeniTasarimlar]
 
-  // Seçili kategoriye göre ürünleri filtreliyoruz
   const filtrelenmisKategoriUrunleri = tumUrunler.filter(urun => {
-    let kategoriUyuyor = true;
-    let altKategoriUyuyor = true;
-
-    if (seciliKategori) {
-      kategoriUyuyor = urun.kategori === seciliKategori;
-    }
-    if (seciliAltKategori) {
-      altKategoriUyuyor = urun.altKategori === seciliAltKategori;
-    }
-
+    let kategoriUyuyor = true; let altKategoriUyuyor = true;
+    if (seciliKategori) kategoriUyuyor = urun.kategori === seciliKategori;
+    if (seciliAltKategori) altKategoriUyuyor = urun.altKategori === seciliAltKategori;
     return kategoriUyuyor && altKategoriUyuyor;
   })
 
-  // Fiyat/Tarih filtrelemesini bu filtrelenmiş listeye uyguluyoruz
   if (aktifFiltre) {
     filtrelenmisKategoriUrunleri.sort((a, b) => {
       const fiyatA = parseInt(a.fiyat.replace(/\D/g, ''));
@@ -554,40 +352,22 @@ function Atolye() {
           <span className="mx-12 text-amber-700">🏷 YAZ KAMPANYASI: Deri ürünlerde %30'a kadar indirim — ATOLYE15 kodu ile ek %15 ✧</span>
           <span className="mx-12">✧ Bu hafta özel dikim siparişlerinde ücretsiz kargo ve hediye paketleme ✧</span>
           <span className="mx-12 text-teal-700">🎁 İlk siparişine özel ATOLYE15 kodunu kullanmayı unutma ✧</span>
-          <span className="mx-12">✧ Ürünlerimiz özenle el emeği ile hazırlandığından, kişiselleştirme süresi, teslimat ve stok durumu değişiklik gösterebilir ✧</span>
-          <span className="mx-12 text-amber-700">🏷 YAZ KAMPANYASI: Deri ürünlerde %30'a kadar indirim — ATOLYE15 kodu ile ek %15 ✧</span>
-          <span className="mx-12">✧ Bu hafta özel dikim siparişlerinde ücretsiz kargo ve hediye paketleme ✧</span>
-          <span className="mx-12 text-teal-700">🎁 İlk siparişine özel ATOLYE15 kodunu kullanmayı unutma ✧</span>
         </div>
       </div>
 
       <div className="max-w-7xl mx-auto px-6 py-12 flex gap-10 items-start">
-
-        {/* ── Sidebar ── */}
-        <Sidebar 
-          aktifFiltre={aktifFiltre} 
-          setAktifFiltre={setAktifFiltre} 
-          seciliKategori={seciliKategori}
-          setSeciliKategori={setSeciliKategori}
-          setSeciliAltKategori={setSeciliAltKategori}
-        />
-
-        {/* ── Sağ taraf ── */}
+        <Sidebar aktifFiltre={aktifFiltre} setAktifFiltre={setAktifFiltre} seciliKategori={seciliKategori} setSeciliKategori={setSeciliKategori} setSeciliAltKategori={setSeciliAltKategori} />
+        
         <div className="flex-1 min-w-0">
-
           <KampanyaSlider />
 
-          {/* EĞER BİR KATEGORİ SEÇİLDİYSE SADECE O ÜRÜNLERİ GÖSTER */}
           {seciliKategori ? (
             <div className="mb-14 min-h-[400px]">
               <div className="flex items-center justify-between mb-8 border-b border-stone-200 pb-4">
                 <h2 className="text-sm font-bold tracking-widest uppercase text-stone-800">
                   {seciliAltKategori ? `${seciliKategori} > ${seciliAltKategori}` : seciliKategori}
                 </h2>
-                <button 
-                  onClick={() => {setSeciliKategori(null); setSeciliAltKategori(null)}} 
-                  className="text-[11px] font-semibold text-stone-500 hover:text-stone-800 flex items-center gap-1 transition-colors"
-                >
+                <button onClick={() => {setSeciliKategori(null); setSeciliAltKategori(null)}} className="text-[11px] font-semibold text-stone-500 hover:text-stone-800 flex items-center gap-1 transition-colors">
                   ✕ Temizle ve Tümüne Dön
                 </button>
               </div>
@@ -601,12 +381,10 @@ function Atolye() {
               ) : (
                 <div className="flex flex-col items-center justify-center py-20 text-center bg-white rounded-lg border border-stone-100">
                   <p className="text-stone-400 text-lg mb-2">Bu kategoride henüz ürün bulunmuyor.</p>
-                  <button onClick={() => {setSeciliKategori(null); setSeciliAltKategori(null)}} className="text-sm text-stone-600 underline">Ana sayfaya dön</button>
                 </div>
               )}
             </div>
           ) : (
-            /* HİÇBİR KATEGORİ SEÇİLMEDİYSE NORMAL VİTRİNLERİ GÖSTER */
             <>
               <VitrinSlider id="bu-hafta" baslik="BU HAFTA ÖNE ÇIKANLAR :" urunlerListesi={urunler} aktifFiltre={aktifFiltre} />
               <VitrinSlider id="cok-satanlar" baslik="EN ÇOK SATANLAR :" urunlerListesi={cokSatanlar} aktifFiltre={aktifFiltre} />
@@ -614,7 +392,7 @@ function Atolye() {
             </>
           )}
 
-          {/* Öne Çıkan Atölyeler (Aynı Kalıyor) */}
+          {/* ─── ÖNE ÇIKAN ATÖLYELER ─── */}
           <div className="py-20 border-t border-stone-200/60 mt-8">
             <div className="flex flex-col md:flex-row justify-between items-end mb-16 gap-6">
               <div>
@@ -702,6 +480,7 @@ function Atolye() {
 
             </div>
           </div>
+
         </div>
       </div>
     </div>
