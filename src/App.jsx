@@ -1,5 +1,6 @@
 import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom'
-import { Toaster } from 'react-hot-toast';
+import { Toaster } from 'react-hot-toast'
+
 // Pages
 import Home from './pages/Home/Home'
 import NotFound from './pages/NotFound/NotFound'
@@ -15,11 +16,18 @@ import ProductDetail from './pages/ProductDetail/ProductDetail'
 import Kampanyalar from './pages/Kampanyalar/Kampanyalar'
 import KampanyaDetail from './pages/Kampanyalar/KampanyaDetail'
 import Profile from './pages/Profile/Profile'
+import MyOrders from './pages/Orders/MyOrders'
+import OrderDetail from './pages/Orders/OrderDetail'
+import Support from './pages/Support/Support'
 import SaticiKayit from './pages/Satici/SaticiKayit'
 
 // Seller Pages
 import ProductManagement from './pages/Seller/ProductManagement'
 import AddProduct from './pages/Seller/AddProduct'
+import OrderManagement from './pages/Seller/OrderManagement'
+import StoreCalendar from './pages/Seller/StoreCalendar'
+import StatisticsDashboard from './pages/Seller/StatisticsDashboard'
+import FinancialManagement from './pages/Seller/FinancialManagement'
 
 // Layout
 import Navbar from './components/layout/Navbar'
@@ -32,7 +40,9 @@ function Layout() {
   const hideNavbarRoutes = ['/satici-kayit', '/satici-panel', '/satici-giris']
 
   const shouldHideFooter = hideFooterRoutes.includes(location.pathname)
-  const shouldHideNavbar = hideNavbarRoutes.some(r => location.pathname.startsWith(r))
+  const shouldHideNavbar = hideNavbarRoutes.some(r =>
+    location.pathname.startsWith(r)
+  )
 
   return (
     <>
@@ -69,14 +79,24 @@ function Layout() {
         {/* Profil */}
         <Route path="/profil" element={<Profile />} />
 
+        {/* Siparişler */}
+        <Route path="/siparislerim" element={<MyOrders />} />
+        <Route path="/siparislerim/:id" element={<OrderDetail />} />
+
+        {/* Destek */}
+        <Route path="/destek" element={<Support />} />
+
         {/* Seller */}
         <Route path="/satici/urunler" element={<ProductManagement />} />
         <Route path="/satici/urun-ekle" element={<AddProduct />} />
         <Route path="/satici/urun-duzenle/:id" element={<AddProduct />} />
-         
-        {/* Satici*/}
+        <Route path="/satici/siparisler" element={<OrderManagement />} />
+        <Route path="/satici/takvim" element={<StoreCalendar />} />
+        <Route path="/satici/istatistikler" element={<StatisticsDashboard />} />
+        <Route path="/satici/finans" element={<FinancialManagement />} />
+
+        {/* Satici */}
         <Route path="/satici-kayit" element={<SaticiKayit />} />
-        
 
         {/* 404 */}
         <Route path="*" element={<NotFound />} />
@@ -90,16 +110,16 @@ function Layout() {
 function App() {
   return (
     <BrowserRouter>
-    <Toaster position="top-center" // Bildirim artık üst ortada çıkacak
-  reverseOrder={false} 
-  toastOptions={{
-    // Varsayılan font ve estetik ayarları buraya da ekleyebiliriz
-    duration: 3000,
-    style: {
-      fontFamily: "'Inter', sans-serif", // Varsa projenin özel fontu
-    },
-  }}
-/>
+      <Toaster
+        position="top-center"
+        reverseOrder={false}
+        toastOptions={{
+          duration: 3000,
+          style: {
+            fontFamily: "'Inter', sans-serif",
+          },
+        }}
+      />
       <Layout />
     </BrowserRouter>
   )

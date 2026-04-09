@@ -140,6 +140,7 @@ function Navbar() {
             { label: 'Elektronik', to: '/urunler?category=Elektronik' },
             { label: 'Aksesuarlar', to: '/urunler?category=Aksesuarlar' },
             { label: 'Ev & Yaşam', to: '/urunler?category=Ev %26 Yaşam' },
+            { label: 'Siparişlerim', to: '/siparislerim' },
           ].map(item => (
             <li key={item.to}>
               <Link
