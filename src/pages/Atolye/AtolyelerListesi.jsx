@@ -79,11 +79,9 @@ function MiniUrunKarti({ urun, atolyeKategori }) {
   },
 });
   }
-
-  const kartaTikla = () => {
-    // Tutarlılık için slug yerine ID bazlı yönlendirme
-    navigate(`/urun/${urun.id}`, { state: { urun } })
-  }
+ const kartaTikla = () => {
+  navigate(`/atolye-urun/${urun.id}`, { state: { urun } })
+}
 
   const renderYildizlar = () => (
     Array.from({ length: 5 }).map((_, i) => (

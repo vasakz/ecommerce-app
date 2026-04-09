@@ -1,5 +1,6 @@
 import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom'
 import { Toaster } from 'react-hot-toast';
+
 // Pages
 import Home from './pages/Home/Home'
 import NotFound from './pages/NotFound/NotFound'
@@ -16,6 +17,7 @@ import Kampanyalar from './pages/Kampanyalar/Kampanyalar'
 import KampanyaDetail from './pages/Kampanyalar/KampanyaDetail'
 import Profile from './pages/Profile/Profile'
 import SaticiKayit from './pages/Satici/SaticiKayit'
+import AtolyeUrunDetay from './pages/Atolye/AtolyeUrunDetay';
 
 // Seller Pages
 import ProductManagement from './pages/Seller/ProductManagement'
@@ -49,7 +51,8 @@ function Layout() {
         {/* Atölye */}
         <Route path="/atolye" element={<Atolye />} />
         <Route path="/atolyeler" element={<AtolyelerListesi />} />
-
+        <Route path="/atolye-urun/:id" element={<AtolyeUrunDetay />} />
+        
         {/* Sepet & Ödeme */}
         <Route path="/sepet" element={<Cart />} />
         <Route path="/odeme" element={<Payment />} />
@@ -90,16 +93,17 @@ function Layout() {
 function App() {
   return (
     <BrowserRouter>
-    <Toaster position="top-center" // Bildirim artık üst ortada çıkacak
-  reverseOrder={false} 
-  toastOptions={{
-    // Varsayılan font ve estetik ayarları buraya da ekleyebiliriz
-    duration: 3000,
-    style: {
-      fontFamily: "'Inter', sans-serif", // Varsa projenin özel fontu
-    },
-  }}
-/>
+      {/* Toaster bileşeni*/}
+      <Toaster 
+        position="top-center" 
+        reverseOrder={false} 
+        toastOptions={{
+          duration: 3000,
+          style: {
+            fontFamily: "'Inter', sans-serif", 
+          },
+        }}
+      />
       <Layout />
     </BrowserRouter>
   )

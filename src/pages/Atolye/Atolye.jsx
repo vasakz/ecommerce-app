@@ -89,9 +89,9 @@ function UrunKarti({ urun }) {
   },
 });
   }
-  const kartaTikla = () => {
-    navigate(`/urun/${urun.id}`, { state: { urun } })
-  }
+ const kartaTikla = () => {
+  navigate(`/atolye-urun/${urun.id}`, { state: { urun } })
+}
 
   const renderYildizlar = () =>
     Array.from({ length: 5 }).map((_, i) => (
