@@ -1,4 +1,4 @@
-// src/data/atolyeData.js
+
 
 import deri1 from '../assets/deri-1.jpeg'
 import deri2 from '../assets/deri-2.jpeg'
@@ -28,24 +28,36 @@ import terzi from '../assets/terzi.jpeg'
 import oyuncak1 from '../assets/oyuncak1.jpg'
 
 export const urunler = [
-  { id: 'u-001', isim: 'DERİ ÇANTA NO.1', fiyat: '1200TL', kategori: 'Deri', altKategori: 'Çanta & Cüzdan', gorseller: [deri1, deri2, deri3, deri4] },
-  { id: 'u-002', isim: 'DERİ ÇANTA NO.2', fiyat: '950TL',  kategori: 'Deri', altKategori: 'Çanta & Cüzdan', gorseller: [deri5, deri6, deri7] },
+  // Çantalar özelleştirilebilir (harf kazıma, özel ölçü vb.) olduğu için sabitFiyat eklemiyoruz ('den başlayan' yazacak).
+  // Ancak Özel Ölçü seçilirse diye min/max limitleri ekliyoruz.
+  { id: 'u-001', isim: 'DERİ ÇANTA NO.1', fiyat: '1200TL', kategori: 'Deri', altKategori: 'Çanta & Cüzdan', gorseller: [deri1, deri2, deri3, deri4], minOlcu: 20, maxOlcu: 60 },
+  { id: 'u-002', isim: 'DERİ ÇANTA NO.2', fiyat: '950TL',  kategori: 'Deri', altKategori: 'Çanta & Cüzdan', gorseller: [deri5, deri6, deri7], minOlcu: 15, maxOlcu: 50 },
   { id: 'u-003', isim: 'DERİ ÇANTA NO.3', fiyat: '1100TL', kategori: 'Deri', altKategori: 'Çanta & Cüzdan', gorseller: [deri8, deri9, deri10] },
   { id: 'u-004', isim: 'DERİ ÇANTA NO.4', fiyat: '850TL',  kategori: 'Deri', altKategori: 'Çanta & Cüzdan', gorseller: [deri11, deri12] },
 ]
 
 export const cokSatanlar = [
-  { id: 'cs-001', isim: 'EL YAPIMI SERAMİK KUPA', fiyat: '450TL', kategori: 'Mutfak & Sofra', altKategori: 'El Yapımı Seramik', gorseller: [seramikKupa] },
+  // Seramik kupa standarttır -> sabitFiyat: true (Sadece 450 TL yazacak)
+  { id: 'cs-001', isim: 'EL YAPIMI SERAMİK KUPA', fiyat: '450TL', kategori: 'Mutfak & Sofra', altKategori: 'El Yapımı Seramik', gorseller: [seramikKupa], sabitFiyat: true },
+  
+  // Cüzdana harf kazınabilir -> Özelleştirilebilir, bu yüzden 'den başlayan' kalsın
   { id: 'cs-002', isim: 'VINTAGE DERİ CÜZDAN', fiyat: '600TL', kategori: 'Deri', altKategori: 'Çanta & Cüzdan', gorseller: [deriCuzdan] },
-  { id: 'cs-003', isim: 'AHŞAP KESME TAHTASI', fiyat: '850TL', kategori: 'Mutfak & Sofra', altKategori: 'Ahşap Mutfak Gereçleri', gorseller: [ahsapTahta] },
-  { id: 'cs-004', isim: 'AMİGURUMİ TAVŞAN', fiyat: '350TL', kategori: 'Oyuncak & Çocuk', altKategori: 'Amigurumi Oyuncak', gorseller: [oyuncakTavsan] },
+  
+  // Kesme tahtası ve Tavşan standart ürünlerdir -> sabitFiyat: true
+  { id: 'cs-003', isim: 'AHŞAP KESME TAHTASI', fiyat: '850TL', kategori: 'Mutfak & Sofra', altKategori: 'Ahşap Mutfak Gereçleri', gorseller: [ahsapTahta], sabitFiyat: true },
+  { id: 'cs-004', isim: 'AMİGURUMİ TAVŞAN', fiyat: '350TL', kategori: 'Oyuncak & Çocuk', altKategori: 'Amigurumi Oyuncak', gorseller: [oyuncakTavsan], sabitFiyat: true },
 ]
 
 export const yeniTasarimlar = [
-  { id: 'yt-001', isim: 'KETEN YASTIK KILIFI', fiyat: '300TL', kategori: 'Ev Yaşam & Dekor', altKategori: 'El Yapımı Yastık', gorseller: [ketenYastik] },
-  { id: 'yt-002', isim: 'ÖZEL DİKİM KUMAŞ ÇANTA', fiyat: '750TL', kategori: 'Tekstil & Giyim', altKategori: 'Ismarlama Dikiş', gorseller: [kumasCanta] },
-  { id: 'yt-003', isim: 'MAKROME DUVAR SÜSÜ', fiyat: '550TL', kategori: 'Ev Yaşam & Dekor', altKategori: 'Makrome & Dokuma', gorseller: [makromeSusu] },
-  { id: 'yt-004', isim: 'DOĞAL MUM SETİ', fiyat: '400TL', kategori: 'Ev Yaşam & Dekor', altKategori: 'Mum & Oda Kokusu', gorseller: [mumSeti] },
+  // Yastık kılıfı ve Mum Seti standarttır
+  { id: 'yt-001', isim: 'KETEN YASTIK KILIFI', fiyat: '300TL', kategori: 'Ev Yaşam & Dekor', altKategori: 'El Yapımı Yastık', gorseller: [ketenYastik], sabitFiyat: true },
+  
+  // Özel dikim kumaş çanta özelleştirilebilir bir üründür. (Min 30cm, Max 120cm dikilebilir)
+  { id: 'yt-002', isim: 'ÖZEL DİKİM KUMAŞ ÇANTA', fiyat: '750TL', kategori: 'Tekstil & Giyim', altKategori: 'Ismarlama Dikiş', gorseller: [kumasCanta], minOlcu: 30, maxOlcu: 120 },
+  
+  // Makrome süs için de duvar ölçüsüne göre limit verelim
+  { id: 'yt-003', isim: 'MAKROME DUVAR SÜSÜ', fiyat: '550TL', kategori: 'Ev Yaşam & Dekor', altKategori: 'Makrome & Dokuma', gorseller: [makromeSusu], minOlcu: 50, maxOlcu: 200 },
+  { id: 'yt-004', isim: 'DOĞAL MUM SETİ', fiyat: '400TL', kategori: 'Ev Yaşam & Dekor', altKategori: 'Mum & Oda Kokusu', gorseller: [mumSeti], sabitFiyat: true },
 ]
 
 export const kampanyalar = [
