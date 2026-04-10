@@ -1,4 +1,6 @@
 import { useState, useEffect } from 'react'
+import { Link } from 'react-router-dom'
+import { orders } from '../../data/orders'
 import {
     User, ShoppingBag, Heart, MapPin, Settings, LogOut,
     Mail, Phone, Calendar, Eye, EyeOff, Star,
@@ -23,28 +25,18 @@ const profileService = {
 }
 
 const siparisService = {
-    getSiparisler: async () => ([
-        {
-            id: '#SP-1042', urun: 'Seramik Kupa Seti', fiyat: '₺320', tarih: '28 Mar 2025', durum: 'Teslim Edildi',
-            kargoFirma: 'Yurtiçi Kargo', kargoNo: 'YK-482910374', tahminiTeslimat: '30 Mar 2025',
-            teslimatAdresi: 'Mimar Sinan Mah. Karacaahmet Sok. No:8 D:3, Üsküdar / İstanbul', adet: 1,
-        },
-        {
-            id: '#SP-1031', urun: 'Makrome Duvar Süsü', fiyat: '₺185', tarih: '14 Mar 2025', durum: 'Kargoda',
-            kargoFirma: 'Aras Kargo', kargoNo: 'AR-293847561', tahminiTeslimat: '17 Mar 2025',
-            teslimatAdresi: 'Mimar Sinan Mah. Karacaahmet Sok. No:8 D:3, Üsküdar / İstanbul', adet: 1,
-        },
-        {
-            id: '#SP-1019', urun: 'Deri Cüzdan', fiyat: '₺450', tarih: '02 Mar 2025', durum: 'Teslim Edildi',
-            kargoFirma: 'MNG Kargo', kargoNo: 'MNG-187364920', tahminiTeslimat: '05 Mar 2025',
-            teslimatAdresi: 'Mimar Sinan Mah. Karacaahmet Sok. No:8 D:3, Üsküdar / İstanbul', adet: 1,
-        },
-        {
-            id: '#SP-1008', urun: 'Keten Yastık Kılıfı', fiyat: '₺145', tarih: '18 Şub 2025', durum: 'Teslim Edildi',
-            kargoFirma: 'Yurtiçi Kargo', kargoNo: 'YK-374820193', tahminiTeslimat: '21 Şub 2025',
-            teslimatAdresi: 'Mimar Sinan Mah. Karacaahmet Sok. No:8 D:3, Üsküdar / İstanbul', adet: 2,
-        },
-    ]),
+    getSiparisler: async () => orders.map(o => ({
+        id: o.id,
+        urun: o.items[0].name + (o.items.length > 1 ? ` ve ${o.items.length - 1} ürün daha` : ''),
+        fiyat: o.total.toLocaleString('tr-TR', { style: 'currency', currency: 'TRY' }),
+        tarih: new Date(o.date).toLocaleDateString('tr-TR', { day: 'numeric', month: 'short', year: 'numeric' }),
+        durum: o.status,
+        kargoFirma: o.carrier || '-',
+        kargoNo: o.trackingNumber || '-',
+        tahminiTeslimat: '-',
+        teslimatAdresi: o.deliveryAddress,
+        adet: o.items.reduce((sum, item) => sum + item.quantity, 0),
+    })),
 }
 
 const favoriService = {
@@ -83,9 +75,12 @@ function BosEkran({ mesaj }) {
 }
 
 const durumuStil = {
-    'Teslim Edildi': 'bg-stone-100 text-stone-600',
+    'Teslim Edildi': 'bg-green-100 text-green-700',
     'Kargoda':       'bg-amber-50 text-amber-700',
+    'Kargoya Verildi': 'bg-blue-50 text-blue-700',
     'Hazırlanıyor':  'bg-sky-50 text-sky-700',
+    'İptal Edildi':  'bg-red-50 text-red-700',
+    'Ödeme Bekleniyor': 'bg-purple-50 text-purple-700',
 }
 
 // ─────────────────────────────────────────────────────────────
@@ -269,6 +264,9 @@ function Siparislerim() {
                                             {s.durum}
                                         </span>
                                     </div>
+                                    <Link to={`/siparislerim/${s.id}`} className="ml-2 p-1 text-stone-400 hover:text-amber-500 transition">
+                                        <Eye size={16} />
+                                    </Link>
                                     <ChevronDown size={14} className={`text-stone-400 flex-shrink-0 transition-transform duration-300 ${acikId === s.id ? 'rotate-180' : ''}`} />
                                 </button>
 

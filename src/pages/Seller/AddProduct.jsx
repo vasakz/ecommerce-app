@@ -23,12 +23,24 @@ import {
 import { toast } from 'react-toastify';
 
 const CATEGORIES = ['Giyim', 'Elektronik', 'Kozmetik', 'Aksesuar', 'Ev & Yaşam', 'Spor'];
+const SUB_CATEGORIES = {
+  'Giyim': ['Tişört', 'Pantolon', 'Elbise', 'Ceket', 'Hırka', 'Etek'],
+  'Elektronik': ['Telefon', 'Bilgisayar', 'Aksesuar', 'Kulaklık', 'Saat'],
+  'Kozmetik': ['Makyaj', 'Cilt Bakımı', 'Parfüm', 'Saç Bakımı'],
+  'Aksesuar': ['Takı', 'Çanta', 'Cüzdan', 'Kemer', 'Gözlük'],
+  'Ev & Yaşam': ['Dekorasyon', 'Mutfak', 'Aydınlatma', 'Tekstil'],
+  'Spor': ['Ayakkabı', 'Ekipman', 'Giyim', 'Besin Takviyesi']
+};
 const BRANDS = ['ModaZen', 'TechPro', 'TimeLess', 'EcoWear', 'SecureHome', 'Diğer'];
+const COLOR_OPTIONS = ['Siyah', 'Beyaz', 'Lacivert', 'Kırmızı', 'Mavi', 'Bej', 'Gri', 'Yeşil', 'Sarı'];
+const SIZE_OPTIONS = ['XS', 'S', 'M', 'L', 'XL', '2XL', '3XL', 'Standart', '36', '37', '38', '39', '40', '41', '42', '43', '44', '45'];
 
 const AddProduct = () => {
   const navigate = useNavigate();
   const [images, setImages] = useState([]);
   const [activeStep, setActiveStep] = useState(1);
+  const [showSummary, setShowSummary] = useState(false);
+  const [formData, setFormData] = useState(null);
 
   const { register, control, handleSubmit, watch, formState: { errors } } = useForm({
     defaultValues: {
@@ -38,13 +50,20 @@ const AddProduct = () => {
     }
   });
 
+  const selectedCategory = watch('category');
+
   const { fields, append, remove } = useFieldArray({
     control,
     name: "variants"
   });
 
   const onSubmit = (data) => {
-    console.log('Product Data:', { ...data, images });
+    setFormData({ ...data, images });
+    setShowSummary(true);
+  };
+
+  const handleFinalSubmit = () => {
+    console.log('Final Product Data:', formData);
     toast.success('Ürün başarıyla oluşturuldu ve onaya gönderildi!');
     setTimeout(() => navigate('/satici/urunler'), 2000);
   };
@@ -162,6 +181,20 @@ const AddProduct = () => {
                   </select>
                 </div>
 
+                {/* Alt Kategori Selection */}
+                <div className={`space-y-2 transition-all duration-300 ${selectedCategory ? 'opacity-100' : 'opacity-30 pointer-events-none'}`}>
+                  <label className="text-xs font-bold text-stone-900 dark:text-white uppercase tracking-widest text-[#7c3aed]">Alt Kategori</label>
+                  <select 
+                    {...register("subCategory", { required: selectedCategory ? "Alt kategori seçiniz" : false })}
+                    className="w-full px-5 py-4 bg-gray-50 dark:bg-stone-800 border-none rounded-2xl focus:ring-2 focus:ring-[#7c3aed] font-medium appearance-none border border-[#7c3aed]/20"
+                  >
+                    <option value="">Alt Kategori Seçin</option>
+                    {selectedCategory && SUB_CATEGORIES[selectedCategory]?.map(sc => (
+                      <option key={sc} value={sc}>{sc}</option>
+                    ))}
+                  </select>
+                </div>
+
                 {/* Fiyat ve İndirimli Fiyat */}
                 <div className="space-y-2">
                   <label className="text-xs font-bold text-stone-900 dark:text-white uppercase tracking-widest flex items-center gap-2">
@@ -268,19 +301,23 @@ const AddProduct = () => {
                     <div key={field.id} className="grid grid-cols-12 gap-x-4 gap-y-2 items-end p-5 bg-gray-50 dark:bg-stone-800 rounded-2xl animate-in fade-in slide-in-from-top-2">
                       <div className="col-span-12 sm:col-span-4 space-y-2">
                         <label className="text-[10px] font-bold text-stone-400 uppercase">Renk</label>
-                        <input 
+                        <select 
                           {...register(`variants.${index}.color`)}
-                          placeholder="Örn: Siyah"
-                          className="w-full px-4 py-3 bg-white dark:bg-stone-900 border-none rounded-xl focus:ring-2 focus:ring-blue-500 text-sm font-bold"
-                        />
+                          className="w-full px-4 py-3 bg-white dark:bg-stone-900 border-none rounded-xl focus:ring-2 focus:ring-blue-500 text-sm font-bold appearance-none"
+                        >
+                          <option value="">Seçiniz</option>
+                          {COLOR_OPTIONS.map(c => <option key={c} value={c}>{c}</option>)}
+                        </select>
                       </div>
                       <div className="col-span-12 sm:col-span-3 space-y-2">
                         <label className="text-[10px] font-bold text-stone-400 uppercase">Beden / Özellik</label>
-                        <input 
+                        <select 
                           {...register(`variants.${index}.size`)}
-                          placeholder="Örn: XL"
-                          className="w-full px-4 py-3 bg-white dark:bg-stone-900 border-none rounded-xl focus:ring-2 focus:ring-blue-500 text-sm font-bold"
-                        />
+                          className="w-full px-4 py-3 bg-white dark:bg-stone-900 border-none rounded-xl focus:ring-2 focus:ring-blue-500 text-sm font-bold appearance-none"
+                        >
+                          <option value="">Seçiniz</option>
+                          {SIZE_OPTIONS.map(s => <option key={s} value={s}>{s}</option>)}
+                        </select>
                       </div>
                       <div className="col-span-8 sm:col-span-3 space-y-2">
                         <label className="text-[10px] font-bold text-stone-400 uppercase">Stok Adedi</label>
@@ -422,6 +459,144 @@ const AddProduct = () => {
           )}
         </form>
       </div>
+
+      {/* Summary Modal */}
+      {showSummary && formData && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-300">
+          <div className="bg-white dark:bg-stone-900 rounded-[2.5rem] w-full max-w-2xl max-h-[90vh] overflow-hidden shadow-2xl flex flex-col border border-stone-800 animate-in zoom-in-95 duration-300">
+            
+            <div className="p-8 border-b border-gray-100 dark:border-stone-800 flex justify-between items-center">
+              <div>
+                <h2 className="text-2xl font-black text-stone-900 dark:text-white">Ürün Özeti</h2>
+                <p className="text-stone-500 font-medium text-sm">Lütfen bilgileri son kez kontrol edin.</p>
+              </div>
+              <div className="p-3 bg-blue-50 dark:bg-blue-900/20 rounded-2xl text-blue-600">
+                <CheckCircle2 className="w-6 h-6" />
+              </div>
+            </div>
+
+            <div className="p-8 overflow-y-auto custom-scrollbar flex-1 space-y-8 bg-gray-50/50 dark:bg-stone-950/30">
+              
+              {/* Product Info Card */}
+              <div className="grid grid-cols-2 gap-6">
+                <div className="bg-white dark:bg-stone-800 p-5 rounded-3xl shadow-sm border border-gray-100 dark:border-stone-800">
+                  <p className="text-[10px] font-black text-stone-400 uppercase tracking-widest mb-1">Ürün Adı</p>
+                  <p className="font-bold text-stone-900 dark:text-white line-clamp-1">{formData.name}</p>
+                </div>
+                <div className="bg-white dark:bg-stone-800 p-5 rounded-3xl shadow-sm border border-gray-100 dark:border-stone-800">
+                  <p className="text-[10px] font-black text-stone-400 uppercase tracking-widest mb-1">Kategori / Alt Kategori</p>
+                  <p className="font-bold text-stone-900 dark:text-white">{formData.category} / {formData.subCategory}</p>
+                </div>
+                <div className="bg-white dark:bg-stone-800 p-5 rounded-3xl shadow-sm border border-gray-100 dark:border-stone-800">
+                  <p className="text-[10px] font-black text-stone-400 uppercase tracking-widest mb-1">Fiyat</p>
+                  <p className="font-bold text-emerald-500">₺{formData.price}</p>
+                </div>
+                <div className="bg-white dark:bg-stone-800 p-5 rounded-3xl shadow-sm border border-gray-100 dark:border-stone-800">
+                  <p className="text-[10px] font-black text-stone-400 uppercase tracking-widest mb-1">Marka</p>
+                  <p className="font-bold text-stone-900 dark:text-white">{formData.brand}</p>
+                </div>
+              </div>
+
+              {/* Images Preview */}
+              <div>
+                <p className="text-[10px] font-black text-stone-400 uppercase tracking-widest mb-3 px-2">Yüklenen Görseller ({formData.images.length})</p>
+                <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-none">
+                  {formData.images.map(img => (
+                    <img key={img.id} src={img.url} className="w-20 h-20 object-cover rounded-2xl flex-shrink-0 border border-gray-100 dark:border-stone-800 shadow-sm" alt="Preview" />
+                  ))}
+                </div>
+              </div>
+
+              {/* Variants */}
+              <div>
+                <p className="text-[10px] font-black text-stone-400 uppercase tracking-widest mb-3 px-2">Varyantlar</p>
+                <div className="bg-white dark:bg-stone-800 rounded-3xl overflow-hidden border border-gray-100 dark:border-stone-800 shadow-sm">
+                  <table className="w-full text-left text-sm">
+                    <thead className="bg-gray-50 dark:bg-stone-900/50 text-stone-400 text-[10px] uppercase font-black tracking-widest">
+                      <tr>
+                        <th className="px-5 py-3">Renk</th>
+                        <th className="px-5 py-3">Beden</th>
+                        <th className="px-5 py-3">Stok</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-gray-100 dark:divide-stone-900">
+                      {formData.variants.map((v, i) => (
+                        <tr key={i} className="text-stone-900 dark:text-gray-200">
+                          <td className="px-5 py-3 font-bold">{v.color || '-'}</td>
+                          <td className="px-5 py-3 font-bold">{v.size || '-'}</td>
+                          <td className="px-5 py-3 font-bold">{v.stock || '0'}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+
+              {/* Tags & Shipping Info */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="bg-amber-50/50 dark:bg-amber-900/10 p-5 rounded-3xl border border-amber-100 dark:border-amber-900/30">
+                  <p className="text-[10px] font-black text-amber-600 dark:text-amber-400 uppercase tracking-widest mb-2 flex items-center gap-2">
+                    <Tag className="w-3 h-3" /> Anahtar Kelimeler
+                  </p>
+                  <div className="flex flex-wrap gap-1.5">
+                    {formData.tags.split(',').map((tag, i) => (
+                      <span key={i} className="px-2 py-1 bg-white dark:bg-stone-800 rounded-lg text-[10px] font-bold text-stone-600 dark:text-stone-400 border border-amber-100 dark:border-stone-700">
+                        {tag.trim()}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+                <div className="bg-blue-50/50 dark:bg-blue-900/10 p-5 rounded-3xl border border-blue-100 dark:border-blue-900/30">
+                  <p className="text-[10px] font-black text-blue-600 dark:text-blue-400 uppercase tracking-widest mb-2 flex items-center gap-2">
+                    <Truck className="w-3 h-3" /> Lojistik Bilgileri
+                  </p>
+                  <p className="text-xs font-bold text-stone-700 dark:text-stone-300">Ağırlık: {formData.weight} kg</p>
+                  <p className="text-xs font-bold text-stone-700 dark:text-stone-300">Boyutlar: {formData.dimensions} cm</p>
+                </div>
+              </div>
+
+              {/* Approval Guidelines */}
+              <div className="bg-red-50/50 dark:bg-red-900/5 p-6 rounded-3xl border border-red-100/50 dark:border-red-900/20">
+                <h4 className="flex items-center gap-2 text-xs font-black text-red-600 dark:text-red-400 uppercase tracking-widest mb-3">
+                  <AlertCircle className="w-4 h-4" /> Önemli: Onay Süreci Bilgilendirmesi
+                </h4>
+                <ul className="text-[11px] space-y-2 text-stone-600 dark:text-stone-400 font-medium">
+                  <li className="flex items-start gap-2">
+                    <div className="w-1 h-1 rounded-full bg-red-400 mt-1.5" />
+                    <span>Hatalı veya abartılı **anahtar kelime** kullanımı ürünün engellenmesine sebep olabilir.</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <div className="w-1 h-1 rounded-full bg-red-400 mt-1.5" />
+                    <span>Lojistik boyutlarının (G x Y x D) yanlış girilmesi durumunda kargo aşamasında ek ücretler doğabilir.</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <div className="w-1 h-1 rounded-full bg-red-400 mt-1.5" />
+                    <span>Yanıltıcı veya düşük kaliteli ürün görselleri onay sürecini uzatabilir veya reddedilmeyle sonuçlanabilir.</span>
+                  </li>
+                </ul>
+              </div>
+
+            </div>
+
+            <div className="p-8 border-t border-gray-100 dark:border-stone-800 bg-white dark:bg-stone-900 flex gap-4">
+              <button 
+                onClick={() => setShowSummary(false)}
+                className="flex-1 py-4 px-6 border border-gray-200 dark:border-stone-800 rounded-2xl font-bold text-stone-500 hover:bg-gray-50 dark:hover:bg-stone-800 transition-all active:scale-95"
+              >
+                Düzenle
+              </button>
+              <button 
+                onClick={handleFinalSubmit}
+                className="flex-[2] py-4 px-6 bg-blue-600 hover:bg-blue-700 text-white rounded-2xl font-bold shadow-lg shadow-blue-500/30 transition-all active:scale-95 flex items-center justify-center gap-2"
+              >
+                Onayla ve Kaydet
+                <CheckCircle2 className="w-5 h-5" />
+              </button>
+            </div>
+
+          </div>
+        </div>
+      )}
     </div>
   );
 };
