@@ -116,23 +116,28 @@ function MiniUrunKarti({ urun, atolyeKategori }) {
           <span className="text-[9px] text-stone-400 font-medium">(12)</span>
         </div>
 
-        {/* Fiyat ve Sepet Butonu */}
-        <div className="flex items-center justify-between mt-auto">
-          
-          {/* YENİ FİYAT TASARIMI */}
-          <div className="flex items-baseline gap-1">
-            <p className="font-bold text-stone-700 text-sm">{urun.fiyat}</p>
-            <span className="text-[9px] font-medium text-stone-400 tracking-wide">'den başlayan</span>
+    {/* Fiyat ve Sepet Butonu */}
+        <div className="flex justify-between items-center mt-2">
+          <div className="flex flex-col justify-center">
+            <p className="font-bold text-stone-900">{urun.fiyat}</p>
+            {/* EĞER ÜRÜN SABİT FİYATLIYSA 'den başlayan YAZMAZ */}
+            {!urun.sabitFiyat && (
+              <span className="text-[9px] font-medium text-stone-400 tracking-wide mt-0.5">
+                'den başlayan
+              </span>
+            )}
           </div>
-
-          {/* BÜYÜTÜLMÜŞ SEPET BUTONU */}
-          <button
-            onClick={sepeteEkle}
-            className="p-2.5 rounded-full bg-stone-100 hover:bg-stone-800 hover:text-white text-stone-700 transition-colors shadow-sm"
+          
+          {/* YENİ: YAZILI VE ŞIK SEPETE EKLE BUTONU */}
+          <button 
+            onClick={sepeteEkle} 
+            className="flex items-center gap-1.5 px-3 py-2 rounded-full bg-stone-900 hover:bg-stone-800 text-white transition-colors shadow-sm group/btn" 
+            title="Sepete Ekle"
           >
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-5 h-5">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-3.5 h-3.5">
               <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 10.5V6a3.75 3.75 0 10-7.5 0v4.5m11.356-1.993l1.263 12c.07.665-.45 1.243-1.119 1.243H4.25a1.125 1.125 0 01-1.12-1.243l1.264-12A1.125 1.125 0 015.513 7.5h12.974c.576 0 1.059.435 1.119 1.007zM8.625 10.5a.375.375 0 11-.75 0 .375.375 0 01.75 0zm7.5 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z" />
             </svg>
+            <span className="text-[10px] font-bold tracking-widest uppercase">Sepete Ekle</span>
           </button>
         </div>
       </div>

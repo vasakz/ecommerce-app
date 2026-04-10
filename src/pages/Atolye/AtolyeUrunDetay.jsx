@@ -22,6 +22,11 @@ function AtolyeUrunDetay() {
   const [isZoomed, setIsZoomed] = useState(false);
   const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
 
+   // -- YENİ EKLENEN STATELER --
+  const [kazimaMetni, setKazimaMetni] = useState('');
+  const [hediyeNotu, setHediyeNotu] = useState('');
+  const [ozelOlcu, setOzelOlcu] = useState('');
+
   // -- 2. DİNAMİK FİYAT VE ÖZELLEŞTİRME STATELERİ --
   const [seciliBoyut, setSeciliBoyut] = useState(null);
   const [seciliRenk, setSeciliRenk] = useState(null);
@@ -69,9 +74,9 @@ function AtolyeUrunDetay() {
   ];
 
   const EKSTRALAR = [
-    { id: 'isim', isim: 'İsim/Baş Harf Kazıma', ekUcret: 100 },
-    { id: 'hediye', isim: 'Premium Hediye Paketi', ekUcret: 50 },
-  ];
+  { id: 'isim', isim: 'İsim/Baş Harf Kazıma', ekUcret: 100 },
+  { id: 'hediye', isim: 'Premium Hediye Paketi + Hediye Kartı', ekUcret: 50 },
+];
 
   const toplamFiyat = tabanFiyat 
     + (seciliBoyut?.ekUcret || 0) 
@@ -228,31 +233,48 @@ function AtolyeUrunDetay() {
 
           <div className="h-px w-full bg-stone-100 mb-8" />
 
-          {/* 1. Boyut Seçimi */}
-          <div className="mb-8">
-            <div className="flex justify-between items-end mb-3">
-              <h3 className="text-xs font-bold uppercase tracking-widest text-stone-800">Boyut Seçimi</h3>
-              <span className="text-[10px] text-stone-400">{seciliBoyut?.isim || 'Seçiniz'}</span>
-            </div>
-            <div className="grid grid-cols-3 gap-3">
-              {BOYUTLAR.map((b) => (
-                <button
-                  key={b.id}
-                  onClick={() => setSeciliBoyut(b)}
-                  className={`py-3 px-2 rounded-md border text-center transition-all ${
-                    seciliBoyut?.id === b.id 
-                      ? 'border-stone-800 bg-stone-900 text-white shadow-md' 
-                      : 'border-stone-200 text-stone-500 hover:border-stone-400 hover:bg-stone-50'
-                  }`}
-                >
-                  <span className="block text-xs font-semibold mb-1">{b.isim}</span>
-                  <span className={`text-[10px] ${seciliBoyut?.id === b.id ? 'text-white/70' : 'text-stone-400'}`}>
-                    {b.ekUcret > 0 ? `+${b.ekUcret} ₺` : 'Ücretsiz'}
-                  </span>
-                </button>
-              ))}
-            </div>
-          </div>
+         {/* 1. Boyut Seçimi */}
+<div className="mb-8">
+  <div className="flex justify-between items-end mb-3">
+    <h3 className="text-xs font-bold uppercase tracking-widest text-stone-800">Boyut Seçimi</h3>
+    <span className="text-[10px] text-stone-400">{seciliBoyut?.isim || 'Seçiniz'}</span>
+  </div>
+  <div className="grid grid-cols-3 gap-3">
+    {BOYUTLAR.map((b) => (
+      <button
+        key={b.id}
+        onClick={() => setSeciliBoyut(b)}
+        className={`py-3 px-2 rounded-md border text-center transition-all ${
+          seciliBoyut?.id === b.id 
+            ? 'border-stone-800 bg-stone-900 text-white shadow-md' 
+            : 'border-stone-200 text-stone-500 hover:border-stone-400 hover:bg-stone-50'
+        }`}
+      >
+        <span className="block text-xs font-semibold mb-1">{b.isim}</span>
+        <span className={`text-[10px] ${seciliBoyut?.id === b.id ? 'text-white/70' : 'text-stone-400'}`}>
+          {b.ekUcret > 0 ? `+${b.ekUcret} ₺` : 'Ücretsiz'}
+        </span>
+      </button>
+    ))}
+  </div>
+  
+  {/* Özel Ölçü Seçildiyse Açılacak Kısım burası */}
+  {seciliBoyut?.id === 'xl' && (
+    <div className="mt-3 p-4 bg-stone-50 border border-stone-200 rounded-md animate-in fade-in slide-in-from-top-2 duration-300">
+      <label className="text-xs font-semibold text-stone-700 block mb-2">
+        İstediğiniz Ölçüler (Min: {urun.minOlcu || '10'}cm - Max: {urun.maxOlcu || '200'}cm)
+      </label>
+      <input 
+        type="text" 
+        value={ozelOlcu}
+        onChange={(e) => setOzelOlcu(e.target.value)}
+        placeholder="Örn: En 45cm, Boy 90cm..." 
+        className="w-full p-2.5 border border-stone-300 rounded-md text-sm focus:outline-none focus:border-stone-500 bg-white" 
+      />
+      <p className="text-[10px] text-stone-400 mt-1.5">* Satıcı atölyenin belirlediği limitler dahilinde üretim yapılacaktır.</p>
+    </div>
+  )}
+</div>
 
           {/* 2. Renk Seçimi */}
           <div className="mb-8">
@@ -273,37 +295,62 @@ function AtolyeUrunDetay() {
                 </button>
               ))}
             </div>
-          </div>
-
-          {/* 3. Ultra Kişiselleştirme (Ekstralar) */}
-          <div className="mb-10">
-            <h3 className="text-xs font-bold uppercase tracking-widest text-stone-800 mb-3">Kişiselleştirme</h3>
-            <div className="flex flex-col gap-3">
-              {EKSTRALAR.map((e) => {
-                const isSelected = seciliEkstralar.some(item => item.id === e.id);
-                return (
-                  <button
-                    key={e.id}
-                    onClick={() => toggleEkstra(e)}
-                    className={`flex items-center justify-between p-4 rounded-md border transition-all text-left ${
-                      isSelected 
-                        ? 'border-amber-600/50 bg-amber-50/30' 
-                        : 'border-stone-200 hover:border-stone-300'
-                    }`}
-                  >
-                    <div className="flex items-center gap-3">
-                      {/* Özel Checkbox Tasarımı */}
-                      <div className={`w-4 h-4 border rounded flex items-center justify-center transition-colors ${isSelected ? 'bg-amber-600 border-amber-600' : 'border-stone-300'}`}>
-                        {isSelected && <svg className="w-3 h-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" /></svg>}
-                      </div>
-                      <span className={`text-sm ${isSelected ? 'text-stone-900 font-medium' : 'text-stone-600'}`}>{e.isim}</span>
-                    </div>
-                    <span className="text-xs text-stone-500 font-medium">+ {e.ekUcret} ₺</span>
-                  </button>
-                );
-              })}
+          </div>{/* 3. Ultra Kişiselleştirme (Ekstralar) */}
+<div className="mb-10">
+  <h3 className="text-xs font-bold uppercase tracking-widest text-stone-800 mb-3">Kişiselleştirme</h3>
+  <div className="flex flex-col gap-3">
+    {EKSTRALAR.map((e) => {
+      const isSelected = seciliEkstralar.some(item => item.id === e.id);
+      return (
+        <div key={e.id} className="flex flex-col gap-2">
+          <button
+            onClick={() => toggleEkstra(e)}
+            className={`flex items-center justify-between p-4 rounded-md border transition-all text-left ${
+              isSelected 
+                ? 'border-amber-600/50 bg-amber-50/30' 
+                : 'border-stone-200 hover:border-stone-300'
+            }`}
+          >
+            <div className="flex items-center gap-3">
+              <div className={`w-4 h-4 border rounded flex items-center justify-center transition-colors ${isSelected ? 'bg-amber-600 border-amber-600' : 'border-stone-300'}`}>
+                {isSelected && <svg className="w-3 h-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" /></svg>}
+              </div>
+              <span className={`text-sm ${isSelected ? 'text-stone-900 font-medium' : 'text-stone-600'}`}>{e.isim}</span>
             </div>
-          </div>
+            <span className="text-xs text-stone-500 font-medium">+ {e.ekUcret} ₺</span>
+          </button>
+
+          {/* YENİ: İsim Kazıma Kutucuğu */}
+          {isSelected && e.id === 'isim' && (
+            <div className="ml-10 mr-2 animate-in fade-in duration-300">
+              <input 
+                type="text" 
+                value={kazimaMetni}
+                onChange={(e) => setKazimaMetni(e.target.value)}
+                placeholder="Kazınacak isim veya harfleri yazın..." 
+                maxLength={15}
+                className="w-full p-2 border border-amber-200 bg-amber-50/20 rounded-md text-sm focus:outline-none focus:border-amber-400" 
+              />
+            </div>
+          )}
+
+          {/* YENİ: Hediye Notu Kutucuğu */}
+          {isSelected && e.id === 'hediye' && (
+            <div className="ml-10 mr-2 animate-in fade-in duration-300">
+              <textarea 
+                value={hediyeNotu}
+                onChange={(e) => setHediyeNotu(e.target.value)}
+                placeholder="Hediye kartına yazılacak notunuzu buraya ekleyin..." 
+                rows="2"
+                className="w-full p-2 border border-amber-200 bg-amber-50/20 rounded-md text-sm resize-none focus:outline-none focus:border-amber-400" 
+              />
+            </div>
+          )}
+        </div>
+      );
+    })}
+  </div>
+</div>
 
           {/* Eylem Butonları */}
           <div className="mt-auto pt-6 border-t border-stone-100 flex gap-4 bg-white/90 backdrop-blur sticky bottom-0 py-4">
