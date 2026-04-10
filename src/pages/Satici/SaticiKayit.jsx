@@ -128,7 +128,6 @@ function AdimKimlikBelgeler() {
                     <FileText size={24} className="text-stone-300 mx-auto mb-2" />
                     <p className="text-sm text-stone-500">Dosya seçin veya sürükleyin</p>
                     <p className="text-xs text-stone-400 mt-1">PNG, JPG veya PDF — Maks. 5MB</p>
-                    <input type="file" className="hidden" accept=".png,.jpg,.pdf" />
                 </div>
             </div>
             <div>
@@ -137,7 +136,6 @@ function AdimKimlikBelgeler() {
                     <FileText size={24} className="text-stone-300 mx-auto mb-2" />
                     <p className="text-sm text-stone-500">Dosya seçin veya sürükleyin</p>
                     <p className="text-xs text-stone-400 mt-1">PNG, JPG veya PDF — Maks. 5MB</p>
-                    <input type="file" className="hidden" accept=".png,.jpg,.pdf" />
                 </div>
             </div>
             <div>
@@ -146,7 +144,6 @@ function AdimKimlikBelgeler() {
                     <FileText size={24} className="text-stone-300 mx-auto mb-2" />
                     <p className="text-sm text-stone-500">Dosya seçin veya sürükleyin</p>
                     <p className="text-xs text-stone-400 mt-1">PNG, JPG veya PDF — Maks. 5MB</p>
-                    <input type="file" className="hidden" accept=".png,.jpg,.pdf" />
                 </div>
             </div>
         </div>
@@ -209,27 +206,15 @@ function AdimMagazaProfili() {
             </div>
             <div>
                 <label className={labelClass}>Mağaza Açıklaması</label>
-                <textarea
-                    rows={4}
-                    placeholder="Mağazanızı ve ürünlerinizi kısaca tanıtın..."
-                    className={`${inputClass} resize-none`}
-                />
+                <textarea rows={4} placeholder="Mağazanızı ve ürünlerinizi kısaca tanıtın..." className={`${inputClass} resize-none`} />
             </div>
             <div>
                 <label className={labelClass}>İade Politikası</label>
-                <textarea
-                    rows={3}
-                    placeholder="İade ve değişim koşullarınızı belirtin..."
-                    className={`${inputClass} resize-none`}
-                />
+                <textarea rows={3} placeholder="İade ve değişim koşullarınızı belirtin..." className={`${inputClass} resize-none`} />
             </div>
             <div>
                 <label className={labelClass}>Kargo Politikası</label>
-                <textarea
-                    rows={3}
-                    placeholder="Kargo süreçleri ve teslimat bilgilerini belirtin..."
-                    className={`${inputClass} resize-none`}
-                />
+                <textarea rows={3} placeholder="Kargo süreçleri ve teslimat bilgilerini belirtin..." className={`${inputClass} resize-none`} />
             </div>
         </div>
     )
@@ -264,29 +249,30 @@ function SaticiKayit() {
     return (
         <div className="min-h-screen bg-stone-50 flex flex-col">
 
-            {/* Üst Navbar */}
-            <header className="bg-slate-950 text-white">
-                <div className="px-6 py-2 flex items-center justify-between border-b border-stone-700">
-                    <span className="text-xs text-stone-400 tracking-widest">SATICI PANELİ</span>
-                    <a href="#" className="flex items-center gap-1 text-xs text-stone-400 hover:text-white transition">
-                        <HelpCircle size={13} /> Yardım Merkezi
-                    </a>
-                </div>
+            {/* Üst Navbar — Beyaz */}
+            <header className="bg-white border-b border-stone-200">
                 <div className="px-6 py-4 flex items-center justify-between">
                     <div className="flex items-center gap-4">
-                        <Link to="/kayit-ol" className="text-lg font-bold tracking-widest hover:text-stone-300 transition">BRAND</Link>
-                        <span className="text-stone-500">|</span>
-                        <span className="text-sm text-stone-300">Satıcı Başvuru Formu</span>
+                        <Link to="/kayit-ol" className="text-lg font-bold tracking-widest text-stone-900 hover:text-stone-600 transition">
+                            BRAND
+                        </Link>
+                        <span className="text-stone-300">|</span>
+                        <span className="text-sm text-stone-500">Satıcı Başvuru Formu</span>
                     </div>
                 </div>
             </header>
 
-            {/* Geri Butonu + Başlık */}
-            <div className="bg-white border-b border-stone-100 px-6 py-4 flex items-center gap-3">
-                <button onClick={geri} className="text-stone-400 hover:text-stone-700 transition">
-                    <ChevronLeft size={18} />
-                </button>
-                <h1 className="text-sm font-semibold text-stone-800">Satıcı Başvuru Formu</h1>
+            {/* İkinci bar */}
+            <div className="bg-white border-b border-stone-200 px-6 py-3.5 flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                    <button onClick={geri} className="text-stone-400 hover:text-stone-700 transition">
+                        <ChevronLeft size={18} />
+                    </button>
+                    <h1 className="text-sm font-semibold text-stone-700">Satıcı Başvuru Formu</h1>
+                </div>
+                <a href="#" className="flex items-center gap-1.5 text-xs text-amber-500 hover:text-amber-600 transition font-medium">
+                    <HelpCircle size={13} /> Nasıl Başvuru Yapabilirim?
+                </a>
             </div>
 
             {/* İçerik */}
@@ -345,7 +331,6 @@ function SaticiKayit() {
                     </div>
                 </div>
 
-                {/* Alt Bilgi */}
                 <p className="text-xs text-stone-400 text-center mt-6">
                     Adım {aktifAdim} / {adimlar.length} — Bilgileriniz güvenle saklanmaktadır.
                 </p>
