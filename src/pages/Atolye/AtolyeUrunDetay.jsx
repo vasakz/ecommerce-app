@@ -72,24 +72,26 @@ function AtolyeUrunDetay() {
     { id: 'siyah', isim: 'Gece Siyahı', ekUcret: 0, hex: '#1C1C1C' },
     { id: 'ozel', isim: 'Çift Renk', ekUcret: 150, hex: 'linear-gradient(to right, #8B5A2B, #1C1C1C)' },
   ];
+const EKSTRALAR = [
+    { id: 'isim', isim: 'İsim/Baş Harf Kazıma', ekUcret: 100 },
+    { id: 'hediye_paket', isim: 'Premium Hediye Paketi', ekUcret: 50 },
+    { id: 'hediye_not', isim: 'Hediye Kartı (Özel Not)', ekUcret: 15 },
+  ];
 
-  const EKSTRALAR = [
-  { id: 'isim', isim: 'İsim/Baş Harf Kazıma', ekUcret: 100 },
-  { id: 'hediye', isim: 'Premium Hediye Paketi + Hediye Kartı', ekUcret: 50 },
-];
+  const toggleEkstra = (ekstra) => {
+    // Eğer tıklanan ekstra zaten listede varsa, onu çıkar
+    if (seciliEkstralar.some(e => e.id === ekstra.id)) {
+      setSeciliEkstralar(seciliEkstralar.filter(e => e.id !== ekstra.id));
+    } else {
+      // Değilse, mevcut listeye bu yeni ekstrayı da ekle (Herhangi birini silmeden!)
+      setSeciliEkstralar([...seciliEkstralar, ekstra]);
+    }
+  };
 
   const toplamFiyat = tabanFiyat 
     + (seciliBoyut?.ekUcret || 0) 
     + (seciliRenk?.ekUcret || 0) 
     + seciliEkstralar.reduce((toplam, ekstra) => toplam + ekstra.ekUcret, 0);
-
-  const toggleEkstra = (ekstra) => {
-    if (seciliEkstralar.some(e => e.id === ekstra.id)) {
-      setSeciliEkstralar(seciliEkstralar.filter(e => e.id !== ekstra.id));
-    } else {
-      setSeciliEkstralar([...seciliEkstralar, ekstra]);
-    }
-  };
 
   const handleMouseMove = (e) => {
     const { left, top, width, height } = e.currentTarget.getBoundingClientRect();
@@ -219,6 +221,23 @@ function AtolyeUrunDetay() {
               )}
             </div>
 
+            {/* YENİ EKLENEN KISIM: Ürün Açıklaması ve Dinamik Ölçü Limitleri */}
+            <div className="mb-6 p-4 bg-stone-50 border-l-2 border-stone-300 rounded-r-md">
+              <p className="text-sm text-stone-600 leading-relaxed">
+                {urun.aciklama || "Atölyemizin ustaları tarafından özenle hazırlanan bu tasarım, birinci sınıf malzemelerle tamamen el işçiliğiyle üretilmektedir."}
+              </p>
+              
+              {/* Sadece üründe min/max ölçü tanımlıysa bu uyarı kutusu çıkar */}
+              {urun.minOlcu && urun.maxOlcu && (
+                <div className="mt-3 flex items-center gap-2 text-xs font-semibold text-stone-700 bg-white p-2.5 rounded border border-stone-200 w-fit shadow-sm">
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-4 h-4 text-amber-600">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M11.412 15.655L9.75 21.75l3.745-4.012M9.257 13.5H3.75l2.659-2.849m2.048-2.194L14.25 2.25 12 8.25m0 0l5.668-6.073L21.75 6l-6.852 7.34" />
+                  </svg>
+                  Atölye Üretim Limitleri: Minimum {urun.minOlcu} cm — Maksimum {urun.maxOlcu} cm
+                </div>
+              )}
+            </div>
+
             {/* Modal Açma Butonu */}
             <button 
               onClick={() => setIsModalOpen(true)}
@@ -320,13 +339,13 @@ function AtolyeUrunDetay() {
             <span className="text-xs text-stone-500 font-medium">+ {e.ekUcret} ₺</span>
           </button>
 
-          {/* YENİ: İsim Kazıma Kutucuğu */}
+        {/* YENİ: İsim Kazıma Kutucuğu */}
           {isSelected && e.id === 'isim' && (
             <div className="ml-10 mr-2 animate-in fade-in duration-300">
               <input 
                 type="text" 
                 value={kazimaMetni}
-                onChange={(e) => setKazimaMetni(e.target.value)}
+                onChange={(ev) => setKazimaMetni(ev.target.value)}
                 placeholder="Kazınacak isim veya harfleri yazın..." 
                 maxLength={15}
                 className="w-full p-2 border border-amber-200 bg-amber-50/20 rounded-md text-sm focus:outline-none focus:border-amber-400" 
@@ -334,12 +353,12 @@ function AtolyeUrunDetay() {
             </div>
           )}
 
-          {/* YENİ: Hediye Notu Kutucuğu */}
-          {isSelected && e.id === 'hediye' && (
+          {/* YENİ: Sadece Hediye Notu Seçilirse Açılacak Kutucuk */}
+          {isSelected && e.id === 'hediye_not' && (
             <div className="ml-10 mr-2 animate-in fade-in duration-300">
               <textarea 
                 value={hediyeNotu}
-                onChange={(e) => setHediyeNotu(e.target.value)}
+                onChange={(ev) => setHediyeNotu(ev.target.value)}
                 placeholder="Hediye kartına yazılacak notunuzu buraya ekleyin..." 
                 rows="2"
                 className="w-full p-2 border border-amber-200 bg-amber-50/20 rounded-md text-sm resize-none focus:outline-none focus:border-amber-400" 
