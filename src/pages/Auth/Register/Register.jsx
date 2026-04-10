@@ -44,13 +44,13 @@ function Register() {
             </label>
           </div>
 
-          <button className="w-full bg-stone-900 text-white py-3 text-sm font-semibold tracking-widest hover:bg-amber-500 transition rounded-full mb-3">
+          <button className="w-full bg-stone-900  dark:border dark:border-stone-400 text-white py-3 text-sm font-semibold tracking-widest hover:bg-amber-500 transition rounded-full mb-3">
             KAYIT OL
           </button>
 
           <button
             onClick={() => navigate('/satici-kayit')}
-            className="w-full border border-stone-300 text-stone-700 py-3 text-sm font-semibold tracking-widest hover:border-amber-500 hover:text-stone-900 transition rounded-full"
+            className="w-full border border-stone-400 dark:border-stone-600 dark:text-white text-stone-700 py-3 text-sm font-semibold tracking-widest hover:bg-amber-500 hover:border-amber-500 hover:text-white transition rounded-full"
           >
             SATICI HESABI OLUŞTUR
           </button>
