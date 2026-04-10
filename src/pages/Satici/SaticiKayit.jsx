@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import {
     ChevronLeft, ChevronRight, User, Store,
-    FileText, CreditCard, Image, Check, HelpCircle
+    FileText, CreditCard, Image, Check, HelpCircle, MessageCircle, X, Phone, Mail
 } from 'lucide-react'
 
 import registerForm1 from '../../assets/registerform1.jpg'
@@ -184,7 +184,7 @@ function AdimBankaBilgileri() {
     )
 }
 
-function AdimMagazaProfili() {
+function AdimMagazaProfili({ aydinlatmaOnayi, setAydinlatmaOnayi }) {
     return (
         <div className="space-y-6">
             <div className="grid grid-cols-2 gap-4">
@@ -211,6 +211,17 @@ function AdimMagazaProfili() {
                 <label className={labelClass}>Kargo Politikası</label>
                 <textarea rows={3} placeholder="Kargo süreçleri ve teslimat bilgilerini belirtin..." className={`${inputClass} resize-none`} />
             </div>
+            <label className="flex items-start gap-3 border border-stone-200 rounded-lg px-4 py-3 cursor-pointer hover:border-stone-400 transition">
+                <input
+                    type="checkbox"
+                    checked={aydinlatmaOnayi}
+                    onChange={(e) => setAydinlatmaOnayi(e.target.checked)}
+                    className="mt-0.5 accent-stone-800"
+                />
+                <span className="text-xs text-stone-600 leading-relaxed">
+                    <span className="underline">Aydınlatma metnini</span> okudum, kişisel verilerimin belirtilen kapsamda işlenmesini kabul ediyorum.
+                </span>
+            </label>
         </div>
     )
 }
@@ -219,9 +230,14 @@ function AdimMagazaProfili() {
 
 function SaticiKayit() {
     const [aktifAdim, setAktifAdim] = useState(1)
+    const [aydinlatmaOnayi, setAydinlatmaOnayi] = useState(false)
+    const [destekAcik, setDestekAcik] = useState(false)
     const navigate = useNavigate()
+    const sonAdimda = aktifAdim === adimlar.length
+    const basvuruTamamlanabilir = !sonAdimda || aydinlatmaOnayi
 
     const ileri = () => {
+        if (!basvuruTamamlanabilir) return
         if (aktifAdim < adimlar.length) setAktifAdim(prev => prev + 1)
         else navigate('/satici-panel')
     }
@@ -235,13 +251,19 @@ function SaticiKayit() {
             case 2: return <AdimMagazaBilgileri />
             case 3: return <AdimKimlikBelgeler />
             case 4: return <AdimBankaBilgileri />
-            case 5: return <AdimMagazaProfili />
+            case 5:
+                return (
+                    <AdimMagazaProfili
+                        aydinlatmaOnayi={aydinlatmaOnayi}
+                        setAydinlatmaOnayi={setAydinlatmaOnayi}
+                    />
+                )
             default: return null
         }
     }
 
     return (
-        <div className="min-h-screen bg-stone-50 flex flex-col">
+        <div className="min-h-screen bg-stone-50 flex flex-col relative">
 
             {/* Navbar */}
             <header className="bg-white border-b border-stone-200">
@@ -325,7 +347,12 @@ function SaticiKayit() {
                             </button>
                             <button
                                 onClick={ileri}
-                                className="flex items-center gap-2 bg-stone-900 hover:bg-amber-500 text-white text-sm font-semibold px-6 py-2.5 rounded-lg transition"
+                                disabled={!basvuruTamamlanabilir}
+                                className={`flex items-center gap-2 text-white text-sm font-semibold px-6 py-2.5 rounded-lg transition ${
+                                    basvuruTamamlanabilir
+                                        ? 'bg-stone-900 hover:bg-amber-500'
+                                        : 'bg-stone-300 cursor-not-allowed'
+                                }`}
                             >
                                 {aktifAdim === adimlar.length ? 'Başvuruyu Tamamla' : 'Devam Et'}
                                 {aktifAdim < adimlar.length && <ChevronRight size={16} />}
@@ -348,6 +375,47 @@ function SaticiKayit() {
                     />
                 </div>
 
+            </div>
+
+            <div className="fixed right-6 bottom-6 z-30">
+                {destekAcik && (
+                    <div className="w-[280px] bg-white border border-stone-200 rounded-xl shadow-xl p-4 mb-3">
+                        <div className="flex items-center justify-between mb-3">
+                            <p className="text-sm font-semibold text-stone-800">Destek Hattı</p>
+                            <button
+                                type="button"
+                                onClick={() => setDestekAcik(false)}
+                                className="text-stone-400 hover:text-stone-700 transition"
+                                aria-label="Destek panelini kapat"
+                            >
+                                <X size={16} />
+                            </button>
+                        </div>
+                        <p className="text-xs text-stone-500 mb-3">Hafta içi 09:00 - 18:00</p>
+                        <div className="space-y-2">
+                            <a href="tel:+908500000000" className="flex items-center gap-2 text-sm text-stone-700 hover:text-stone-900 transition">
+                                <Phone size={14} /> 0850 000 00 00
+                            </a>
+                            <a href="mailto:destek@brand.com" className="flex items-center gap-2 text-sm text-stone-700 hover:text-stone-900 transition">
+                                <Mail size={14} /> destek@brand.com
+                            </a>
+                            <a href="https://wa.me/905550000000" target="_blank" rel="noreferrer" className="block text-xs text-emerald-600 hover:text-emerald-700 underline">
+                                WhatsApp ile yaz
+                            </a>
+                            <a href="#" className="block text-xs text-amber-600 hover:text-amber-700 underline">
+                                Sık sorulan sorular
+                            </a>
+                        </div>
+                    </div>
+                )}
+                <button
+                    type="button"
+                    onClick={() => setDestekAcik(prev => !prev)}
+                    className="ml-auto flex items-center gap-3 bg-amber-500 hover:bg-amber-600 text-white text-lg font-semibold px-7 py-3.5 rounded-full shadow-lg transition"
+                >
+                    <MessageCircle size={20} />
+                    Destek
+                </button>
             </div>
         </div>
     )
