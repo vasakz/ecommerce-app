@@ -242,8 +242,8 @@ function Payment() {
             </div>
          </div>
          <div className="flex gap-4">
-           <button onClick={() => setPaymentStatus('RECEIPT')} className="flex items-center gap-2 px-6 py-3 bg-stone-900 text-white rounded hover:bg-stone-800 transition">
-              <FileText size={18}/> Ödeme Dekontu (ضيف هدهى صفحة)
+           <button onClick={() => setPaymentStatus('RECEIPT')} className="flex items-center gap-2 px-6 py-3 bg-amber-500 text-white font-bold rounded-lg hover:bg-amber-600 transition-all shadow-lg hover:shadow-xl hover:-translate-y-0.5">
+              <FileText size={18}/> Ödeme Dekontu
            </button>
            <button onClick={() => navigate('/')} className="px-6 py-3 border border-stone-300 text-stone-700 rounded hover:bg-stone-50 transition">
               Alışverişe Devam Et
@@ -563,47 +563,47 @@ function Payment() {
           </div>
 
           {/* ORDER SUMMARY SIDEBAR */}
-          <aside className="lg:sticky lg:top-8 bg-stone-900 text-white rounded-xl shadow-xl overflow-hidden flex flex-col">
+          <aside className="lg:sticky lg:top-8 bg-amber-500 text-white rounded-xl shadow-[0_10px_40px_-10px_rgba(245,158,11,0.5)] overflow-hidden flex flex-col border border-amber-400">
             <div className="p-6">
-                <h2 className="text-xs tracking-widest font-bold text-stone-300 mb-6 border-b border-stone-700 pb-4">SİPARİŞ ÖZETİ</h2>
-                <div className="space-y-4 text-sm text-stone-300 mb-6">
+                <h2 className="text-xs tracking-widest font-bold text-amber-100 mb-6 border-b border-amber-400/50 pb-4">SİPARİŞ ÖZETİ</h2>
+                <div className="space-y-4 text-sm text-amber-50 mb-6">
                 <div className="flex items-center justify-between">
-                    <span>Sepetteki Ürünler ({toplamAdet})</span>
-                    <span className="text-white">{araToplam.toLocaleString('tr-TR')} TL</span>
+                    <span className="font-medium text-amber-100">Sepetteki Ürünler ({toplamAdet})</span>
+                    <span className="text-white font-bold">{araToplam.toLocaleString('tr-TR')} TL</span>
                 </div>
                 {baseKargo > 0 && (
                     <div className="flex items-center justify-between">
-                        <span>Kargo</span>
-                        <span className="text-white">{baseKargo} TL</span>
+                        <span className="font-medium text-amber-100">Kargo</span>
+                        <span className="text-white font-bold">{baseKargo} TL</span>
                     </div>
                 )}
                 {baseKargo === 0 && (
-                    <div className="flex items-center justify-between text-emerald-400">
-                        <span>Kargo İndirimi</span>
-                        <span>Ücretsiz</span>
+                    <div className="flex items-center justify-between text-yellow-100">
+                        <span className="font-bold">Kargo İndirimi</span>
+                        <span className="font-bold uppercase tracking-widest bg-yellow-400/30 px-2 py-0.5 rounded text-[10px]">Ücretsiz</span>
                     </div>
                 )}
                 {ekstraUcret > 0 && (
                      <div className="flex items-center justify-between">
-                        <span>Kapıda Ödeme Bedeli</span>
-                        <span className="text-white">{ekstraUcret} TL</span>
+                        <span className="font-medium text-amber-100">Kapıda Ödeme Bedeli</span>
+                        <span className="text-white font-bold">{ekstraUcret} TL</span>
                      </div>
                 )}
                 {indirim > 0 && (
-                    <div className="flex items-center justify-between text-amber-400">
-                        <span>İndirim</span>
-                        <span className="font-medium">-{indirim.toLocaleString('tr-TR')} TL</span>
+                    <div className="flex items-center justify-between text-yellow-100">
+                        <span className="font-medium">İndirim</span>
+                        <span className="font-bold">-{indirim.toLocaleString('tr-TR')} TL</span>
                     </div>
                 )}
                 </div>
 
-                <div className="border-t border-stone-700 pt-5 pb-2 border-b border-stone-700 mb-6">
+                <div className="border-t border-amber-400/50 pt-5 pb-2 border-b border-amber-400/50 mb-6">
                     <div className="flex items-center justify-between mb-1">
-                        <span className="text-stone-400">Genel Toplam</span>
-                        <span className="text-stone-300">{genelToplam.toLocaleString('tr-TR')} TL</span>
+                        <span className="text-amber-100 font-medium">Genel Toplam</span>
+                        <span className="text-white font-bold">{genelToplam.toLocaleString('tr-TR')} TL</span>
                     </div>
                     {paymentMethod === 'WALLET' && walletBalance > 0 && (
-                        <div className="flex items-center justify-between mt-2 text-emerald-400 font-semibold">
+                        <div className="flex items-center justify-between mt-2 text-yellow-200 font-bold">
                             <span>Cüzdandan Düşülecek</span>
                             <span>-{Math.min(walletBalance, genelToplam).toLocaleString('tr-TR')} TL</span>
                         </div>
@@ -611,21 +611,21 @@ function Payment() {
                 </div>
 
                 <div className="flex flex-col items-end">
-                    <span className="text-xs text-stone-400 mb-1">ÖDENECEK TUTAR</span>
-                    <span className="text-3xl font-bold text-white tracking-tight">{odenecekTutar.toLocaleString('tr-TR')} <span className="text-xl font-normal text-stone-400">TL</span></span>
+                    <span className="text-xs text-amber-100 mb-1 font-bold">ÖDENECEK TUTAR</span>
+                    <span className="text-4xl font-black text-white tracking-tight">{odenecekTutar.toLocaleString('tr-TR')} <span className="text-xl font-bold text-amber-200">TL</span></span>
                 </div>
             </div>
 
             <button
                 onClick={handleProcessPayment}
                 disabled={!isAgreementChecked || (paymentMethod === 'WALLET' && walletBalance < genelToplam)}
-                className={`w-full py-5 text-base font-bold tracking-wide transition flex items-center justify-center gap-2 ${
+                className={`w-full py-5 text-sm font-black tracking-widest uppercase transition-all duration-300 flex items-center justify-center gap-2 shadow-xl ${
                     !isAgreementChecked || (paymentMethod === 'WALLET' && walletBalance < genelToplam)
-                    ? 'bg-stone-800 text-stone-500 cursor-not-allowed'
-                    : 'bg-amber-600 text-stone-900 hover:bg-amber-500'
+                    ? 'bg-amber-600/50 text-amber-200 cursor-not-allowed border-t border-amber-600/30'
+                    : 'bg-stone-900 text-white hover:bg-stone-800 shadow-stone-900/20 hover:shadow-stone-900/40 transform active:scale-[0.98]'
                 }`}
             >
-                <Lock size={18} className={!isAgreementChecked ? 'text-stone-500' : 'text-stone-900'}/>
+                <Lock size={18} className={!isAgreementChecked ? 'text-amber-200' : 'text-white'}/>
                 ÖDEMEYİ TAMAMLA
             </button>
           </aside>

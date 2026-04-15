@@ -132,7 +132,7 @@ const Products = () => {
     <div className="bg-gray-50 dark:bg-stone-900 min-h-screen pb-12 transition-colors duration-300">
       
       {/* Category Banner */}
-      <div className="relative w-full h-48 md:h-64 overflow-hidden bg-black mb-8">
+      <div className="relative w-full h-48 md:h-64 overflow-hidden bg-black mb-0">
         <img 
           src={selectedCategory ? CATEGORY_BANNERS[selectedCategory] : CATEGORY_BANNERS['Genel']} 
           alt="Category Banner" 
@@ -145,6 +145,20 @@ const Products = () => {
           <p className="mt-2 text-lg font-medium opacity-90 drop-shadow">
             Kusursuz Seçenekleri Keşfedin
           </p>
+        </div>
+      </div>
+
+      {/* Kayan Yazı */}
+      <style>{`
+        @keyframes marquee { 0% { transform: translateX(0%); } 100% { transform: translateX(-100%); } }
+        .animate-marquee { display: flex; white-space: nowrap; animation: marquee 35s linear infinite; }
+      `}</style>
+      <div className="w-full bg-stone-100/80 border-y border-stone-200 py-2.5 overflow-hidden flex items-center mb-8">
+        <div className="animate-marquee text-[11px] tracking-[0.25em] text-stone-600 font-medium uppercase">
+          <span className="mx-12">✧ Özel tasarım ve kusursuz kalite, sınırlı stok! Hemen inceleyin ✧</span>
+          <span className="mx-12 text-amber-700">🏷 YAZ KAMPANYASI: Seçili ürünlerde %30'a kadar indirim — EKSTRA %15 İNDİRİM FIRSATI ✧</span>
+          <span className="mx-12">✧ Bu haftaki tüm alışverişlerinizde ücretsiz kargo ve hediye paketleme ✧</span>
+          <span className="mx-12 text-teal-700">🎁 Tükendikten sonra yeniden stoklanmayacak ürünleri kaçırmayın ✧</span>
         </div>
       </div>
 
@@ -170,7 +184,7 @@ const Products = () => {
                 placeholder="Arama yap..." 
                 value={searchQuery}
                 onChange={(e) => updateParams('q', e.target.value)}
-                className="pl-10 pr-4 py-2 bg-white dark:bg-stone-800 border border-gray-200 dark:border-stone-700 rounded-lg outline-none focus:ring-2 focus:ring-blue-500 w-full sm:w-64 text-gray-900 dark:text-gray-100"
+                className="pl-10 pr-4 py-2 bg-white dark:bg-stone-800 border border-gray-200 dark:border-stone-700 rounded-lg outline-none focus:ring-2 focus:ring-amber-500 w-full sm:w-64 text-gray-900 dark:text-gray-100"
               />
               <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
             </div>
@@ -191,7 +205,7 @@ const Products = () => {
               <select 
                 value={sortBy}
                 onChange={(e) => setSortBy(e.target.value)}
-                className="appearance-none bg-white dark:bg-stone-800 border border-gray-200 dark:border-stone-700 rounded-lg px-4 py-2 pr-10 outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer text-sm font-medium"
+                className="appearance-none bg-white dark:bg-stone-800 border border-gray-200 dark:border-stone-700 rounded-lg px-4 py-2 pr-10 outline-none focus:ring-2 focus:ring-amber-500 cursor-pointer text-sm font-medium"
               >
                 <option value="best-seller">Akıllı Sıralama</option>
                 <option value="price-asc">En Düşük Fiyat</option>
@@ -224,15 +238,18 @@ const Products = () => {
         <div className="flex flex-col lg:flex-row gap-8">
           
           {/* Sidebar */}
-          <aside className="w-full lg:w-64 flex-shrink-0 space-y-8 bg-white dark:bg-stone-900 border border-gray-200 dark:border-stone-800 rounded-2xl p-6 self-start sticky top-24 max-h-[calc(100vh-120px)] overflow-y-auto custom-scrollbar">
+          <aside className="w-full lg:w-[280px] flex-shrink-0 space-y-10 bg-white/50 dark:bg-stone-900/40 backdrop-blur-2xl border border-white/40 dark:border-stone-800/60 rounded-3xl p-7 self-start sticky top-24 max-h-[calc(100vh-120px)] overflow-y-auto custom-scrollbar shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.2)]">
             
             {/* Kategoriler */}
             <div>
-              <h3 className="font-bold text-sm uppercase tracking-wider mb-4 border-b pb-2 dark:border-stone-800">Kategoriler</h3>
-              <div className="space-y-2">
+              <div className="flex items-center gap-2 mb-5">
+                <div className="w-1.5 h-1.5 rounded-full bg-amber-500"></div>
+                <h3 className="font-extrabold text-[11px] uppercase tracking-[0.2em] text-stone-900 dark:text-stone-100">Kategoriler</h3>
+              </div>
+              <div className="flex flex-col gap-1.5">
                 <button 
                   onClick={() => updateParams('category', '')}
-                  className={`block text-sm text-left w-full hover:text-blue-600 transition-colors ${!selectedCategory ? 'font-bold text-blue-600' : 'text-gray-600 dark:text-gray-400'}`}
+                  className={`block w-full text-left px-4 py-2.5 rounded-xl transition-all font-bold text-xs tracking-wide border ${!selectedCategory ? 'bg-amber-500 text-white border-amber-500 shadow-md shadow-amber-500/20' : 'bg-transparent text-stone-600 dark:text-stone-400 border-transparent hover:bg-white dark:hover:bg-stone-800 hover:text-stone-900 dark:hover:text-stone-200 hover:shadow-sm'}`}
                 >
                   Tüm Kategoriler
                 </button>
@@ -240,7 +257,7 @@ const Products = () => {
                   <button 
                     key={cat}
                     onClick={() => updateParams('category', cat)}
-                    className={`block text-sm text-left w-full hover:text-blue-600 transition-colors ${selectedCategory === cat ? 'font-bold text-blue-600' : 'text-gray-600 dark:text-gray-400'}`}
+                    className={`block w-full text-left px-4 py-2.5 rounded-xl transition-all font-bold text-xs tracking-wide border ${selectedCategory === cat ? 'bg-amber-500 text-white border-amber-500 shadow-md shadow-amber-500/20' : 'bg-transparent text-stone-600 dark:text-stone-400 border-transparent hover:bg-white dark:hover:bg-stone-800 hover:text-stone-900 dark:hover:text-stone-200 hover:shadow-sm'}`}
                   >
                     {cat}
                   </button>
@@ -251,17 +268,18 @@ const Products = () => {
             {/* Alt Kategoriler (if category selected) */}
             {availableSubcategories.length > 0 && (
               <div>
-                <h3 className="font-bold text-sm uppercase tracking-wider mb-4 border-b pb-2 dark:border-stone-800">Alt Kategoriler</h3>
-                <div className="space-y-2 max-h-40 overflow-y-auto custom-scrollbar">
+                <div className="flex items-center gap-2 mb-5 border-t border-stone-200/50 dark:border-stone-800/50 pt-8">
+                  <div className="w-1.5 h-1.5 rounded-full bg-amber-500"></div>
+                  <h3 className="font-extrabold text-[11px] uppercase tracking-[0.2em] text-stone-900 dark:text-stone-100">Alt Kategoriler</h3>
+                </div>
+                <div className="space-y-3 max-h-48 overflow-y-auto custom-scrollbar pr-2">
                   {availableSubcategories.map(sub => (
-                    <label key={sub} className="flex items-center gap-2 cursor-pointer group">
-                      <input 
-                        type="checkbox" 
-                        checked={selectedSubcategories.includes(sub)}
-                        onChange={() => updateParams('subcategory', sub, true)}
-                        className="w-4 h-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500 cursor-pointer" 
-                      />
-                      <span className="text-sm text-gray-600 dark:text-gray-400 group-hover:text-black dark:group-hover:text-white">{sub}</span>
+                    <label key={sub} className="flex items-center gap-3 cursor-pointer group">
+                      <input type="checkbox" checked={selectedSubcategories.includes(sub)} onChange={() => updateParams('subcategory', sub, true)} className="sr-only" />
+                      <div className={`w-4 h-4 rounded border flex items-center justify-center transition-all duration-200 ${selectedSubcategories.includes(sub) ? 'bg-amber-500 border-amber-500' : 'bg-white dark:bg-stone-900 border-stone-300 dark:border-stone-600 group-hover:border-amber-400'}`}>
+                        {selectedSubcategories.includes(sub) && <svg className="w-2.5 h-2.5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" /></svg>}
+                      </div>
+                      <span className={`text-xs font-semibold transition-colors ${selectedSubcategories.includes(sub) ? 'text-stone-900 dark:text-white' : 'text-stone-500 dark:text-stone-400 group-hover:text-stone-800 dark:group-hover:text-stone-200'}`}>{sub}</span>
                     </label>
                   ))}
                 </div>
@@ -270,39 +288,49 @@ const Products = () => {
 
             {/* Fiyat */}
             <div>
-              <h3 className="font-bold text-sm uppercase tracking-wider mb-4 border-b pb-2 dark:border-stone-800">Fiyat Aralığı</h3>
+              <div className="flex items-center gap-2 mb-5 border-t border-stone-200/50 dark:border-stone-800/50 pt-8">
+                <div className="w-1.5 h-1.5 rounded-full bg-amber-500"></div>
+                <h3 className="font-extrabold text-[11px] uppercase tracking-[0.2em] text-stone-900 dark:text-stone-100">Fiyat Aralığı</h3>
+              </div>
               <div className="flex gap-2 items-center">
-                <input 
-                  type="number" 
-                  placeholder="Min" 
-                  value={minPrice}
-                  onChange={e => updateParams('minPrice', e.target.value)}
-                  className="w-full border dark:border-stone-700 bg-gray-50 dark:bg-stone-800 rounded px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-blue-500" 
-                />
-                <span className="text-gray-400">-</span>
-                <input 
-                  type="number" 
-                  placeholder="Max" 
-                  value={maxPrice}
-                  onChange={e => updateParams('maxPrice', e.target.value)}
-                  className="w-full border dark:border-stone-700 bg-gray-50 dark:bg-stone-800 rounded px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-blue-500" 
-                />
+                <div className="relative w-full">
+                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-stone-400 text-xs font-bold">₺</span>
+                  <input 
+                    type="number" 
+                    placeholder="Min" 
+                    value={minPrice}
+                    onChange={e => updateParams('minPrice', e.target.value)}
+                    className="w-full border-0 bg-stone-100/80 dark:bg-stone-800/80 focus:bg-white dark:focus:bg-stone-800 focus:ring-2 focus:ring-amber-500 rounded-xl pl-7 pr-3 py-2.5 text-xs font-bold outline-none transition-all placeholder:text-stone-400 text-stone-800 dark:text-stone-100 shadow-inner" 
+                  />
+                </div>
+                <span className="text-stone-300 dark:text-stone-600 font-bold">-</span>
+                <div className="relative w-full">
+                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-stone-400 text-xs font-bold">₺</span>
+                  <input 
+                    type="number" 
+                    placeholder="Max" 
+                    value={maxPrice}
+                    onChange={e => updateParams('maxPrice', e.target.value)}
+                    className="w-full border-0 bg-stone-100/80 dark:bg-stone-800/80 focus:bg-white dark:focus:bg-stone-800 focus:ring-2 focus:ring-amber-500 rounded-xl pl-7 pr-3 py-2.5 text-xs font-bold outline-none transition-all placeholder:text-stone-400 text-stone-800 dark:text-stone-100 shadow-inner" 
+                  />
+                </div>
               </div>
             </div>
 
             {/* Marka */}
             <div>
-              <h3 className="font-bold text-sm uppercase tracking-wider mb-4 border-b pb-2 dark:border-stone-800">Markalar</h3>
-              <div className="space-y-2 max-h-48 overflow-y-auto custom-scrollbar">
+              <div className="flex items-center gap-2 mb-5 border-t border-stone-200/50 dark:border-stone-800/50 pt-8">
+                <div className="w-1.5 h-1.5 rounded-full bg-amber-500"></div>
+                <h3 className="font-extrabold text-[11px] uppercase tracking-[0.2em] text-stone-900 dark:text-stone-100">Markalar</h3>
+              </div>
+              <div className="space-y-3 max-h-48 overflow-y-auto custom-scrollbar pr-2">
                 {availableBrands.map(brand => (
-                  <label key={brand} className="flex items-center gap-2 cursor-pointer group">
-                    <input 
-                      type="checkbox" 
-                      checked={selectedBrands.includes(brand)}
-                      onChange={() => updateParams('brand', brand, true)}
-                      className="w-4 h-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500 cursor-pointer" 
-                    />
-                    <span className="text-sm text-gray-600 dark:text-gray-400 group-hover:text-black dark:group-hover:text-white">{brand}</span>
+                  <label key={brand} className="flex items-center gap-3 cursor-pointer group">
+                    <input type="checkbox" checked={selectedBrands.includes(brand)} onChange={() => updateParams('brand', brand, true)} className="sr-only" />
+                    <div className={`w-4 h-4 rounded border flex items-center justify-center transition-all duration-200 ${selectedBrands.includes(brand) ? 'bg-amber-500 border-amber-500' : 'bg-white dark:bg-stone-900 border-stone-300 dark:border-stone-600 group-hover:border-amber-400'}`}>
+                      {selectedBrands.includes(brand) && <svg className="w-2.5 h-2.5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" /></svg>}
+                    </div>
+                    <span className={`text-xs font-semibold transition-colors ${selectedBrands.includes(brand) ? 'text-stone-900 dark:text-white' : 'text-stone-500 dark:text-stone-400 group-hover:text-stone-800 dark:group-hover:text-stone-200'}`}>{brand}</span>
                   </label>
                 ))}
               </div>
@@ -310,28 +338,27 @@ const Products = () => {
 
             {/* Kargo ve Teslimat */}
             <div>
-              <h3 className="font-bold text-sm uppercase tracking-wider mb-4 border-b pb-2 dark:border-stone-800">Teslimat & Kargo</h3>
+              <div className="flex items-center gap-2 mb-5 border-t border-stone-200/50 dark:border-stone-800/50 pt-8">
+                <div className="w-1.5 h-1.5 rounded-full bg-amber-500"></div>
+                <h3 className="font-extrabold text-[11px] uppercase tracking-[0.2em] text-stone-900 dark:text-stone-100">Ayrıcalıklar</h3>
+              </div>
               <div className="space-y-3">
-                <label className="flex items-center gap-2 cursor-pointer group">
-                  <input 
-                    type="checkbox" 
-                    checked={isFreeShipping}
-                    onChange={() => updateParams('freeShipping', isFreeShipping ? '' : 'true')}
-                    className="w-4 h-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500 cursor-pointer" 
-                  />
-                  <div className="flex items-center gap-1.5 text-sm text-gray-700 dark:text-gray-300 font-medium">
-                    <Truck className="w-4 h-4 text-green-500" /> Ücretsiz Kargo
+                <label className="flex items-center gap-3 cursor-pointer group p-3 rounded-xl border border-stone-200 dark:border-stone-700/50 hover:border-amber-500/40 dark:hover:border-amber-500/40 hover:bg-white dark:hover:bg-stone-800 transition-all bg-stone-50/50 dark:bg-stone-800/30">
+                  <input type="checkbox" checked={isFreeShipping} onChange={() => updateParams('freeShipping', isFreeShipping ? '' : 'true')} className="sr-only" />
+                  <div className={`w-4 h-4 rounded border flex items-center justify-center transition-all duration-200 ${isFreeShipping ? 'bg-amber-500 border-amber-500 shadow-sm shadow-amber-500/30' : 'bg-white dark:bg-stone-900 border-stone-300 dark:border-stone-600'}`}>
+                     {isFreeShipping && <svg className="w-2.5 h-2.5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" /></svg>}
+                  </div>
+                  <div className="flex items-center gap-2 text-xs font-bold text-stone-800 dark:text-stone-200">
+                    <Truck className="w-3.5 h-3.5 text-emerald-500" /> Ücretsiz Kargo
                   </div>
                 </label>
-                <label className="flex items-center gap-2 cursor-pointer group">
-                  <input 
-                    type="checkbox" 
-                    checked={isFastDelivery}
-                    onChange={() => updateParams('fastDelivery', isFastDelivery ? '' : 'true')}
-                    className="w-4 h-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500 cursor-pointer" 
-                  />
-                  <div className="flex items-center gap-1.5 text-sm text-gray-700 dark:text-gray-300 font-medium">
-                    <Zap className="w-4 h-4 text-yellow-500 fill-yellow-500" /> Hızlı Teslimat
+                <label className="flex items-center gap-3 cursor-pointer group p-3 rounded-xl border border-stone-200 dark:border-stone-700/50 hover:border-amber-500/40 dark:hover:border-amber-500/40 hover:bg-white dark:hover:bg-stone-800 transition-all bg-stone-50/50 dark:bg-stone-800/30">
+                  <input type="checkbox" checked={isFastDelivery} onChange={() => updateParams('fastDelivery', isFastDelivery ? '' : 'true')} className="sr-only" />
+                  <div className={`w-4 h-4 rounded border flex items-center justify-center transition-all duration-200 ${isFastDelivery ? 'bg-amber-500 border-amber-500 shadow-sm shadow-amber-500/30' : 'bg-white dark:bg-stone-900 border-stone-300 dark:border-stone-600'}`}>
+                     {isFastDelivery && <svg className="w-2.5 h-2.5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" /></svg>}
+                  </div>
+                  <div className="flex items-center gap-2 text-xs font-bold text-stone-800 dark:text-stone-200">
+                    <Zap className="w-3.5 h-3.5 text-amber-500 fill-amber-500" /> Hızlı Teslimat
                   </div>
                 </label>
               </div>
@@ -339,17 +366,18 @@ const Products = () => {
 
             {/* Satıcı */}
             <div>
-              <h3 className="font-bold text-sm uppercase tracking-wider mb-4 border-b pb-2 dark:border-stone-800">Satıcı</h3>
-              <div className="space-y-2">
+              <div className="flex items-center gap-2 mb-5 border-t border-stone-200/50 dark:border-stone-800/50 pt-8">
+                <div className="w-1.5 h-1.5 rounded-full bg-amber-500"></div>
+                <h3 className="font-extrabold text-[11px] uppercase tracking-[0.2em] text-stone-900 dark:text-stone-100">Satıcı</h3>
+              </div>
+              <div className="space-y-3">
                 {SELLERS.map(seller => (
-                  <label key={seller} className="flex items-center gap-2 cursor-pointer group">
-                    <input 
-                      type="checkbox" 
-                      checked={selectedSellers.includes(seller)}
-                      onChange={() => updateParams('seller', seller, true)}
-                      className="w-4 h-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500 cursor-pointer" 
-                    />
-                    <span className="text-sm text-gray-600 dark:text-gray-400 group-hover:text-black dark:group-hover:text-white">{seller}</span>
+                  <label key={seller} className="flex items-center gap-3 cursor-pointer group">
+                    <input type="checkbox" checked={selectedSellers.includes(seller)} onChange={() => updateParams('seller', seller, true)} className="sr-only" />
+                    <div className={`w-4 h-4 rounded border flex items-center justify-center transition-all duration-200 ${selectedSellers.includes(seller) ? 'bg-amber-500 border-amber-500' : 'bg-white dark:bg-stone-900 border-stone-300 dark:border-stone-600 group-hover:border-amber-400'}`}>
+                      {selectedSellers.includes(seller) && <svg className="w-2.5 h-2.5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" /></svg>}
+                    </div>
+                    <span className={`text-xs font-semibold transition-colors ${selectedSellers.includes(seller) ? 'text-stone-900 dark:text-white' : 'text-stone-500 dark:text-stone-400 group-hover:text-stone-800 dark:group-hover:text-stone-200'}`}>{seller}</span>
                   </label>
                 ))}
               </div>
@@ -357,22 +385,30 @@ const Products = () => {
 
             {/* Puan */}
             <div>
-              <h3 className="font-bold text-sm uppercase tracking-wider mb-4 border-b pb-2 dark:border-stone-800">Müşteri Puanı</h3>
-              <div className="space-y-2">
+              <div className="flex items-center gap-2 mb-5 border-t border-stone-200/50 dark:border-stone-800/50 pt-8">
+                <div className="w-1.5 h-1.5 rounded-full bg-amber-500"></div>
+                <h3 className="font-extrabold text-[11px] uppercase tracking-[0.2em] text-stone-900 dark:text-stone-100">Müşteri Puanı</h3>
+              </div>
+              <div className="space-y-1.5">
                 {[4, 3, 2, 1].map(rating => (
-                  <label key={rating} className="flex items-center gap-2 cursor-pointer">
-                    <input 
-                      type="radio" 
-                      name="rating" 
-                      checked={minRating === rating}
-                      onChange={() => updateParams('rating', rating.toString())}
-                      className="w-4 h-4 border-gray-300 text-blue-600 focus:ring-blue-500 cursor-pointer" 
-                    />
-                    <div className="flex items-center text-yellow-400">
-                      {Array.from({ length: 5 }).map((_, i) => (
-                        <Star key={i} className={`w-3 h-3 ${i < rating ? 'fill-current' : 'text-gray-300'}`} />
-                      ))}
-                      <span className="text-gray-500 dark:text-gray-400 ml-2 text-xs font-medium">& Üzeri</span>
+                  <label key={rating} className="block cursor-pointer">
+                    <div className={`flex items-center gap-3 w-full px-3 py-2 rounded-xl border transition-all duration-300 ${minRating === rating ? 'bg-white dark:bg-stone-800 border-amber-500 shadow-sm shadow-amber-500/10' : 'bg-transparent border-transparent hover:bg-white/50 dark:hover:bg-stone-800/50'}`}>
+                      <input 
+                        type="radio" 
+                        name="rating" 
+                        checked={minRating === rating}
+                        onChange={() => updateParams('rating', rating.toString())}
+                        className="sr-only" 
+                      />
+                      <div className={`w-3.5 h-3.5 rounded-full border-2 flex items-center justify-center transition-all ${minRating === rating ? 'border-amber-500' : 'border-stone-300 dark:border-stone-600'}`}>
+                        {minRating === rating && <div className="w-1.5 h-1.5 bg-amber-500 rounded-full"></div>}
+                      </div>
+                      <div className="flex items-center flex-1">
+                        {Array.from({ length: 5 }).map((_, i) => (
+                          <Star key={i} className={`w-3.5 h-3.5 ${i < rating ? 'fill-amber-400 text-amber-400' : 'fill-stone-200 dark:fill-stone-700 text-transparent'}`} />
+                        ))}
+                        <span className={`text-[10px] font-bold ml-auto uppercase tracking-wide ${minRating === rating ? 'text-amber-600' : 'text-stone-400'}`}>& Üzeri</span>
+                      </div>
                     </div>
                   </label>
                 ))}
@@ -381,16 +417,20 @@ const Products = () => {
 
             {/* Renk */}
             <div>
-              <h3 className="font-bold text-sm uppercase tracking-wider mb-4 border-b pb-2 dark:border-stone-800">Renk</h3>
-              <div className="flex flex-wrap gap-2">
+              <div className="flex items-center gap-2 mb-5 border-t border-stone-200/50 dark:border-stone-800/50 pt-8">
+                <div className="w-1.5 h-1.5 rounded-full bg-amber-500"></div>
+                <h3 className="font-extrabold text-[11px] uppercase tracking-[0.2em] text-stone-900 dark:text-stone-100">Renk</h3>
+              </div>
+              <div className="flex flex-wrap gap-2.5">
                 {COLORS.map((color) => (
                   <button 
                     key={color.id} 
                     title={color.name}
                     onClick={() => updateParams('color', color.id, true)}
-                    className={`w-7 h-7 rounded-full border shadow-sm transition-transform flex items-center justify-center
+                    className={`relative w-8 h-8 rounded-full border shadow-sm transition-all duration-300 flex items-center justify-center
                       ${color.class} ${color.border || 'border-transparent'}
-                      ${selectedColors.includes(color.id) ? 'ring-2 ring-offset-2 ring-blue-500 dark:ring-offset-stone-900 scale-110' : 'hover:scale-110'}`}
+                      ${selectedColors.includes(color.id) ? 'ring-2 ring-offset-2 ring-amber-500 dark:ring-offset-stone-900 scale-110 rotate-12' : 'hover:scale-110 hover:shadow-md'}
+                    `}
                   >
                   </button>
                 ))}
@@ -400,30 +440,36 @@ const Products = () => {
             {/* Beden & Cinsiyet */}
             {(selectedCategory === 'Çantalar' || selectedCategory === 'Ayakkabılar' || selectedCategory === 'Giyim' || !selectedCategory) && (
               <>
-                <div>
-                  <h3 className="font-bold text-sm uppercase tracking-wider mb-4 border-b pb-2 dark:border-stone-800">Cinsiyet</h3>
+                <div className="border-t border-stone-200/50 dark:border-stone-800/50 pt-8">
+                  <div className="flex items-center gap-2 mb-5">
+                    <div className="w-1.5 h-1.5 rounded-full bg-amber-500"></div>
+                    <h3 className="font-extrabold text-[11px] uppercase tracking-[0.2em] text-stone-900 dark:text-stone-100">Cinsiyet</h3>
+                  </div>
                   <div className="flex flex-wrap gap-2">
                     {['Erkek', 'Kadın', 'Unisex'].map(g => (
                       <button 
                         key={g}
                         onClick={() => updateParams('gender', g, true)}
-                        className={`px-3 py-1.5 rounded-lg border text-xs font-semibold transition-colors
-                          ${selectedGenders.includes(g) ? 'border-blue-600 bg-blue-50 dark:bg-blue-900/30 text-blue-600' : 'border-gray-200 dark:border-stone-700 hover:border-blue-600 text-gray-600 dark:text-gray-300'}`}
+                        className={`px-4 py-2 rounded-xl border text-[11px] uppercase tracking-wider font-extrabold transition-all duration-300 shadow-sm
+                          ${selectedGenders.includes(g) ? 'border-amber-500 bg-amber-500 text-white shadow-amber-500/20' : 'bg-white border-stone-200 dark:bg-stone-800 dark:border-stone-700 hover:border-amber-400 text-stone-600 dark:text-stone-300 hover:bg-stone-50 dark:hover:bg-stone-700'}`}
                       >
                         {g}
                       </button>
                     ))}
                   </div>
                 </div>
-                <div>
-                  <h3 className="font-bold text-sm uppercase tracking-wider mb-4 border-b pb-2 dark:border-stone-800">Beden</h3>
-                  <div className="grid grid-cols-3 gap-2">
+                <div className="border-t border-stone-200/50 dark:border-stone-800/50 pt-8">
+                  <div className="flex items-center gap-2 mb-5">
+                    <div className="w-1.5 h-1.5 rounded-full bg-amber-500"></div>
+                    <h3 className="font-extrabold text-[11px] uppercase tracking-[0.2em] text-stone-900 dark:text-stone-100">Beden</h3>
+                  </div>
+                  <div className="grid grid-cols-3 gap-2.5">
                     {['XS', 'S', 'M', 'L', 'XL'].map(size => (
                       <button 
                         key={size}
                         onClick={() => updateParams('size', size, true)}
-                        className={`h-9 rounded border flex items-center justify-center text-xs font-bold transition-colors
-                          ${selectedSizes.includes(size) ? 'border-black bg-black text-white dark:border-white dark:bg-white dark:text-black' : 'border-gray-200 dark:border-stone-700 hover:border-black dark:hover:border-white text-gray-700 dark:text-gray-300'}`}
+                        className={`h-11 rounded-xl border flex items-center justify-center text-xs font-black transition-all duration-300 shadow-sm
+                          ${selectedSizes.includes(size) ? 'border-stone-900 bg-stone-900 text-amber-400 dark:border-white dark:bg-white dark:text-stone-900' : 'bg-white border-stone-200 dark:bg-stone-800 dark:border-stone-700 hover:border-stone-400 text-stone-500 dark:text-stone-300'}`}
                       >
                         {size}
                       </button>
@@ -444,7 +490,7 @@ const Products = () => {
                 <p className="text-gray-500 dark:text-gray-400 mb-8 max-w-sm mx-auto">Seçtiğiniz filtrelere uyan bir ürün maalesef şu an stoklarımızda yok. Farklı filtreler denemeye ne dersiniz?</p>
                 <button 
                   onClick={clearAllFilters}
-                  className="bg-blue-600 text-white px-8 py-3 rounded-xl font-bold hover:bg-blue-700 transition-colors shadow-lg shadow-blue-500/30"
+                  className="bg-amber-600 text-white px-8 py-3 rounded-xl font-bold hover:bg-amber-700 transition-colors shadow-lg shadow-amber-500/30"
                 >
                   Filtreleri Temizle
                 </button>
@@ -497,7 +543,7 @@ const Products = () => {
                     <div className="p-5 flex flex-col flex-1">
                       {/* Name & Details Stacked */}
                       <div className="mb-3">
-                        <Link to={`/urunler/${product.id}`} className="font-bold text-gray-900 dark:text-gray-100 line-clamp-1 hover:text-blue-600 dark:hover:text-blue-400 transition-colors leading-tight uppercase tracking-tight text-sm">
+                        <Link to={`/urunler/${product.id}`} className="font-bold text-gray-900 dark:text-gray-100 line-clamp-1 hover:text-amber-600 dark:hover:text-amber-400 transition-colors leading-tight uppercase tracking-tight text-sm">
                           {product.name}
                         </Link>
                         <p className="text-[11px] font-medium text-stone-500 dark:text-stone-400 mt-1 line-clamp-1 italic">
@@ -534,7 +580,7 @@ const Products = () => {
                         <div className="mt-4 flex items-center justify-between">
                           <Link 
                             to={`/urunler/${product.id}`}
-                            className="text-[10px] font-black text-stone-800 dark:text-stone-200 hover:text-blue-600 transition-colors uppercase tracking-[0.15em] border-b border-stone-200 dark:border-stone-700 pb-0.5"
+                            className="text-[10px] font-black text-stone-800 dark:text-stone-200 hover:text-amber-600 transition-colors uppercase tracking-[0.15em] border-b border-stone-200 dark:border-stone-700 pb-0.5"
                           >
                             İncele
                           </Link>
@@ -548,9 +594,11 @@ const Products = () => {
                               }));
                               toast.success('Ürün sepete eklendi');
                             }}
-                            className="p-2 rounded-xl bg-gray-900 dark:bg-white text-white dark:text-gray-900 hover:bg-amber-500 dark:hover:bg-amber-500 dark:hover:text-white transition-all transform active:scale-95 shadow-md"
+                            className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-amber-500 text-white hover:bg-amber-600 transition-all transform active:scale-95 shadow-md shadow-amber-500/20 text-[10px] font-black uppercase tracking-widest"
                           >
                             <ShoppingBag className="w-4 h-4" />
+                            <span className="hidden sm:inline-block">Sepete Ekle</span>
+                            <span className="inline-block sm:hidden">Ekle</span>
                           </button>
                         </div>
                       </div>
