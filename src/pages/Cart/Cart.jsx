@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 import { decreaseQuantity, increaseQuantity, removeFromCart } from '../../store/slices/cartSlice'
-import { toast } from 'react-toastify'
+import { toast } from 'react-hot-toast'
 
 const priceToNumber = (price) => {
   if (typeof price === 'number') return price

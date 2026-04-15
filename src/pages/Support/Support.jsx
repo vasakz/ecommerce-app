@@ -109,7 +109,7 @@ const Support = () => {
                     placeholder="Size nasıl yardımcı olabiliriz?"
                   ></textarea>
                 </div>
-                <button className="w-full py-4 bg-primary-600 hover:bg-primary-700 text-white font-bold rounded-xl shadow-lg shadow-primary-500/30 transition-all scale-100 active:scale-95">
+                <button className="w-full py-4 bg-stone-900 dark:bg-white text-white dark:text-stone-900 font-bold rounded-xl shadow-lg hover:bg-black dark:hover:bg-stone-100 transition-all scale-100 active:scale-95">
                   Mesajı Gönder
                 </button>
               </form>

@@ -104,13 +104,23 @@ const MyOrders = () => {
                       Sipariş Detaylarını Gör →
                     </Link>
                     <div className="flex gap-3">
+                      {(order.status === 'Hazırlanıyor' || order.status === 'Onay Bekliyor' || order.status === 'Ödeme Bekleniyor') && (
+                         <Link to={`/siparislerim/${order.id}/islem`} className="px-4 py-2 text-sm font-medium text-amber-700 bg-amber-100 hover:bg-amber-200 dark:text-amber-200 dark:bg-amber-900/40 border border-amber-200 dark:border-amber-800 rounded-lg transition-colors">
+                            Siparişi İptal Et
+                         </Link>
+                      )}
+                      {(order.status === 'Teslim Edildi') && (
+                         <Link to={`/siparislerim/${order.id}/islem`} className="px-4 py-2 text-sm font-medium text-blue-700 bg-blue-100 hover:bg-blue-200 dark:text-blue-200 dark:bg-blue-900/40 border border-blue-200 dark:border-blue-800 rounded-lg transition-colors">
+                            İade Talebi
+                         </Link>
+                      )}
                       <button 
                         onClick={() => generateInvoicePDF(order)}
                         className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 hover:bg-gray-200 dark:text-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600 rounded-lg transition-colors"
                       >
                         Fatura
                       </button>
-                      <button className="px-4 py-2 text-sm font-medium text-white bg-primary-600 hover:bg-primary-700 rounded-lg shadow-sm transition-colors">
+                      <button className="px-4 py-2 text-sm font-bold text-white bg-amber-500 hover:bg-amber-600 rounded-lg shadow-sm transition-colors">
                         Tekrar Sipariş Ver
                       </button>
                     </div>

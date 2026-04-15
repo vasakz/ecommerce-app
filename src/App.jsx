@@ -6,6 +6,7 @@ import Home from './pages/Home/Home'
 import NotFound from './pages/NotFound/NotFound'
 import Register from './pages/Auth/Register/Register'
 import Login from './pages/Auth/Login/Login'
+import ForgotPassword from './pages/Auth/ForgotPassword/ForgotPassword'
 import Atolye from './pages/Atolye/Atolye'
 import AtolyelerListesi from './pages/Atolye/AtolyelerListesi'
 import Cart from './pages/Cart/Cart'
@@ -18,16 +19,19 @@ import KampanyaDetail from './pages/Kampanyalar/KampanyaDetail'
 import Profile from './pages/Profile/Profile'
 import MyOrders from './pages/Orders/MyOrders'
 import OrderDetail from './pages/Orders/OrderDetail'
+import OrderAction from './pages/Orders/OrderAction'
 import Support from './pages/Support/Support'
 import SaticiKayit from './pages/Satici/SaticiKayit'
 
 // Seller Pages
 import ProductManagement from './pages/Seller/ProductManagement'
+import OrderRequests from './pages/Seller/OrderRequests'
 import AddProduct from './pages/Seller/AddProduct'
 import OrderManagement from './pages/Seller/OrderManagement'
 import StoreCalendar from './pages/Seller/StoreCalendar'
 import StatisticsDashboard from './pages/Seller/StatisticsDashboard'
 import FinancialManagement from './pages/Seller/FinancialManagement'
+import ShippingManagement from './pages/Seller/ShippingManagement'
 
 // Layout
 import Navbar from './components/layout/Navbar'
@@ -36,7 +40,7 @@ import Footer from './components/layout/Footer'
 function Layout() {
   const location = useLocation()
 
-  const hideFooterRoutes = ['/kayit-ol', '/giris-yap']
+  const hideFooterRoutes = ['/kayit-ol', '/giris-yap', '/sifremi-unuttum']
   const hideNavbarRoutes = ['/satici-kayit', '/satici-panel', '/satici-giris']
 
   const shouldHideFooter = hideFooterRoutes.includes(location.pathname)
@@ -55,6 +59,7 @@ function Layout() {
         {/* Auth */}
         <Route path="/kayit-ol" element={<Register />} />
         <Route path="/giris-yap" element={<Login />} />
+        <Route path="/sifremi-unuttum" element={<ForgotPassword />} />
 
         {/* Atölye */}
         <Route path="/atolye" element={<Atolye />} />
@@ -82,6 +87,7 @@ function Layout() {
         {/* Siparişler */}
         <Route path="/siparislerim" element={<MyOrders />} />
         <Route path="/siparislerim/:id" element={<OrderDetail />} />
+        <Route path="/siparislerim/:id/islem" element={<OrderAction />} />
 
         {/* Destek */}
         <Route path="/destek" element={<Support />} />
@@ -91,9 +97,11 @@ function Layout() {
         <Route path="/satici/urun-ekle" element={<AddProduct />} />
         <Route path="/satici/urun-duzenle/:id" element={<AddProduct />} />
         <Route path="/satici/siparisler" element={<OrderManagement />} />
+        <Route path="/satici/talepler" element={<OrderRequests />} />
         <Route path="/satici/takvim" element={<StoreCalendar />} />
         <Route path="/satici/istatistikler" element={<StatisticsDashboard />} />
         <Route path="/satici/finans" element={<FinancialManagement />} />
+        <Route path="/satici/kargo" element={<ShippingManagement />} />
 
         {/* Satici */}
         <Route path="/satici-kayit" element={<SaticiKayit />} />

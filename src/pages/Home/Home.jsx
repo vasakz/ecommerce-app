@@ -177,63 +177,79 @@ function Home() {
   const prevHero = () => setCurrentHero(prev => (prev - 1 + heroContent.length) % heroContent.length);
 
   return (
-    <div className="bg-stone-50 dark:bg-stone-950 min-h-screen transition-colors duration-500">
-      {/* Hero Banner Carousel */}
-      <div className="relative w-full h-[500px] overflow-hidden">
+    <div className="bg-stone-50 dark:bg-stone-950 min-h-screen transition-colors duration-500 overflow-x-hidden">
+      {/* Cinematic Video-Style Hero (Compact) */}
+      <div className="relative w-full h-[400px] md:h-[500px] overflow-hidden bg-black group shadow-2xl">
         {heroContent.map((hero, idx) => (
           <div
             key={idx}
-            className={`absolute inset-0 transition-all duration-1000 ease-in-out transform ${idx === currentHero ? 'opacity-100 scale-100' : 'opacity-0 scale-105 pointer-events-none'}`}
+            className={`absolute inset-0 transition-all duration-[2000ms] ease-out transform ${
+              idx === currentHero 
+                ? 'opacity-100' 
+                : 'opacity-0 pointer-events-none'
+            }`}
           >
-            <img
-              src={hero.img}
-              alt="hero"
-              className="object-cover w-full h-full"
-            />
-            <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/40 to-transparent flex flex-col justify-center px-12 md:px-24 text-white">
-              <p className="text-xs tracking-[0.3em] mb-4 text-amber-400 font-black uppercase opacity-90">{hero.tag}</p>
-              <h1 className="text-6xl font-black mb-6 leading-[1.1] tracking-tighter">{hero.title}</h1>
-              <p className="text-base max-w-lg text-stone-300 mb-8 leading-relaxed font-medium">
-                {hero.desc}
-              </p>
-              <div className="flex gap-4">
-                <Link
-                  to="/urunler"
-                  className="inline-flex items-center gap-3 bg-amber-500 hover:bg-amber-400 text-white font-black py-4 px-10 rounded-2xl transition-all text-sm shadow-2xl shadow-amber-500/40 w-fit active:scale-95"
-                >
-                  <ShoppingBag className="w-5 h-5" />
-                  Alışverişe Başla
-                </Link>
+            {/* Ken Burns Video Effect */}
+            <div className={`absolute inset-0 transform transition-transform duration-[8000ms] ease-linear ${idx === currentHero ? 'scale-125 translate-y-2' : 'scale-100'}`}>
+              <img
+                src={hero.img}
+                alt="hero"
+                className="object-cover w-full h-full brightness-[0.6] saturate-[1.2]"
+              />
+            </div>
+
+            <div className="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-transparent" />
+            
+            {/* Cinematic Overlay */}
+            <div className="relative h-full max-w-7xl mx-auto px-10 md:px-24 flex flex-col justify-end pb-16 text-white z-10">
+              <div className="max-w-2xl">
+                <span className={`inline-block px-3 py-1 bg-white/10 backdrop-blur-xl border border-white/20 rounded text-[9px] font-black tracking-widest uppercase mb-4 transition-all duration-1000 ${idx === currentHero ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
+                  {hero.tag}
+                </span>
+                
+                <h1 className={`text-4xl md:text-6xl font-black mb-4 tracking-tighter transition-all duration-1000 delay-300 ${idx === currentHero ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
+                  {hero.title}
+                </h1>
+
+                <div className={`flex items-center gap-6 mt-6 transition-all duration-1000 delay-700 ${idx === currentHero ? 'opacity-100' : 'opacity-0'}`}>
+                  <Link
+                    to="/urunler"
+                    className="h-12 px-8 bg-white text-black text-[11px] font-black uppercase tracking-widest rounded-full flex items-center justify-center hover:scale-105 transition-transform shadow-xl"
+                  >
+                    Koleksiyonu İncele
+                  </Link>
+                </div>
               </div>
             </div>
           </div>
         ))}
 
-        {/* Carousel Controls */}
-        <div className="absolute bottom-10 left-12 md:left-24 flex items-center gap-4">
-          <div className="flex gap-2">
-            {heroContent.map((_, idx) => (
-              <button
-                key={idx}
-                onClick={() => setCurrentHero(idx)}
-                className={`h-1 rounded-full transition-all duration-500 ${idx === currentHero ? 'bg-amber-400 w-12' : 'bg-white/30 w-4 hover:bg-white/50'}`}
-              />
-            ))}
+        {/* Video Progress Bar */}
+        <div className="absolute top-0 left-0 w-full h-[3px] bg-white/10 z-30">
+          <div 
+            key={currentHero}
+            className="h-full bg-amber-500 animate-progress-timer"
+            style={{ animationDuration: '5000ms' }}
+          />
+        </div>
+
+        {/* Cinematic Controls */}
+        <div className="absolute bottom-10 right-10 md:right-24 flex items-center gap-3 z-30">
+          <button 
+            onClick={prevHero}
+            className="w-10 h-10 bg-black/40 backdrop-blur-xl border border-white/10 rounded-full flex items-center justify-center text-white hover:bg-white hover:text-black transition-all"
+          >
+            <ChevronLeft size={18} />
+          </button>
+          <div className="text-[10px] font-black text-white px-3 py-1 bg-black/40 backdrop-blur-xl border border-white/10 rounded-full tracking-widest">
+            0{currentHero + 1} / 04
           </div>
-          <div className="flex items-center gap-2 ml-4">
-            <button
-              onClick={prevHero}
-              className="p-2 rounded-full bg-white/10 backdrop-blur-md hover:bg-white/20 transition-all text-white active:scale-90"
-            >
-              <ChevronLeft size={20} />
-            </button>
-            <button
-              onClick={nextHero}
-              className="p-2 rounded-full bg-white/10 backdrop-blur-md hover:bg-white/20 transition-all text-white active:scale-90"
-            >
-              <ChevronRight size={20} />
-            </button>
-          </div>
+          <button 
+            onClick={nextHero}
+            className="w-10 h-10 bg-black/40 backdrop-blur-xl border border-white/10 rounded-full flex items-center justify-center text-white hover:bg-white hover:text-black transition-all"
+          >
+            <ChevronRight size={18} />
+          </button>
         </div>
       </div>
 
