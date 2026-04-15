@@ -75,12 +75,14 @@ export const BRANDS = {
 export const ALL_BRANDS = [...new Set(Object.values(BRANDS).flat())];
 
 export const COLORS = [
-  { id: 'black', class: 'bg-black', name: 'Siyah' },
-  { id: 'white', class: 'bg-white', border: 'border-gray-200', name: 'Beyaz' },
-  { id: 'red', class: 'bg-red-500', name: 'Kırmızı' },
-  { id: 'blue', class: 'bg-blue-500', name: 'Mavi' },
-  { id: 'brown', class: 'bg-amber-800', name: 'Kahverengi' },
-  { id: 'tan', class: 'bg-amber-500', name: 'Taba' },
+  { id: 'black', class: 'bg-stone-900', name: 'Siyah' },
+  { id: 'white', class: 'bg-white', border: 'border-stone-200', name: 'Beyaz' },
+  { id: 'amber', class: 'bg-amber-500', name: 'Kehribar' },
+  { id: 'sky', class: 'bg-sky-600', name: 'Mavi' },
+  { id: 'rose', class: 'bg-rose-600', name: 'Kırmızı' },
+  { id: 'emerald', class: 'bg-emerald-600', name: 'Yeşil' },
+  { id: 'stone', class: 'bg-stone-500', name: 'Gri' },
+  { id: 'brown', class: 'bg-amber-900', name: 'Kahverengi' },
 ];
 
 const SUB_IMAGES = {
