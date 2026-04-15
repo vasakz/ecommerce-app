@@ -1,24 +1,39 @@
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 import { decreaseQuantity, increaseQuantity, removeFromCart } from '../../store/slices/cartSlice'
-import { toast } from 'react-hot-toast'
 
+// react-toastify yerine react-hot-toast ile tutarlı hale getirildi
+import toast from 'react-hot-toast'
+
+
+// undefined veya null fiyat için güvenli dönüşüm
 const priceToNumber = (price) => {
   if (typeof price === 'number') return price
+  if (!price) return 0
   return Number(String(price).replace(/[^\d]/g, '')) || 0
 }
 
 function Cart() {
   const dispatch = useDispatch()
+  const navigate = useNavigate()
   const items = useSelector((state) => state.cart.items)
-  const toplamAdet = items.reduce((total, item) => total + (item.quantity ?? 1), 0)
 
+  const toplamAdet = items.reduce((total, item) => total + (item.quantity ?? 1), 0)
   const araToplam = items.reduce(
     (total, item) => total + priceToNumber(item.fiyat ?? item.price) * (item.quantity ?? 1),
     0
   )
   const kargo = araToplam > 2000 || araToplam === 0 ? 0 : 149
   const genelToplam = araToplam + kargo
+
+  // type kontrolü korundu — artık tüm atölye kartları type:'atolye' gönderiyor
+  const handleNavigation = (item) => {
+    if (item.type === 'atolye' && item.orijinalUrun) {
+      navigate(`/atolye-urun/${item.gercekId}`, { state: { urun: item.orijinalUrun } })
+    } else {
+      navigate(`/urunler/${item.id}`)
+    }
+  }
 
   return (
     <main className="bg-gradient-to-br from-stone-50 to-stone-100 min-h-[70vh]">
@@ -48,24 +63,71 @@ function Cart() {
           </div>
         ) : (
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            {/* Sepet Ürünleri */}
             <div className="lg:col-span-2 bg-gradient-to-br from-white to-stone-50 border border-stone-200 rounded-lg p-6 shadow-lg">
-              <h2 className="text-sm tracking-widest font-semibold mb-6 text-stone-700 bg-gradient-to-r from-stone-700 to-stone-600 bg-clip-text text-transparent">
+              <h2 className="text-sm tracking-widest font-semibold mb-6 text-stone-700">
                 SEPET ÜRÜNLERİ ({toplamAdet})
               </h2>
 
               <div className="space-y-5">
                 {items.map((item) => (
-                  <div key={item.id} className="flex items-center gap-6 border-b border-stone-100 pb-5 hover:bg-gradient-to-r hover:from-stone-50 hover:to-stone-25 transition-all duration-300 rounded-lg p-4 hover:shadow-md">
+                  <div
+                    key={item.id}
+                    className="flex items-start gap-6 border-b border-stone-100 pb-5 hover:bg-stone-50/60 transition-all duration-300 rounded-lg p-4"
+                  >
+                    {/* Görsel */}
                     {item.image && (
-                      <Link to={`/urunler/${item.id}`}>
-                        <img src={item.image} alt={item.isim ?? item.name} className="w-16 h-16 object-cover rounded-lg shadow-sm hover:shadow-md transition-shadow duration-300 hover:scale-105" />
-                      </Link>
+                      <div onClick={() => handleNavigation(item)} className="cursor-pointer flex-shrink-0">
+                        <img
+                          src={item.image}
+                          alt={item.isim ?? item.name}
+                          className="w-20 h-20 object-cover rounded-lg shadow-sm hover:shadow-md transition-shadow duration-300 hover:scale-105"
+                        />
+                      </div>
                     )}
-                    <div className="min-w-0 flex-1">
-                      <Link to={`/urunler/${item.id}`} className="font-semibold text-stone-800 truncate hover:text-amber-600 transition-colors duration-300">
-                        {item.isim ?? item.name}
-                      </Link>
 
+                    {/* Bilgiler */}
+                    <div className="min-w-0 flex-1">
+                      <button
+                        onClick={() => handleNavigation(item)}
+                        className="text-left font-semibold text-stone-800 hover:text-amber-600 transition-colors duration-300 text-sm"
+                      >
+                        {item.isim ?? item.name}
+                      </button>
+
+                      {/* Atölye ürünlerinin özelliklerini göster (boyut, renk, kişiselleştirme) */}
+                      {item.ozellikler && (
+                        <div className="mt-1.5 flex flex-wrap gap-1.5">
+                          {item.ozellikler.boyut && (
+                            <span className="text-[10px] bg-stone-100 text-stone-500 px-2 py-0.5 rounded-full border border-stone-200">
+                              📐 {item.ozellikler.boyut}
+                              {item.ozellikler.ozelOlcu ? ` — ${item.ozellikler.ozelOlcu}` : ''}
+                            </span>
+                          )}
+                          {item.ozellikler.renk && (
+                            <span className="text-[10px] bg-stone-100 text-stone-500 px-2 py-0.5 rounded-full border border-stone-200">
+                              🎨 {item.ozellikler.renk}
+                            </span>
+                          )}
+                          {item.ozellikler.kazimaMetni && (
+                            <span className="text-[10px] bg-amber-50 text-amber-700 px-2 py-0.5 rounded-full border border-amber-200">
+                              ✍️ {item.ozellikler.kazimaMetni}
+                            </span>
+                          )}
+                          {item.ozellikler.hediyeNotu && (
+                            <span className="text-[10px] bg-rose-50 text-rose-600 px-2 py-0.5 rounded-full border border-rose-200 max-w-[180px] truncate">
+                              🎁 {item.ozellikler.hediyeNotu}
+                            </span>
+                          )}
+                          {item.ozellikler.ekstralar?.length > 0 && (
+                            <span className="text-[10px] bg-teal-50 text-teal-600 px-2 py-0.5 rounded-full border border-teal-200">
+                              ✨ {item.ozellikler.ekstralar.join(', ')}
+                            </span>
+                          )}
+                        </div>
+                      )}
+
+                      {/* Adet + Sil */}
                       <div className="mt-3 flex items-center gap-3">
                         <div className="inline-flex items-center border border-stone-300 rounded-lg overflow-hidden shadow-sm">
                           <button
@@ -73,7 +135,7 @@ function Cart() {
                             className="px-3 py-1 text-stone-700 hover:bg-stone-100 transition-colors duration-200"
                             aria-label="Adet azalt"
                           >
-                            -
+                            −
                           </button>
                           <span className="px-4 py-1 text-sm font-medium text-stone-800 bg-stone-50">
                             {item.quantity ?? 1}
@@ -95,17 +157,20 @@ function Cart() {
                         </button>
                       </div>
                     </div>
-                    <p className="font-semibold text-stone-900 text-lg">
-                      {(priceToNumber(item.fiyat ?? item.price) * (item.quantity ?? 1)).toLocaleString('tr-TR')} TL
+
+                    {/* Fiyat */}
+                    <p className="font-semibold text-stone-900 text-lg flex-shrink-0">
+                      {(priceToNumber(item.fiyat ?? item.price) * (item.quantity ?? 1)).toLocaleString('tr-TR')} ₺
                     </p>
                   </div>
                 ))}
               </div>
             </div>
 
+            {/* Sepet Özeti */}
             <aside className="bg-gradient-to-br from-white to-stone-50 border border-stone-200 rounded-lg p-6 h-fit space-y-7 shadow-lg">
               <div>
-                <h3 className="text-sm tracking-widest font-semibold mb-5 text-stone-700 bg-gradient-to-r from-stone-700 to-stone-600 bg-clip-text text-transparent">SEPET ÖZETİ</h3>
+                <h3 className="text-sm tracking-widest font-semibold mb-5 text-stone-700">SEPET ÖZETİ</h3>
                 <div className="space-y-3 text-sm">
                   <div className="flex items-center justify-between p-2 rounded-lg hover:bg-stone-100 transition-colors">
                     <span className="text-stone-600">Ürün Sayısı</span>
@@ -113,22 +178,32 @@ function Cart() {
                   </div>
                   <div className="flex items-center justify-between p-2 rounded-lg hover:bg-stone-100 transition-colors">
                     <span className="text-stone-600">Ara Toplam</span>
-                    <span className="font-medium text-stone-800">{araToplam.toLocaleString('tr-TR')} TL</span>
+                    <span className="font-medium text-stone-800">{araToplam.toLocaleString('tr-TR')} ₺</span>
                   </div>
                   <div className="flex items-center justify-between p-2 rounded-lg hover:bg-stone-100 transition-colors">
                     <span className="text-stone-600">Kargo</span>
-                    <span className="font-medium text-stone-800">{kargo === 0 ? 'Ücretsiz' : `${kargo} TL`}</span>
+                    <span className="font-medium text-stone-800">
+                      {kargo === 0 ? (
+                        <span className="text-teal-600 font-semibold">Ücretsiz 🎉</span>
+                      ) : (
+                        `${kargo} ₺`
+                      )}
+                    </span>
                   </div>
+                  {kargo > 0 && (
+                    <p className="text-[10px] text-stone-400 px-2">
+                      2.000 ₺ üzeri siparişlerde kargo ücretsiz
+                    </p>
+                  )}
                   <div className="border-t border-stone-200 pt-3 mt-3 flex items-center justify-between bg-gradient-to-r from-stone-100 to-stone-50 p-3 rounded-lg">
                     <span className="text-stone-800 font-semibold">Genel Toplam</span>
-                    <span className="text-stone-900 text-lg font-bold">{genelToplam.toLocaleString('tr-TR')} TL</span>
+                    <span className="text-stone-900 text-lg font-bold">{genelToplam.toLocaleString('tr-TR')} ₺</span>
                   </div>
                 </div>
               </div>
 
               <div className="border-t border-stone-200 pt-6">
-                <h3 className="text-sm tracking-widest font-semibold mb-4 text-stone-700 bg-gradient-to-r from-stone-700 to-stone-600 bg-clip-text text-transparent">ÖDEME</h3>
-
+                <h3 className="text-sm tracking-widest font-semibold mb-4 text-stone-700">ÖDEME</h3>
                 <div className="space-y-3 text-sm mb-4">
                   <label className="flex items-center justify-between border border-stone-200 rounded-lg px-3 py-2 cursor-pointer hover:border-stone-400 hover:bg-stone-50 transition-all duration-200 shadow-sm">
                     <span className="text-stone-700">Kredi / Banka Kartı</span>

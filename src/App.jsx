@@ -1,5 +1,5 @@
 import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom'
-import { Toaster } from 'react-hot-toast'
+import { Toaster } from 'react-hot-toast';
 
 // Pages
 import Home from './pages/Home/Home'
@@ -22,6 +22,7 @@ import OrderDetail from './pages/Orders/OrderDetail'
 import OrderAction from './pages/Orders/OrderAction'
 import Support from './pages/Support/Support'
 import SaticiKayit from './pages/Satici/SaticiKayit'
+import AtolyeUrunDetay from './pages/Atolye/AtolyeUrunDetay';
 
 // Seller Pages
 import ProductManagement from './pages/Seller/ProductManagement'
@@ -64,7 +65,8 @@ function Layout() {
         {/* Atölye */}
         <Route path="/atolye" element={<Atolye />} />
         <Route path="/atolyeler" element={<AtolyelerListesi />} />
-
+        <Route path="/atolye-urun/:id" element={<AtolyeUrunDetay />} />
+        
         {/* Sepet & Ödeme */}
         <Route path="/sepet" element={<Cart />} />
         <Route path="/odeme" element={<Payment />} />
@@ -118,13 +120,14 @@ function Layout() {
 function App() {
   return (
     <BrowserRouter>
-      <Toaster
-        position="top-center"
-        reverseOrder={false}
+      {/* Toaster bileşeni*/}
+      <Toaster 
+        position="top-center" 
+        reverseOrder={false} 
         toastOptions={{
           duration: 3000,
           style: {
-            fontFamily: "'Inter', sans-serif",
+            fontFamily: "'Inter', sans-serif", 
           },
         }}
       />

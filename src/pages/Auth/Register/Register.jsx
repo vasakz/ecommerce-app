@@ -36,45 +36,49 @@ function Register() {
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-1.5">
                 <label className="text-[10px] font-black uppercase tracking-widest text-stone-400 px-1">Adınız</label>
-                <input 
-                  type="text" 
-                  placeholder="Can" 
-                  className="w-full bg-stone-50 dark:bg-stone-900 border border-stone-100 dark:border-stone-800 rounded-2xl px-5 py-3.5 text-sm outline-none focus:ring-4 focus:ring-amber-500/10 focus:border-amber-500 transition-all font-medium" 
+                <input
+                  type="text"
+                  placeholder="Can"
+                  className="w-full bg-stone-50 dark:bg-stone-900 border border-stone-100 dark:border-stone-800 rounded-2xl px-5 py-3.5 text-sm outline-none focus:ring-4 focus:ring-amber-500/10 focus:border-amber-500 transition-all font-medium"
                 />
               </div>
               <div className="space-y-1.5">
                 <label className="text-[10px] font-black uppercase tracking-widest text-stone-400 px-1">Soyadınız</label>
-                <input 
-                  type="text" 
-                  placeholder="Yılmaz" 
-                  className="w-full bg-stone-50 dark:bg-stone-900 border border-stone-100 dark:border-stone-800 rounded-2xl px-5 py-3.5 text-sm outline-none focus:ring-4 focus:ring-amber-500/10 focus:border-amber-500 transition-all font-medium" 
+                <input
+                  type="text"
+                  placeholder="Yılmaz"
+                  className="w-full bg-stone-50 dark:bg-stone-900 border border-stone-100 dark:border-stone-800 rounded-2xl px-5 py-3.5 text-sm outline-none focus:ring-4 focus:ring-amber-500/10 focus:border-amber-500 transition-all font-medium"
                 />
               </div>
             </div>
 
             <div className="space-y-1.5">
-              <label className="text-[10px] font-black uppercase tracking-widest text-stone-400 px-1">E-posta Adresi</label>
-              <input 
-                type="email" 
-                placeholder="uzman@example.com" 
-                className="w-full bg-stone-50 dark:bg-stone-900 border border-stone-100 dark:border-stone-800 rounded-2xl px-5 py-3.5 text-sm outline-none focus:ring-4 focus:ring-amber-500/10 focus:border-amber-500 transition-all font-medium" 
+              <label className="text-[10px] font-black uppercase tracking-widest text-stone-400 px-1">
+                E-posta Adresi
+              </label>
+              <input
+                type="email"
+                placeholder="uzman@example.com"
+                className="w-full bg-stone-50 dark:bg-stone-900 border border-stone-100 dark:border-stone-800 rounded-2xl px-5 py-3.5 text-sm outline-none focus:ring-4 focus:ring-amber-500/10 focus:border-amber-500 transition-all font-medium"
               />
             </div>
 
             <div className="space-y-1.5">
-              <label className="text-[10px] font-black uppercase tracking-widest text-stone-400 px-1">Şifre</label>
-              <input 
-                type="password" 
-                placeholder="••••••••" 
-                className="w-full bg-stone-50 dark:bg-stone-900 border border-stone-100 dark:border-stone-800 rounded-2xl px-5 py-3.5 text-sm outline-none focus:ring-4 focus:ring-amber-500/10 focus:border-amber-500 transition-all font-medium" 
+              <label className="text-[10px] font-black uppercase tracking-widest text-stone-400 px-1">
+                Şifre
+              </label>
+              <input
+                type="password"
+                placeholder="••••••••"
+                className="w-full bg-stone-50 dark:bg-stone-900 border border-stone-100 dark:border-stone-800 rounded-2xl px-5 py-3.5 text-sm outline-none focus:ring-4 focus:ring-amber-500/10 focus:border-amber-500 transition-all font-medium"
               />
             </div>
 
             <div className="flex items-start gap-3 py-3">
               <div className="relative flex items-center mt-1">
-                <input 
-                  type="checkbox" 
-                  id="terms" 
+                <input
+                  type="checkbox"
+                  id="terms"
                   className="peer h-5 w-5 cursor-pointer appearance-none rounded-md border border-stone-200 checked:bg-amber-500 checked:border-amber-500 transition-all"
                 />
                 <div className="pointer-events-none absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 text-white opacity-0 peer-checked:opacity-100 transition-opacity">
