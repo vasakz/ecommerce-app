@@ -8,6 +8,17 @@ export const orders = [
     deliveryAddress: 'Atatürk Mah. İstiklal Cad. No:123 D:4 Ümraniye/İstanbul',
     trackingNumber: 'TR1234567890',
     carrier: 'Aras Kargo',
+    deliveryDetails: {
+      type: 'Standart',
+      option: 'Adrese Teslim',
+      history: [
+        { status: 'Sipariş Alındı', date: '2024-03-15T14:30:00Z', detail: 'Siparişiniz başarıyla oluşturuldu.' },
+        { status: 'Hazırlanıyor', date: '2024-03-16T10:00:00Z', detail: 'Ürünleriniz paketleniyor.' },
+        { status: 'Kargoya Verildi', date: '2024-03-16T16:20:00Z', detail: 'Kargonuz Aras Kargo\'ya teslim edildi.' },
+        { status: 'Yolda', date: '2024-03-17T09:00:00Z', detail: 'Kargonuz transfer merkezinde.' },
+        { status: 'Teslim Edildi', date: '2024-03-18T11:45:00Z', detail: 'Kargonuz teslim edildi.' }
+      ]
+    },
     items: [
       {
         id: 1,
@@ -36,6 +47,16 @@ export const orders = [
     deliveryAddress: 'Bahçelievler Mah. 7. Sokak No:5 Çankaya/Ankara',
     trackingNumber: 'TR9876543210',
     carrier: 'Yurtiçi Kargo',
+    deliveryDetails: {
+      type: 'Hızlı',
+      option: 'Komşuya Bırak',
+      neighborName: 'Ahmet Bey (Daire 5)',
+      history: [
+        { status: 'Sipariş Alındı', date: '2024-04-05T09:15:00Z', detail: 'Siparişiniz alındı.' },
+        { status: 'Kargoya Verildi', date: '2024-04-06T17:30:00Z', detail: 'Kargonuz yola çıktı.' },
+        { status: 'Yolda', date: '2024-04-07T08:30:00Z', detail: 'Kargonuz Ankara şubesinde.' }
+      ]
+    },
     items: [
       {
         id: 3,
@@ -62,6 +83,11 @@ export const orders = [
     deliveryAddress: 'Moda Cad. No:45 Kadıköy/İstanbul',
     trackingNumber: null,
     carrier: null,
+    deliveryDetails: {
+      type: 'Aynı Gün',
+      option: 'Belirli Saatte Teslimat (18:00 - 21:00)',
+      history: []
+    },
     items: [
       {
         id: 4,
@@ -88,12 +114,19 @@ export const orders = [
     deliveryAddress: 'Güzelyurt Mah. Şehitler Sok. No:2 Manisa',
     trackingNumber: null,
     carrier: null,
+    deliveryDetails: {
+      type: 'Standart',
+      option: 'Mağazadan Teslim',
+      history: [
+        { status: 'İptal Edildi', date: '2024-02-11T14:00:00Z', detail: 'Müşteri talebi üzerine iptal edildi.' }
+      ]
+    },
     items: [
       {
         id: 5,
         name: 'Dekoratif Mum Seti',
         price: 320.00,
-        image: 'https://images.unsplash.com/photo-1602872030219-cbf948a980dd?auto=format&fit=crop&w=600&q=80',
+        image: 'https://images.unsplash.com/photo-1605651202774-7d573fd3f12d?auto=format&fit=crop&w=800&q=80',
         quantity: 1
       }
     ],
@@ -112,7 +145,8 @@ export const ORDER_STATUSES = {
   OUT_FOR_DELIVERY: 'Dağıtımda',
   DELIVERED: 'Teslim Edildi',
   CANCELLED: 'İptal Edildi',
-  RETURN_PROCESS: 'İade Sürecinde'
+  RETURN_PROCESS: 'İade Sürecinde',
+  COULD_NOT_DELIVER: 'Teslim Edilemedi'
 };
 
 export const getStatusColor = (status) => {
@@ -130,7 +164,10 @@ export const getStatusColor = (status) => {
       return 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400';
     case 'Ödeme Bekleniyor':
       return 'bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-400';
+    case 'Teslim Edilemedi':
+      return 'bg-orange-100 text-orange-800 dark:bg-orange-900/30 dark:text-orange-400';
     default:
       return 'bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-400';
   }
 };
+

@@ -72,7 +72,7 @@ export const BRANDS = {
   'Kampanyalar': ['Atölye']
 };
 
-export const ALL_BRANDS = Object.values(BRANDS).flat();
+export const ALL_BRANDS = [...new Set(Object.values(BRANDS).flat())];
 
 export const COLORS = [
   { id: 'black', class: 'bg-black', name: 'Siyah' },

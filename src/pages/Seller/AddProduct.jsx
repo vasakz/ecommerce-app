@@ -8,6 +8,7 @@ import {
   Plus, 
   Info, 
   ChevronRight, 
+  ChevronDown,
   Box, 
   Truck, 
   Tag, 
@@ -160,39 +161,54 @@ const AddProduct = () => {
                 {/* Marka Selection */}
                 <div className="space-y-2">
                   <label className="text-xs font-bold text-stone-900 dark:text-white uppercase tracking-widest">Marka</label>
-                  <select 
-                    {...register("brand", { required: "Marka seçiniz" })}
-                    className="w-full px-5 py-4 bg-gray-50 dark:bg-stone-800 border-none rounded-2xl focus:ring-2 focus:ring-blue-500 font-medium appearance-none"
-                  >
-                    <option value="">Marka Seçin</option>
-                    {BRANDS.map(b => <option key={b} value={b}>{b}</option>)}
-                  </select>
+                  <div className="relative">
+                    <select 
+                      {...register("brand", { required: "Marka seçiniz" })}
+                      className="w-full px-5 py-4 bg-gray-50 dark:bg-stone-800 border-none rounded-2xl focus:ring-2 focus:ring-blue-500 font-medium appearance-none pr-12"
+                    >
+                      <option value="">Marka Seçin</option>
+                      {BRANDS.map(b => <option key={b} value={b}>{b}</option>)}
+                    </select>
+                    <div className="absolute right-5 top-1/2 -translate-y-1/2 pointer-events-none text-stone-400">
+                      <ChevronDown className="w-5 h-5" />
+                    </div>
+                  </div>
                 </div>
 
                 {/* Kategori Selection */}
                 <div className="space-y-2">
                   <label className="text-xs font-bold text-stone-900 dark:text-white uppercase tracking-widest">Kategori</label>
-                  <select 
-                    {...register("category", { required: "Kategori seçiniz" })}
-                    className="w-full px-5 py-4 bg-gray-50 dark:bg-stone-800 border-none rounded-2xl focus:ring-2 focus:ring-blue-500 font-medium appearance-none"
-                  >
-                    <option value="">Kategori Seçin</option>
-                    {CATEGORIES.map(c => <option key={c} value={c}>{c}</option>)}
-                  </select>
+                  <div className="relative">
+                    <select 
+                      {...register("category", { required: "Kategori seçiniz" })}
+                      className="w-full px-5 py-4 bg-gray-50 dark:bg-stone-800 border-none rounded-2xl focus:ring-2 focus:ring-blue-500 font-medium appearance-none pr-12"
+                    >
+                      <option value="">Kategori Seçin</option>
+                      {CATEGORIES.map(c => <option key={c} value={c}>{c}</option>)}
+                    </select>
+                    <div className="absolute right-5 top-1/2 -translate-y-1/2 pointer-events-none text-stone-400">
+                      <ChevronDown className="w-5 h-5" />
+                    </div>
+                  </div>
                 </div>
 
                 {/* Alt Kategori Selection */}
                 <div className={`space-y-2 transition-all duration-300 ${selectedCategory ? 'opacity-100' : 'opacity-30 pointer-events-none'}`}>
                   <label className="text-xs font-bold text-stone-900 dark:text-white uppercase tracking-widest text-[#7c3aed]">Alt Kategori</label>
-                  <select 
-                    {...register("subCategory", { required: selectedCategory ? "Alt kategori seçiniz" : false })}
-                    className="w-full px-5 py-4 bg-gray-50 dark:bg-stone-800 border-none rounded-2xl focus:ring-2 focus:ring-[#7c3aed] font-medium appearance-none border border-[#7c3aed]/20"
-                  >
-                    <option value="">Alt Kategori Seçin</option>
-                    {selectedCategory && SUB_CATEGORIES[selectedCategory]?.map(sc => (
-                      <option key={sc} value={sc}>{sc}</option>
-                    ))}
-                  </select>
+                  <div className="relative">
+                    <select 
+                      {...register("subCategory", { required: selectedCategory ? "Alt kategori seçiniz" : false })}
+                      className="w-full px-5 py-4 bg-gray-50 dark:bg-stone-800 border-none rounded-2xl focus:ring-2 focus:ring-[#7c3aed] font-medium appearance-none border border-[#7c3aed]/20 pr-12"
+                    >
+                      <option value="">Alt Kategori Seçin</option>
+                      {selectedCategory && SUB_CATEGORIES[selectedCategory]?.map(sc => (
+                        <option key={sc} value={sc}>{sc}</option>
+                      ))}
+                    </select>
+                    <div className="absolute right-5 top-1/2 -translate-y-1/2 pointer-events-none text-[#7c3aed]/50">
+                      <ChevronDown className="w-5 h-5" />
+                    </div>
+                  </div>
                 </div>
 
                 {/* Fiyat ve İndirimli Fiyat */}
@@ -301,23 +317,33 @@ const AddProduct = () => {
                     <div key={field.id} className="grid grid-cols-12 gap-x-4 gap-y-2 items-end p-5 bg-gray-50 dark:bg-stone-800 rounded-2xl animate-in fade-in slide-in-from-top-2">
                       <div className="col-span-12 sm:col-span-4 space-y-2">
                         <label className="text-[10px] font-bold text-stone-400 uppercase">Renk</label>
-                        <select 
-                          {...register(`variants.${index}.color`)}
-                          className="w-full px-4 py-3 bg-white dark:bg-stone-900 border-none rounded-xl focus:ring-2 focus:ring-blue-500 text-sm font-bold appearance-none"
-                        >
-                          <option value="">Seçiniz</option>
-                          {COLOR_OPTIONS.map(c => <option key={c} value={c}>{c}</option>)}
-                        </select>
+                        <div className="relative">
+                          <select 
+                            {...register(`variants.${index}.color`)}
+                            className="w-full px-4 py-3 bg-white dark:bg-stone-900 border-none rounded-xl focus:ring-2 focus:ring-blue-500 text-sm font-bold appearance-none pr-10"
+                          >
+                            <option value="">Seçiniz</option>
+                            {COLOR_OPTIONS.map(c => <option key={c} value={c}>{c}</option>)}
+                          </select>
+                          <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-stone-400">
+                            <ChevronDown className="w-4 h-4" />
+                          </div>
+                        </div>
                       </div>
                       <div className="col-span-12 sm:col-span-3 space-y-2">
                         <label className="text-[10px] font-bold text-stone-400 uppercase">Beden / Özellik</label>
-                        <select 
-                          {...register(`variants.${index}.size`)}
-                          className="w-full px-4 py-3 bg-white dark:bg-stone-900 border-none rounded-xl focus:ring-2 focus:ring-blue-500 text-sm font-bold appearance-none"
-                        >
-                          <option value="">Seçiniz</option>
-                          {SIZE_OPTIONS.map(s => <option key={s} value={s}>{s}</option>)}
-                        </select>
+                        <div className="relative">
+                          <select 
+                            {...register(`variants.${index}.size`)}
+                            className="w-full px-4 py-3 bg-white dark:bg-stone-900 border-none rounded-xl focus:ring-2 focus:ring-blue-500 text-sm font-bold appearance-none pr-10"
+                          >
+                            <option value="">Seçiniz</option>
+                            {SIZE_OPTIONS.map(s => <option key={s} value={s}>{s}</option>)}
+                          </select>
+                          <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-stone-400">
+                            <ChevronDown className="w-4 h-4" />
+                          </div>
+                        </div>
                       </div>
                       <div className="col-span-8 sm:col-span-3 space-y-2">
                         <label className="text-[10px] font-bold text-stone-400 uppercase">Stok Adedi</label>

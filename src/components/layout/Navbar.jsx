@@ -7,7 +7,9 @@ import {
   X,
   ChevronRight,
   Settings,
+  ShoppingBag,
 } from 'lucide-react'
+import { orders } from '../../data/orders'
 import { Link } from 'react-router-dom'
 import { useState } from 'react'
 import { useSelector } from 'react-redux'
@@ -21,6 +23,7 @@ function Navbar() {
 
   const cartCount = cartItems.reduce((sum, item) => sum + item.quantity, 0)
   const favoritesCount = favoritesItems.length
+  const ordersCount = orders.length
 
   return (
     <header>
@@ -64,7 +67,6 @@ function Navbar() {
               />
               <Search size={16} className="text-stone-400" />
             </div>
-
             {/* Favorites */}
             <Link to="/begendiklerim" className="relative">
               <Heart className="hover:text-red-500" size={20} />
@@ -81,6 +83,16 @@ function Navbar() {
               {cartCount > 0 && (
                 <span className="absolute -top-2 -right-2 bg-amber-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
                   {cartCount}
+                </span>
+              )}
+            </Link>
+
+            {/* Orders */}
+            <Link to="/siparislerim" title="Siparişlerim" className="relative">
+              <ShoppingBag className="hover:text-amber-500 transition" size={20} />
+              {ordersCount > 0 && (
+                <span className="absolute -top-2 -right-2 bg-amber-500 text-white text-[10px] font-bold rounded-full h-4 w-4 flex items-center justify-center border border-white dark:border-stone-900">
+                  {ordersCount}
                 </span>
               )}
             </Link>

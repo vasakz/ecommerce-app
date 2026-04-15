@@ -5,6 +5,7 @@ import { decreaseQuantity, increaseQuantity, removeFromCart } from '../../store/
 // react-toastify yerine react-hot-toast ile tutarlı hale getirildi
 import toast from 'react-hot-toast'
 
+
 // undefined veya null fiyat için güvenli dönüşüm
 const priceToNumber = (price) => {
   if (typeof price === 'number') return price

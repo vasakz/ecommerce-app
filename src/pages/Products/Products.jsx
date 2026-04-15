@@ -1,7 +1,7 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
-import { toast } from 'react-toastify';
+import { toast } from 'react-hot-toast';
 import { 
   Heart, 
   Search, 
@@ -26,6 +26,7 @@ import {
   CATEGORY_BANNERS,
 } from '../../data/products';
 import { addToFavorites } from '../../store/slices/favoritesSlice';
+import { addToCart } from '../../store/slices/cartSlice';
 
 
 const Products = () => {
@@ -537,7 +538,18 @@ const Products = () => {
                           >
                             İncele
                           </Link>
-                          <button className="p-2 rounded-xl bg-gray-900 dark:bg-white text-white dark:text-gray-900 hover:bg-amber-500 dark:hover:bg-amber-500 dark:hover:text-white transition-all transform active:scale-95 shadow-md">
+                          <button 
+                            onClick={() => {
+                              dispatch(addToCart({
+                                id: product.id,
+                                isim: product.name,
+                                fiyat: `${product.price} ₺`,
+                                image: product.image
+                              }));
+                              toast.success('Ürün sepete eklendi');
+                            }}
+                            className="p-2 rounded-xl bg-gray-900 dark:bg-white text-white dark:text-gray-900 hover:bg-amber-500 dark:hover:bg-amber-500 dark:hover:text-white transition-all transform active:scale-95 shadow-md"
+                          >
                             <ShoppingBag className="w-4 h-4" />
                           </button>
                         </div>

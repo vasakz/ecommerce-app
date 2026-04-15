@@ -2,6 +2,7 @@ import React  from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { addToCart } from '../../store/slices/cartSlice';
+import { toast } from 'react-hot-toast';
 import { addToFavorites, removeFromFavorites } from '../../store/slices/favoritesSlice';
 import { 
   Heart, 
@@ -262,12 +263,18 @@ const ProductDetail = () => {
 
             {/* Action Buttons */}
             <button 
-              onClick={() => dispatch(addToCart({
-                id: MOCK_PRODUCT.id,
-                isim: MOCK_PRODUCT.name,
-                fiyat: `${MOCK_PRODUCT.price} ₺`,
-                image: MOCK_PRODUCT.image
-              }))}
+              onClick={() => {
+                dispatch(addToCart({
+                  id: MOCK_PRODUCT.id,
+                  isim: MOCK_PRODUCT.name,
+                  fiyat: `${MOCK_PRODUCT.price} ₺`,
+                  image: MOCK_PRODUCT.image,
+                  color: selectedColor.name,
+                  size: selectedSize.name,
+                  quantity: quantity
+                }));
+                toast.success('Ürün sepete eklendi');
+              }}
               className="flex-1 bg-black text-white hover:bg-gray-800 rounded-xl font-bold text-lg flex items-center justify-center gap-2 transition-transform active:scale-95 shadow-xl shadow-black/20"
             >
               <ShoppingBag className="w-6 h-6" />
@@ -408,6 +415,21 @@ const ProductDetail = () => {
                   className="absolute top-3 right-3 p-2 rounded-full bg-white/80 backdrop-blur text-gray-400 hover:text-red-500 hover:bg-white transition-all opacity-0 group-hover:opacity-100 translate-y-2 group-hover:translate-y-0"
                 >
                   <Heart className="w-5 h-5" />
+                </button>
+                <button 
+                  onClick={(e) => {
+                    e.preventDefault();
+                    dispatch(addToCart({
+                      id: product.id,
+                      isim: product.name,
+                      fiyat: `${product.price} ₺`,
+                      image: product.image
+                    }));
+                    toast.success('Ürün sepete eklendi');
+                  }}
+                  className="absolute bottom-3 right-3 p-2.5 rounded-xl bg-black text-white shadow-xl opacity-0 group-hover:opacity-100 translate-y-2 group-hover:translate-y-0 transition-all duration-300 hover:bg-amber-500"
+                >
+                  <ShoppingBag className="w-5 h-5" />
                 </button>
               </div>
               <div className="p-5">
