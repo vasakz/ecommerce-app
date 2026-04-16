@@ -167,7 +167,7 @@ function AtolyeVitrin({ atolye }) {
         <div className="flex flex-col gap-2.5 flex-shrink-0 w-full md:w-auto pt-0 md:pt-2">
           <Link
             to={`/atolyeler/${atolye.id}`}
-            className="text-center text-xs font-semibold tracking-widest text-white uppercase bg-stone-800 px-7 py-3 rounded-full hover:bg-stone-900 transition-colors shadow-md"
+            className="text-center text-xs font-semibold tracking-widest text-white uppercase bg-amber-600 px-7 py-3 rounded-full hover:bg-amber-700 transition-colors shadow-md shadow-amber-600/20"
           >
             Atölyeyi Ziyaret Et
           </Link>

@@ -9,6 +9,7 @@ import Login from './pages/Auth/Login/Login'
 import ForgotPassword from './pages/Auth/ForgotPassword/ForgotPassword'
 import Atolye from './pages/Atolye/Atolye'
 import AtolyelerListesi from './pages/Atolye/AtolyelerListesi'
+import AtolyeDetay from './pages/Atolye/AtolyeDetay'
 import Cart from './pages/Cart/Cart'
 import Favorites from './pages/Favorites/Favorites'
 import Payment from './pages/Payment/Payment'
@@ -22,6 +23,7 @@ import OrderDetail from './pages/Orders/OrderDetail'
 import OrderAction from './pages/Orders/OrderAction'
 import Support from './pages/Support/Support'
 import SaticiKayit from './pages/Satici/SaticiKayit'
+import SaticiProfil from './pages/Satici/SaticiProfil'
 import AtolyeUrunDetay from './pages/Atolye/AtolyeUrunDetay';
 
 // Seller Pages
@@ -65,6 +67,7 @@ function Layout() {
         {/* Atölye */}
         <Route path="/atolye" element={<Atolye />} />
         <Route path="/atolyeler" element={<AtolyelerListesi />} />
+        <Route path="/atolyeler/:id" element={<AtolyeDetay />} />
         <Route path="/atolye-urun/:id" element={<AtolyeUrunDetay />} />
         
         {/* Sepet & Ödeme */}
@@ -107,6 +110,7 @@ function Layout() {
 
         {/* Satici */}
         <Route path="/satici-kayit" element={<SaticiKayit />} />
+        <Route path="/satici/profil/:id" element={<SaticiProfil />} />
 
         {/* 404 */}
         <Route path="*" element={<NotFound />} />
