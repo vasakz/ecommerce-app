@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useReducer } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import toast from 'react-hot-toast';
 
@@ -7,7 +7,7 @@ import { addToCart } from '../../store/slices/cartSlice';
 import { addToFavorites, removeFromFavorites } from '../../store/slices/favoritesSlice';
 
 /* ══════════════════════════════════════════
-   YARDIMCI: Yıldız Bileşeni (interactive destekli)
+ Yıldız Bileşeni (interactive destekli)
 ══════════════════════════════════════════ */
 export function Yildizlar({ puan = 5, boyut = 'w-4 h-4', renk = 'text-amber-400', interactive = false, onSelect }) {
   const [hovered, setHovered] = useState(null);
@@ -245,6 +245,7 @@ function YorumFormu({ dispatch }) {
   );
 }
 
+
 /* Değerlendirmeler Bölümü */
 function DegerlendirmelerBolumu() {
   const [state, dispatch] = useReducer(yorumReducer, { yorumlar: ORNEK_YORUMLAR });
@@ -299,13 +300,37 @@ function DegerlendirmelerBolumu() {
 /* ══════════════════════════════════════════
    ANA SAYFA BİLEŞENİ
 ══════════════════════════════════════════ */
+
 function AtolyeUrunDetay() {
   const location = useLocation();
-  const urun = location.state?.urun;
+  const { id } = useParams(); // URL'den ürün ID'sini yakalar
   const dispatch = useDispatch();
+  
+  // Ürünü state içinde tutuyoruz. Eğer başka sayfadan geldiysek oradan alır, 
+  // yoksa (sayfa yenilendiyse) null başlar.
+  const [urun, setUrun] = useState(location.state?.urun || null);
+  const [yukleniyor, setYukleniyor] = useState(!urun);
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+    
+    // Eğer 'urun' bilgisi yoksa (sayfa yenilendiyse), veriyi buradan çekmelisin
+    if (!urun && id) {
+      setYukleniyor(true);
+      // Burası ileride backend'e (veritabanına) bağlanacak yer:
+      // fetch(`/api/urunler/${id}`).then(...)
+      setYukleniyor(false); 
+    }
+  }, [id, urun]);
+
   const favoriler = useSelector((state) => state.favorites.items);
   const isFavorited = favoriler.some((item) => item.id === urun?.id);
 
+  // Atölye mesaj modalı için yeni statelerimiz:
+  const [mesajModalAcik, setMesajModalAcik] = useState(false);
+  const [atolyeMesaj, setAtolyeMesaj] = useState('');
+
+  // Görsel ve seçim stateleri (bunlar aynı kalsın):
   const [seciliGorsel, setSeciliGorsel] = useState(0);
   const [isZoomed, setIsZoomed] = useState(false);
   const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
@@ -316,7 +341,7 @@ function AtolyeUrunDetay() {
   const [seciliRenk, setSeciliRenk] = useState({ id: 'taba', isim: 'Taba', ekUcret: 0, hex: '#8B5A2B' });
   const [seciliEkstralar, setSeciliEkstralar] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
-
+  
   useEffect(() => { window.scrollTo(0, 0); }, []);
 
   if (!urun) {
@@ -608,6 +633,26 @@ function AtolyeUrunDetay() {
         </div>
       </div>
 
+
+                {/* Atölye Sahibi Bilgisi ve Mesaj Butonu */}
+<div className="flex items-center gap-3 my-6 p-4 bg-stone-50 rounded-xl border border-stone-100">
+  <div className="w-10 h-10 rounded-full bg-amber-100 flex items-center justify-center text-amber-700 font-bold">
+    {urun.atolyeIsmi ? urun.atolyeIsmi[0] : 'A'}
+  </div>
+  <div className="flex-1">
+    <h4 className="text-xs font-bold text-stone-800 uppercase tracking-tight">
+      {urun.atolyeIsmi || "Tasarım Atölyesi"}
+    </h4>
+    <p className="text-[10px] text-stone-400">Genellikle 1 saat içinde yanıt veriyor</p>
+  </div>
+  <button 
+    onClick={() => setMesajModalAcik(true)}
+    className="px-3 py-2 text-[10px] font-bold uppercase tracking-widest text-amber-700 border border-amber-200 rounded-lg hover:bg-amber-50 transition-colors"
+  >
+    Soru Sor
+  </button>
+</div>
+
       {/* ══ DEĞERLENDİRMELER BÖLÜMÜ ══ */}
       <DegerlendirmelerBolumu urunId={urun.id} />
 
@@ -643,6 +688,36 @@ function AtolyeUrunDetay() {
           </div>
         </div>
       )}
+      
+
+      {/* Atölyeye Mesaj Gönder Modal Penceresi */}
+      {mesajModalAcik && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm" onClick={() => setMesajModalAcik(false)}>
+          <div className="bg-white rounded-2xl max-w-md w-full shadow-2xl p-6" onClick={e => e.stopPropagation()}>
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-lg font-serif text-stone-800">Atölyeye Mesaj Gönder</h3>
+              <button onClick={() => setMesajModalAcik(false)} className="text-stone-400 hover:text-stone-600">✕</button>
+            </div>
+            <textarea 
+              value={atolyeMesaj} 
+              onChange={e => setAtolyeMesaj(e.target.value)} 
+              placeholder="Ürün hakkında sormak istediklerinizi yazın..." 
+              className="w-full h-32 p-3 text-sm bg-stone-50 border border-stone-200 rounded-xl focus:outline-none focus:border-amber-400 resize-none"
+            />
+            <button 
+              onClick={() => {
+                toast.success("Mesajınız iletildi!");
+                setMesajModalAcik(false);
+                setAtolyeMesaj("");
+              }}
+              className="w-full mt-4 py-3 bg-stone-900 text-white text-xs font-bold uppercase tracking-widest rounded-xl hover:bg-stone-800 transition-colors"
+            >
+              Gönder
+            </button>
+          </div>
+        </div>
+      )}
+
     </>
   );
 }
