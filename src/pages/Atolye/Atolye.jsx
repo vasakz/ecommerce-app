@@ -3,32 +3,45 @@ import { Link, useNavigate } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 import toast from 'react-hot-toast'
 
-// Redux bağlantıları
-import { addToCart } from '../../store/slices/cartSlice' 
+import { addToCart } from '../../store/slices/cartSlice'
 import { addToFavorites, removeFromFavorites } from '../../store/slices/favoritesSlice'
 
-// Verilerimiz
 import { urunler, cokSatanlar, yeniTasarimlar, kampanyalar, kategoriler } from '../../data/atolyeData'
 
-// Görsellerimiz
 import atolyeden from '../../assets/atolyeden.jpeg'
 import deriAtolye1 from '../../assets/deri-atolye1.jpg'
 import terzi from '../../assets/terzi.jpeg'
 import oyuncak1 from '../../assets/oyuncak1.jpg'
+
+const TOAST_STYLE = {
+  style: {
+    background: 'rgba(41, 37, 36, 0.95)',
+    color: '#f5f5f4',
+    backdropFilter: 'blur(8px)',
+    padding: '16px 24px',
+    fontSize: '13px',
+    fontWeight: '500',
+    letterSpacing: '0.05em',
+    borderRadius: '12px',
+    border: '1px solid rgba(255, 255, 255, 0.1)',
+    boxShadow: '0 10px 15px -3px rgba(0,0,0,0.1)',
+  },
+  iconTheme: { primary: '#d97706', secondary: '#fff' },
+}
 
 /* ─── ÜRÜN KARTI ────────────────────────────────────────── */
 function UrunKarti({ urun }) {
   const [aktifIndex, setAktifIndex] = useState(0)
   const navigate = useNavigate()
   const dispatch = useDispatch()
-  
+
   const favoriler = useSelector((state) => state.favorites.items)
   const isFavorited = favoriler.some((item) => item.id === urun.id)
 
   const tekGorselMi = urun.gorseller.length <= 1
 
   const gosterGorsel = (index) => setAktifIndex((index + urun.gorseller.length) % urun.gorseller.length)
-  
+
   const okTikla = (yon, e) => {
     e.stopPropagation()
     e.preventDefault()
@@ -38,16 +51,13 @@ function UrunKarti({ urun }) {
   const favoriToggle = (e) => {
     e.stopPropagation()
     e.preventDefault()
-
-    // ÇEVİRMEN: Favoriler sistemine uygun format
     const arkadasinFormatindaUrun = {
       id: urun.id,
       name: urun.isim,
-      price: parseInt(urun.fiyat.replace(/\D/g, '')), // "1200TL" yazısını 1200 sayısına çevirir
+      price: parseInt(urun.fiyat.replace(/\D/g, '')),
       image: urun.gorseller[0],
-      category: urun.kategori || urun.altKategori
+      category: urun.kategori || urun.altKategori,
     }
-
     if (isFavorited) {
       dispatch(removeFromFavorites(urun.id))
     } else {
@@ -55,43 +65,26 @@ function UrunKarti({ urun }) {
     }
   }
 
+  //type:'atolye' ve gercekId eklendi → Cart'ta navigation 
   const sepeteEkle = (e) => {
     e.stopPropagation()
     e.preventDefault()
-
-    // ÇEVİRMEN: Sepet sistemine uygun format
     const sepeteUygunUrun = {
-      id: urun.id,
+      id: `atolye-${urun.id}`,
+      gercekId: urun.id,
       isim: urun.isim,
       fiyat: urun.fiyat,
-      image: urun.gorseller[0]
+      image: urun.gorseller[0],
+      type: 'atolye',
+      orijinalUrun: urun,
     }
-
     dispatch(addToCart(sepeteUygunUrun))
-    
-    // Şık bildirim
-    toast.success(`${urun.isim} sepete eklendi!`, {
-  style: {
-    background: 'rgba(41, 37, 36, 0.95)', // Hafif transparan stone-800
-    color: '#f5f5f4',
-    backdropFilter: 'blur(8px)', // Şık bir cam efekti
-    padding: '16px 24px',
-    fontSize: '13px',
-    fontWeight: '500',
-    letterSpacing: '0.05em',
-    borderRadius: '12px',
-    border: '1px solid rgba(255, 255, 255, 0.1)',
-    boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)',
-  },
-  iconTheme: {
-    primary: '#d97706', // Kehribar (Amber) tonu
-    secondary: '#fff',
-  },
-});
+    toast.success(`${urun.isim} sepete eklendi!`, TOAST_STYLE)
   }
- const kartaTikla = () => {
-  navigate(`/atolye-urun/${urun.id}`, { state: { urun } })
-}
+
+  const kartaTikla = () => {
+    navigate(`/atolye-urun/${urun.id}`, { state: { urun } })
+  }
 
   const renderYildizlar = () =>
     Array.from({ length: 5 }).map((_, i) => (
@@ -104,9 +97,9 @@ function UrunKarti({ urun }) {
     <div onClick={kartaTikla} className="w-[260px] flex-shrink-0 cursor-pointer group">
       <div className="relative bg-stone-100 w-[260px] h-[260px] mb-3 overflow-hidden rounded-md">
         <img src={urun.gorseller[aktifIndex]} alt={urun.isim} className="object-cover w-full h-full transition duration-500 group-hover:scale-105" />
-        
+
         <button onClick={favoriToggle} className="absolute top-3 right-3 z-20 p-2 rounded-full bg-white/40 backdrop-blur-sm hover:bg-white/70 transition-all duration-300 shadow-sm">
-          <svg xmlns="http://www.w3.org/2000/svg" fill={isFavorited ? "#b91c1c" : "none"} viewBox="0 0 24 24" strokeWidth={1.5} stroke={isFavorited ? "#b91c1c" : "currentColor"} className={`w-5 h-5 transition-transform duration-300 ${isFavorited ? 'scale-110' : 'text-stone-800'}`}>
+          <svg xmlns="http://www.w3.org/2000/svg" fill={isFavorited ? '#b91c1c' : 'none'} viewBox="0 0 24 24" strokeWidth={1.5} stroke={isFavorited ? '#b91c1c' : 'currentColor'} className={`w-5 h-5 transition-transform duration-300 ${isFavorited ? 'scale-110' : 'text-stone-800'}`}>
             <path strokeLinecap="round" strokeLinejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z" />
           </svg>
         </button>
@@ -118,23 +111,29 @@ function UrunKarti({ urun }) {
           </>
         )}
       </div>
-      
+
       <div className="flex flex-col px-1">
         <p className="font-medium tracking-wide text-sm text-stone-800 line-clamp-1">{urun.isim}</p>
         <div className="flex items-center gap-1 mt-1 mb-2">
           <div className="flex">{renderYildizlar()}</div>
           <span className="text-[10px] text-stone-500 font-medium">(12 Yorum)</span>
         </div>
-        <div className="flex justify-between items-center mt-1">
-         <div className="flex items-baseline gap-1">
-  <p className="font-bold text-stone-900">{urun.fiyat}</p>
-  <span className="text-[10px] font-medium text-stone-500 tracking-wide">'den başlayan</span>
-</div>
-          
-          <button onClick={sepeteEkle} className="p-2.5 rounded-full bg-stone-100 hover:bg-stone-200 text-stone-700 transition-colors shadow-sm" title="Sepete Ekle">
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5">
+        <div className="flex justify-between items-center mt-2">
+          <div className="flex flex-col justify-center">
+            <p className="font-bold text-stone-900">{urun.fiyat}</p>
+            {!urun.sabitFiyat && (
+              <span className="text-[9px] font-medium text-stone-400 tracking-wide mt-0.5">'den başlayan</span>
+            )}
+          </div>
+          <button
+            onClick={sepeteEkle}
+            className="flex items-center gap-1.5 px-3 py-2 rounded-full bg-amber-600 hover:bg-amber-700 text-white transition-colors shadow-md shadow-amber-600/20"
+            title="Sepete Ekle"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-3.5 h-3.5">
               <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 10.5V6a3.75 3.75 0 10-7.5 0v4.5m11.356-1.993l1.263 12c.07.665-.45 1.243-1.119 1.243H4.25a1.125 1.125 0 01-1.12-1.243l1.264-12A1.125 1.125 0 015.513 7.5h12.974c.576 0 1.059.435 1.119 1.007zM8.625 10.5a.375.375 0 11-.75 0 .375.375 0 01.75 0zm7.5 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z" />
             </svg>
+            <span className="text-[10px] font-bold tracking-widest uppercase">Sepete Ekle</span>
           </button>
         </div>
       </div>
@@ -142,42 +141,69 @@ function UrunKarti({ urun }) {
   )
 }
 
-/* ─── SIDEBAR ───────────────────────────────────────── */
+/* ─── SIDEBAR ───────────────────────────────────────────── */
 function Sidebar({ aktifFiltre, setAktifFiltre, seciliKategori, setSeciliKategori, setSeciliAltKategori }) {
-  const [acik, setAcik] = useState(null)
+  //hover ve click için ayrı stateler kullanıldı çünkü hover sadece görsel olarak açarken, click kalıcı olarak açıyor ve alt kategori seçimi yapmaya izin veriyor
+  const [acik, setAcik] = useState(null)       // tıkla ile açılan
+  const [hovered, setHovered] = useState(null) // hover ile açılan (sadece görsel)
+
+  const aktifIndex = acik !== null ? acik : hovered
 
   const kategoriTikla = (i, kat) => {
-    setAcik(acik === i ? null : i)
-    if (acik !== i) {
-      setSeciliKategori(kat.baslik)
+    if (acik === i) {
+      setAcik(null)
+      setSeciliKategori(null)
       setSeciliAltKategori(null)
     } else {
-      setSeciliKategori(null)
+      setAcik(i)
+      setSeciliKategori(kat.baslik)
       setSeciliAltKategori(null)
     }
   }
 
   return (
     <aside className="hidden lg:block w-52 flex-shrink-0 sticky top-20 self-start h-fit">
-      <Link to="/atolyeler" className="flex items-center gap-2 w-full mb-6 px-3 py-2.5 rounded-md bg-stone-800 text-white text-xs font-bold tracking-widest uppercase hover:bg-stone-900 transition-colors group">
+      <Link
+        to="/atolyeler"
+        className="flex items-center gap-2 w-full mb-6 px-3 py-2.5 rounded-md bg-amber-600 text-white text-xs font-bold tracking-widest uppercase hover:bg-stone-900 transition-colors group"
+      >
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4 flex-shrink-0">
           <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 21v-7.5a.75.75 0 01.75-.75h3a.75.75 0 01.75.75V21m-4.5 0H2.36m11.14 0H18m0 0h3.64m-1.39 0V9.349m-16.5 11.65V9.35m0 0a3.001 3.001 0 003.75-.615A2.993 2.993 0 009.75 9.75c.896 0 1.7-.393 2.25-1.016a2.993 2.993 0 002.25 1.016c.896 0 1.7-.393 2.25-1.016a3.001 3.001 0 003.75.614m-16.5 0a3.004 3.004 0 01-.621-4.72L4.318 3.44A1.5 1.5 0 015.378 3h13.243a1.5 1.5 0 011.06.44l1.19 1.189a3 3 0 01-.621 4.72m-13.5 8.65h3.75a.75.75 0 00.75-.75V13.5a.75.75 0 00-.75-.75H6.75a.75.75 0 00-.75.75v3.75c0 .415.336.75.75.75z" />
         </svg>
         Atölyeleri Gör
         <span className="ml-auto text-stone-300 group-hover:translate-x-0.5 transition-transform">›</span>
       </Link>
+
       <p className="text-[9px] font-bold tracking-[0.3em] text-stone-400 uppercase mb-4">Kategoriler</p>
       <nav className="flex flex-col gap-1">
         {kategoriler.map((kat, i) => (
-          <div key={i} onMouseEnter={() => setAcik(i)} onMouseLeave={() => setAcik(null)} className="relative">
-            <button onClick={() => kategoriTikla(i, kat)} className={`w-full flex justify-between items-center text-left py-2 px-3 rounded-md text-sm font-semibold tracking-wide transition-colors ${seciliKategori === kat.baslik ? 'bg-stone-200 ' + kat.renk : (acik === i ? 'bg-stone-100 ' + kat.renk : 'text-stone-700 hover:bg-stone-50')}`}>
+          <div
+            key={i}
+            onMouseEnter={() => setHovered(i)}
+            onMouseLeave={() => setHovered(null)}
+            className="relative"
+          >
+            <button
+              onClick={() => kategoriTikla(i, kat)}
+              className={`w-full flex justify-between items-center text-left py-2 px-3 rounded-md text-sm font-semibold tracking-wide transition-colors ${
+                seciliKategori === kat.baslik
+                  ? 'bg-stone-200 ' + kat.renk
+                  : aktifIndex === i
+                  ? 'bg-stone-100 ' + kat.renk
+                  : 'text-stone-700 hover:bg-stone-50'
+              }`}
+            >
               {kat.baslik}
-              <span className={`transition-transform duration-200 text-xs ${acik === i ? 'rotate-90' : ''}`}>›</span>
+              <span className={`transition-transform duration-200 text-xs ${aktifIndex === i ? 'rotate-90' : ''}`}>›</span>
             </button>
-            <div className={`overflow-hidden transition-all duration-300 ease-in-out ${acik === i ? 'max-h-48 opacity-100 mt-1 mb-1' : 'max-h-0 opacity-0'}`}>
+            <div className={`overflow-hidden transition-all duration-300 ease-in-out ${aktifIndex === i ? 'max-h-48 opacity-100 mt-1 mb-1' : 'max-h-0 opacity-0'}`}>
               <div className="ml-3 flex flex-col gap-0.5 pb-1">
                 {kat.alt.map((alt, j) => (
-                  <button key={j} onClick={() => { setSeciliKategori(kat.baslik); setSeciliAltKategori(alt) }} className="text-left text-[11px] text-stone-500 hover:text-stone-800 py-1 px-2 rounded hover:bg-stone-100 transition-colors">
+                  <button
+                    key={j}
+                    onClick={() => { setSeciliKategori(kat.baslik); setSeciliAltKategori(alt) }}
+                    className="text-left text-[11px] text-stone-500 hover:text-stone-800 py-1 px-2 rounded hover:bg-stone-100 transition-colors"
+                  >
                     {alt}
                   </button>
                 ))}
@@ -186,24 +212,35 @@ function Sidebar({ aktifFiltre, setAktifFiltre, seciliKategori, setSeciliKategor
           </div>
         ))}
       </nav>
+
       <div className="mt-8 border-t border-stone-200 pt-5">
         <p className="text-[9px] font-bold tracking-[0.3em] text-stone-400 uppercase mb-3">Filtrele</p>
         <div className="flex flex-col gap-2">
           {['En Yeniler', 'En Çok Satanlar', 'Fiyat: Artan', 'Fiyat: Azalan'].map((f) => (
-            <button key={f} onClick={() => setAktifFiltre(aktifFiltre === f ? null : f)} className={`text-left text-[11px] py-1 px-2 rounded transition-colors ${aktifFiltre === f ? 'bg-stone-800 text-white font-semibold' : 'text-stone-500 hover:text-stone-800 hover:bg-stone-100'}`}>
+            <button
+              key={f}
+              onClick={() => setAktifFiltre(aktifFiltre === f ? null : f)}
+              className={`text-left text-[11px] py-1 px-2 rounded transition-colors ${
+                aktifFiltre === f
+                  ? 'bg-stone-800 text-white font-semibold'
+                  : 'text-stone-500 hover:text-stone-800 hover:bg-stone-100'
+              }`}
+            >
               {aktifFiltre === f ? '✓ ' : ''}{f}
             </button>
           ))}
         </div>
         {aktifFiltre && (
-          <button onClick={() => setAktifFiltre(null)} className="mt-3 text-[10px] text-stone-400 hover:text-stone-600 underline transition-colors">Filtreyi Kaldır</button>
+          <button onClick={() => setAktifFiltre(null)} className="mt-3 text-[10px] text-stone-400 hover:text-stone-600 underline transition-colors">
+            Filtreyi Kaldır
+          </button>
         )}
       </div>
     </aside>
   )
 }
 
-/* ─── KAMPANYALAR & VİTRİN SLIDER ────────────────────────────────────────── */
+/* ─── KAMPANYA SLİDER ───────────────────────────────────── */
 function KampanyaSlider() {
   const [aktif, setAktif] = useState(0)
   const sliderRef = useRef(null)
@@ -214,7 +251,8 @@ function KampanyaSlider() {
   }, [])
 
   useEffect(() => {
-    if (sliderRef.current) sliderRef.current.scrollTo({ left: aktif * sliderRef.current.offsetWidth, behavior: 'smooth' })
+    if (sliderRef.current)
+      sliderRef.current.scrollTo({ left: aktif * sliderRef.current.offsetWidth, behavior: 'smooth' })
   }, [aktif])
 
   return (
@@ -223,7 +261,11 @@ function KampanyaSlider() {
         <h2 className="text-sm font-bold tracking-widest uppercase">KAMPANYALAR & FIRSATLAR :</h2>
         <div className="flex gap-1.5">
           {kampanyalar.map((_, i) => (
-            <button key={i} onClick={() => setAktif(i)} className={`rounded-full transition-all duration-300 ${i === aktif ? 'w-5 h-2 bg-stone-800' : 'w-2 h-2 bg-stone-300 hover:bg-stone-500'}`} />
+            <button
+              key={i}
+              onClick={() => setAktif(i)}
+              className={`rounded-full transition-all duration-300 ${i === aktif ? 'w-5 h-2 bg-stone-800' : 'w-2 h-2 bg-stone-300 hover:bg-stone-500'}`}
+            />
           ))}
         </div>
       </div>
@@ -239,7 +281,9 @@ function KampanyaSlider() {
                 <p className="text-white/60 text-sm max-w-md">{k.aciklama}</p>
               </div>
               <div className="flex items-center justify-between mt-6">
-                <Link to="/kampanyalar" className="bg-white text-stone-800 text-xs font-bold tracking-widest uppercase px-6 py-2.5 rounded-full hover:bg-stone-100 transition-colors">Kampanyayı Keşfet →</Link>
+                <Link to="/kampanyalar" className="bg-white text-stone-800 text-xs font-bold tracking-widest uppercase px-6 py-2.5 rounded-full hover:bg-stone-100 transition-colors">
+                  Kampanyayı Keşfet →
+                </Link>
                 <span className="text-white/40 text-xs">{i + 1} / {kampanyalar.length}</span>
               </div>
             </div>
@@ -250,18 +294,19 @@ function KampanyaSlider() {
   )
 }
 
+/* ─── VİTRİN SLİDER ────────────────────────────────────── */
 function VitrinSlider({ baslik, urunlerListesi, id, aktifFiltre }) {
   const sliderRef = useRef(null)
 
   const siraliUrunler = [...urunlerListesi].sort((a, b) => {
-    if (!aktifFiltre) return 0;
-    const fiyatA = parseInt(a.fiyat.replace(/\D/g, ''));
-    const fiyatB = parseInt(b.fiyat.replace(/\D/g, ''));
-    if (aktifFiltre === 'Fiyat: Artan') return fiyatA - fiyatB;
-    if (aktifFiltre === 'Fiyat: Azalan') return fiyatB - fiyatA;
-    if (aktifFiltre === 'En Yeniler') return -1; 
-    if (aktifFiltre === 'En Çok Satanlar') return a.isim.localeCompare(b.isim);
-    return 0;
+    if (!aktifFiltre) return 0
+    const fiyatA = parseInt(a.fiyat.replace(/\D/g, ''))
+    const fiyatB = parseInt(b.fiyat.replace(/\D/g, ''))
+    if (aktifFiltre === 'Fiyat: Artan') return fiyatA - fiyatB
+    if (aktifFiltre === 'Fiyat: Azalan') return fiyatB - fiyatA
+    if (aktifFiltre === 'En Yeniler') return -1
+    if (aktifFiltre === 'En Çok Satanlar') return a.isim.localeCompare(b.isim)
+    return 0
   })
 
   useEffect(() => {
@@ -269,8 +314,10 @@ function VitrinSlider({ baslik, urunlerListesi, id, aktifFiltre }) {
     const otoKaydir = setInterval(() => {
       if (sliderRef.current) {
         const { scrollLeft, scrollWidth, clientWidth } = sliderRef.current
-        if (scrollLeft + clientWidth >= scrollWidth - 5) sliderRef.current.scrollTo({ left: 0, behavior: 'smooth' })
-        else sliderRef.current.scrollBy({ left: 284, behavior: 'smooth' })
+        if (scrollLeft + clientWidth >= scrollWidth - 5)
+          sliderRef.current.scrollTo({ left: 0, behavior: 'smooth' })
+        else
+          sliderRef.current.scrollBy({ left: 284, behavior: 'smooth' })
       }
     }, randomSure)
     return () => clearInterval(otoKaydir)
@@ -280,20 +327,28 @@ function VitrinSlider({ baslik, urunlerListesi, id, aktifFiltre }) {
     if (sliderRef.current) sliderRef.current.scrollBy({ left: yon * 284, behavior: 'smooth' })
   }
 
-  const vitrinGosterimi = [...siraliUrunler, ...siraliUrunler]
+  // index yerine `${urun.id}-${kopya}` formatında unique key kullanılıyor
+  const vitrinGosterimi = [
+    ...siraliUrunler.map((u) => ({ ...u, _key: `${u.id}-0` })),
+    ...siraliUrunler.map((u) => ({ ...u, _key: `${u.id}-1` })),
+  ]
 
   return (
     <div className="mb-14" id={id}>
       <div className="flex items-center justify-between mb-6">
         <h2 className="text-sm font-bold tracking-widest uppercase">{baslik}</h2>
-        {aktifFiltre && <span className="text-[10px] bg-stone-200 text-stone-600 px-2.5 py-1 rounded-full font-medium">{aktifFiltre}</span>}
+        {aktifFiltre && (
+          <span className="text-[10px] bg-stone-200 text-stone-600 px-2.5 py-1 rounded-full font-medium">
+            {aktifFiltre}
+          </span>
+        )}
       </div>
       <div className="relative group">
         <button onClick={() => manuelKaydir(-1)} className="absolute left-0 top-[130px] -translate-y-1/2 -ml-5 z-10 bg-white/90 shadow-md border border-stone-200 text-stone-600 rounded-full w-10 h-10 flex items-center justify-center hover:bg-stone-800 hover:text-white transition-colors opacity-0 group-hover:opacity-100">‹</button>
         <button onClick={() => manuelKaydir(1)} className="absolute right-0 top-[130px] -translate-y-1/2 -mr-5 z-10 bg-white/90 shadow-md border border-stone-200 text-stone-600 rounded-full w-10 h-10 flex items-center justify-center hover:bg-stone-800 hover:text-white transition-colors opacity-0 group-hover:opacity-100">›</button>
         <div ref={sliderRef} className="flex gap-6 overflow-x-auto scrollbar-hide hide-scroll pb-4 scroll-smooth snap-x snap-mandatory">
-          {vitrinGosterimi.map((urun, index) => (
-            <div key={index} className="snap-start shrink-0">
+          {vitrinGosterimi.map((urun) => (
+            <div key={urun._key} className="snap-start shrink-0">
               <UrunKarti urun={urun} />
             </div>
           ))}
@@ -303,7 +358,7 @@ function VitrinSlider({ baslik, urunlerListesi, id, aktifFiltre }) {
   )
 }
 
-/* ─── ANA BİLEŞEN ───────────────────────────────────── */
+/* ─── ANA BİLEŞEN ───────────────────────────────────────── */
 function Atolye() {
   const [aktifFiltre, setAktifFiltre] = useState(null)
   const [seciliKategori, setSeciliKategori] = useState(null)
@@ -311,20 +366,21 @@ function Atolye() {
 
   const tumUrunler = [...urunler, ...cokSatanlar, ...yeniTasarimlar]
 
-  const filtrelenmisKategoriUrunleri = tumUrunler.filter(urun => {
-    let kategoriUyuyor = true; let altKategoriUyuyor = true;
-    if (seciliKategori) kategoriUyuyor = urun.kategori === seciliKategori;
-    if (seciliAltKategori) altKategoriUyuyor = urun.altKategori === seciliAltKategori;
-    return kategoriUyuyor && altKategoriUyuyor;
+  const filtrelenmisKategoriUrunleri = tumUrunler.filter((urun) => {
+    let kategoriUyuyor = true
+    let altKategoriUyuyor = true
+    if (seciliKategori) kategoriUyuyor = urun.kategori === seciliKategori
+    if (seciliAltKategori) altKategoriUyuyor = urun.altKategori === seciliAltKategori
+    return kategoriUyuyor && altKategoriUyuyor
   })
 
   if (aktifFiltre) {
     filtrelenmisKategoriUrunleri.sort((a, b) => {
-      const fiyatA = parseInt(a.fiyat.replace(/\D/g, ''));
-      const fiyatB = parseInt(b.fiyat.replace(/\D/g, ''));
-      if (aktifFiltre === 'Fiyat: Artan') return fiyatA - fiyatB;
-      if (aktifFiltre === 'Fiyat: Azalan') return fiyatB - fiyatA;
-      return 0;
+      const fiyatA = parseInt(a.fiyat.replace(/\D/g, ''))
+      const fiyatB = parseInt(b.fiyat.replace(/\D/g, ''))
+      if (aktifFiltre === 'Fiyat: Artan') return fiyatA - fiyatB
+      if (aktifFiltre === 'Fiyat: Azalan') return fiyatB - fiyatA
+      return 0
     })
   }
 
@@ -344,7 +400,8 @@ function Atolye() {
           <p className="text-xs tracking-widest mb-2">ZEVKLİ TASARIMLAR</p>
           <h1 className="text-4xl font-bold mb-4">Atölyeden Evinize, Hikayesi Olan Tasarımlar.</h1>
           <p className="text-sm max-w-xl text-stone-200">
-            Her bir detayında alın teri, her bir kıvrımında mükemmellik tutkusu var. Atölyemizin tozunda doğan özel koleksiyonları keşfedin.
+            Her bir detayında alın teri, her bir kıvrımında mükemmellik tutkusu var. Atölyemizin
+            tozunda doğan özel koleksiyonları keşfedin.
           </p>
         </div>
       </div>
@@ -360,8 +417,14 @@ function Atolye() {
       </div>
 
       <div className="max-w-7xl mx-auto px-6 py-12 flex gap-10 items-start">
-        <Sidebar aktifFiltre={aktifFiltre} setAktifFiltre={setAktifFiltre} seciliKategori={seciliKategori} setSeciliKategori={setSeciliKategori} setSeciliAltKategori={setSeciliAltKategori} />
-        
+        <Sidebar
+          aktifFiltre={aktifFiltre}
+          setAktifFiltre={setAktifFiltre}
+          seciliKategori={seciliKategori}
+          setSeciliKategori={setSeciliKategori}
+          setSeciliAltKategori={setSeciliAltKategori}
+        />
+
         <div className="flex-1 min-w-0">
           <KampanyaSlider />
 
@@ -371,15 +434,18 @@ function Atolye() {
                 <h2 className="text-sm font-bold tracking-widest uppercase text-stone-800">
                   {seciliAltKategori ? `${seciliKategori} > ${seciliAltKategori}` : seciliKategori}
                 </h2>
-                <button onClick={() => {setSeciliKategori(null); setSeciliAltKategori(null)}} className="text-[11px] font-semibold text-stone-500 hover:text-stone-800 flex items-center gap-1 transition-colors">
+                <button
+                  onClick={() => { setSeciliKategori(null); setSeciliAltKategori(null) }}
+                  className="text-[11px] font-semibold text-stone-500 hover:text-stone-800 flex items-center gap-1 transition-colors"
+                >
                   ✕ Temizle ve Tümüne Dön
                 </button>
               </div>
-              
+
               {filtrelenmisKategoriUrunleri.length > 0 ? (
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-y-10 gap-x-6">
                   {filtrelenmisKategoriUrunleri.map((urun, idx) => (
-                    <UrunKarti key={idx} urun={urun} />
+                    <UrunKarti key={`${urun.id}-${idx}`} urun={urun} />
                   ))}
                 </div>
               ) : (
@@ -396,7 +462,7 @@ function Atolye() {
             </>
           )}
 
-          {/* ─── ÖNE ÇIKAN ATÖLYELER ─── */}
+          {/* ── ÖNE ÇIKAN ATÖLYELER ── */}
           <div className="py-20 border-t border-stone-200/60 mt-8">
             <div className="flex flex-col md:flex-row justify-between items-end mb-16 gap-6">
               <div>
@@ -404,12 +470,12 @@ function Atolye() {
                 <h2 className="text-3xl font-serif text-stone-800">Öne Çıkan Atölyeler</h2>
               </div>
               <Link to="/atolyeler" className="text-xs font-semibold tracking-widest text-stone-700 uppercase flex items-center gap-2 border-b border-stone-400 pb-1.5 hover:border-stone-800 transition-colors group">
-                Tüm Atölyeleri Gör <span className="text-lg font-light leading-none group-hover:translate-x-1 transition-transform">›</span>
+                Tüm Atölyeleri Gör
+                <span className="text-lg font-light leading-none group-hover:translate-x-1 transition-transform">›</span>
               </Link>
             </div>
 
             <div className="flex flex-col gap-16 md:gap-24">
-
               {/* 1. Deri Atölyesi */}
               <div className="flex flex-col md:flex-row gap-8 md:gap-12 items-center">
                 <div className="w-full md:w-5/12">
@@ -425,7 +491,7 @@ function Atolye() {
                   <h3 className="text-2xl font-serif text-stone-800 mb-3">Mila DERİ ÇANTA & CÜZDAN</h3>
                   <p className="text-[10px] font-bold text-amber-600 tracking-wider mb-4 uppercase">El Yapımı Çanta & Zanaat</p>
                   <p className="text-stone-600 text-sm leading-relaxed mb-5">
-                    Derinin yaşanmışlığını ve karakterini yansıtan koleksiyonlarımız, ustamızın yıllara dayanan tecrübesiyle şekilleniyor. Arkasındaki devasa renk paletinden özenle seçilen her bir deri parçası, zamana meydan okuyan tasarımlara dönüşerek sadece size özel bir hikaye anlatır.
+                    Derinin yaşanmışlığını ve karakterini yansıtan koleksiyonlarımız, ustamızın yıllara dayanan tecrübesiyle şekilleniyor.
                   </p>
                   <div className="bg-stone-50 border-l-2 border-amber-400 p-4 rounded-r-md">
                     <p className="text-stone-700 text-xs italic mb-2">"Yıllardır aradığım o kusursuz vintage görünümlü çantayı sonunda burada buldum. İşçilik tek kelimeyle muazzam."</p>
@@ -438,7 +504,7 @@ function Atolye() {
               <div className="flex flex-col md:flex-row-reverse gap-8 md:gap-12 items-center">
                 <div className="w-full md:w-5/12">
                   <div className="aspect-[4/3] overflow-hidden rounded-md bg-stone-100 shadow-sm relative group cursor-pointer">
-                    <img src={terzi} alt="Özel Dikim Terzihanesi" className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
+                    <img src={terzi} alt="Özel Dikim" className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
                     <div className="absolute inset-0 bg-stone-900/0 group-hover:bg-stone-900/50 transition-colors duration-500 flex items-center justify-center">
                       <Link to="/atolyeler" className="opacity-0 group-hover:opacity-100 transition-opacity duration-500 delay-75 text-white border border-white/60 px-6 py-2.5 rounded-sm text-[10px] tracking-[0.2em] uppercase font-medium backdrop-blur-sm">Atölyeyi Keşfet</Link>
                     </div>
@@ -449,7 +515,7 @@ function Atolye() {
                   <h3 className="text-2xl font-serif text-stone-800 mb-3">Özel Dikim Terzihanesi</h3>
                   <p className="text-[10px] font-bold text-sky-600 tracking-wider mb-4 uppercase">Ismarlama & Klasik Kesim</p>
                   <p className="text-stone-600 text-sm leading-relaxed mb-5">
-                    Milimetrik hesaplamalar, usta işi tebeşir çizgileri ve birinci sınıf kumaşların kusursuz buluşma noktası. Standart kalıpların ötesine geçerek; sadece bedeninize değil, karakterinize ve duruşunuza da tam oturan kişiye özel tasarımlar hazırlıyoruz.
+                    Milimetrik hesaplamalar, usta işi tebeşir çizgileri ve birinci sınıf kumaşların kusursuz buluşma noktası.
                   </p>
                   <div className="bg-stone-50 border-r-2 border-sky-400 p-4 rounded-l-md md:text-left">
                     <p className="text-stone-700 text-xs italic mb-2">"Kumaşın kalitesi ve ustanın özeni inanılmazdı. Kesimi o kadar kusursuz ki, üzerimde taşıdığım en iyi ceket oldu."</p>
@@ -473,7 +539,7 @@ function Atolye() {
                   <h3 className="text-2xl font-serif text-stone-800 mb-3">Amigurumi OYUNCAK</h3>
                   <p className="text-[10px] font-bold text-rose-500 tracking-wider mb-4 uppercase">İlmek İlmek: Oyuncak</p>
                   <p className="text-stone-600 text-sm leading-relaxed mb-5">
-                    Çocuklar ve ruhu çocuk kalanlar için, organik pamuk iplerle örülmüş uyku arkadaşları. Hiçbir zararlı madde içermeyen, tamamen doğal amigurumi oyuncaklarımız sevgiyle ilmek ilmek işleniyor.
+                    Çocuklar ve ruhu çocuk kalanlar için, organik pamuk iplerle örülmüş uyku arkadaşları.
                   </p>
                   <div className="bg-stone-50 border-l-2 border-rose-400 p-4 rounded-r-md">
                     <p className="text-stone-700 text-xs italic mb-2">"Kızım tavşanını elinden düşürmüyor, dokusu o kadar yumuşak ve güvenli ki içim çok rahat."</p>
@@ -481,10 +547,8 @@ function Atolye() {
                   </div>
                 </div>
               </div>
-
             </div>
           </div>
-
         </div>
       </div>
     </div>
