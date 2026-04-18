@@ -707,6 +707,21 @@ function Payment() {
                       <span>GÜVENLİ ÖDEME</span>
                     </div>
                 </button>
+                {/* Secure Highlights */}
+                <div className="mt-8 grid grid-cols-2 gap-4 animate-in fade-in slide-in-from-bottom-4 duration-1000">
+                  <div className="flex flex-col items-center gap-2 p-4 bg-stone-50/50 rounded-2xl border border-stone-100 group hover:bg-white hover:shadow-xl hover:shadow-stone-200/50 transition-all duration-300">
+                    <div className="w-10 h-10 rounded-full bg-white flex items-center justify-center shadow-sm border border-stone-50 group-hover:scale-110 transition-transform">
+                      <ShieldCheck size={18} className="text-emerald-500" />
+                    </div>
+                    <span className="text-[9px] font-black text-stone-400 uppercase tracking-widest text-center leading-tight">256-bit SSL Güvenli Altyapı</span>
+                  </div>
+                  <div className="flex flex-col items-center gap-2 p-4 bg-stone-50/50 rounded-2xl border border-stone-100 group hover:bg-white hover:shadow-xl hover:shadow-stone-200/50 transition-all duration-300">
+                    <div className="w-10 h-10 rounded-full bg-white flex items-center justify-center shadow-sm border border-stone-50 group-hover:scale-110 transition-transform">
+                      <Truck size={18} className="text-amber-500" />
+                    </div>
+                    <span className="text-[9px] font-black text-stone-400 uppercase tracking-widest text-center leading-tight">Aynı Gün Hızlı Teslimat</span>
+                  </div>
+                </div>
             </div>
           </aside>
         </div>
