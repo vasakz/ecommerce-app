@@ -707,7 +707,6 @@ function Payment() {
                       <span>GÜVENLİ ÖDEME</span>
                     </div>
                 </button>
-
                 {/* Secure Highlights */}
                 <div className="mt-8 grid grid-cols-2 gap-4 animate-in fade-in slide-in-from-bottom-4 duration-1000">
                   <div className="flex flex-col items-center gap-2 p-4 bg-stone-50/50 rounded-2xl border border-stone-100 group hover:bg-white hover:shadow-xl hover:shadow-stone-200/50 transition-all duration-300">
