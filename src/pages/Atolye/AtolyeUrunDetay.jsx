@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useReducer } from 'react';
-import { useLocation, useParams } from 'react-router-dom';
+import { useLocation, useParams, Link } from 'react-router-dom'; // Link eklendi
 import { useDispatch, useSelector } from 'react-redux';
 import toast from 'react-hot-toast';
 
@@ -341,7 +341,7 @@ function AtolyeUrunDetay() {
   const [seciliRenk, setSeciliRenk] = useState({ id: 'taba', isim: 'Taba', ekUcret: 0, hex: '#8B5A2B' });
   const [seciliEkstralar, setSeciliEkstralar] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  
+
   useEffect(() => { window.scrollTo(0, 0); }, []);
 
   if (!urun) {
@@ -634,17 +634,25 @@ function AtolyeUrunDetay() {
       </div>
 
 
-                {/* Atölye Sahibi Bilgisi ve Mesaj Butonu */}
+       {/* Atölye Sahibi Bilgisi ve Mesaj Butonu */}
 <div className="flex items-center gap-3 my-6 p-4 bg-stone-50 rounded-xl border border-stone-100">
-  <div className="w-10 h-10 rounded-full bg-amber-100 flex items-center justify-center text-amber-700 font-bold">
-    {urun.atolyeIsmi ? urun.atolyeIsmi[0] : 'A'}
-  </div>
-  <div className="flex-1">
-    <h4 className="text-xs font-bold text-stone-800 uppercase tracking-tight">
-      {urun.atolyeIsmi || "Tasarım Atölyesi"}
-    </h4>
-    <p className="text-[10px] text-stone-400">Genellikle 1 saat içinde yanıt veriyor</p>
-  </div>
+  {/* Tıklanabilir Alan: Avatar ve İsim */}
+  <Link 
+    to={`/atolyeler/${urun.atolyeId || urun.id}`} // Atölye ID'sine göre yönlendirir
+    className="flex items-center gap-3 flex-1 group"
+  >
+    <div className="w-10 h-10 rounded-full bg-amber-100 flex items-center justify-center text-amber-700 font-bold group-hover:ring-2 group-hover:ring-amber-200 transition-all">
+      {urun.atolyeIsmi ? urun.atolyeIsmi[0] : 'A'}
+    </div>
+    <div className="text-left">
+      <h4 className="text-xs font-bold text-stone-800 uppercase tracking-tight group-hover:text-amber-700 transition-colors">
+        {urun.atolyeIsmi || "Tasarım Atölyesi"}
+      </h4>
+      <p className="text-[10px] text-stone-400">Genellikle 1 saat içinde yanıt veriyor</p>
+    </div>
+  </Link>
+
+  {/* Soru Sor Butonu (Buna basınca sayfa değişmez, modal açılır) */}
   <button 
     onClick={() => setMesajModalAcik(true)}
     className="px-3 py-2 text-[10px] font-bold uppercase tracking-widest text-amber-700 border border-amber-200 rounded-lg hover:bg-amber-50 transition-colors"
