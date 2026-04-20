@@ -312,15 +312,24 @@ function AtolyeUrunDetay() {
   const [urun, setUrun] = useState(location.state?.urun || null);
   const [yukleniyor, setYukleniyor] = useState(!urun);
 
-  useEffect(() => {
+ useEffect(() => {
     window.scrollTo(0, 0);
     
-    // Eğer 'urun' bilgisi yoksa (sayfa yenilendiyse), veriyi buradan çekmelisin
+    // Eğer 'urun' bilgisi yoksa (sayfa yenilendiyse), veriyi buradan çekiyoruz
     if (!urun && id) {
-      setYukleniyor(true);
-      // Burası ileride backend'e (veritabanına) bağlanacak yer:
-      // fetch(`/api/urunler/${id}`).then(...)
-      setYukleniyor(false); 
+      // React'i döngüye sokmamak için asenkron bir fonksiyon tanımlıyoruz
+      const veriGetir = async () => {
+        setYukleniyor(true); // Artık 'yukleniyor' değişkeni kullanılmış oldu
+        
+        // İleride burası backend'den veri çekme yeri olacak:
+        // const response = await fetch(`/api/urunler/${id}`);
+        // const data = await response.json();
+        // setUrun(data); // Artık 'setUrun' kullanılmış oldu
+        
+        setYukleniyor(false); 
+      };
+      
+      veriGetir();
     }
   }, [id, urun]);
 
@@ -638,16 +647,15 @@ function AtolyeUrunDetay() {
          {/* Atölye Sahibi Bilgisi ve Mesaj Butonu */}
 <div className="flex items-center gap-3 my-6 p-4 bg-stone-50 rounded-xl border border-stone-100">
   <Link 
-    to={`/atolyeler/${urun.atolyeId}`} // Burası backend'den gelecek ID ile çalışacak
+    to={`/atolyeler/${urun.atolyeId}`} // backend'den gelecek ID ile çalışacak
     className="flex items-center gap-3 flex-1 group"
-  >
-    <div className="w-10 h-10 rounded-full bg-amber-100 flex items-center justify-center text-amber-700 font-bold group-hover:ring-2 group-hover:ring-amber-200 transition-all overflow-hidden border border-stone-200">
-      {urun.atolyeAvatar ? (
-        <img src={urun.atolyeAvatar} alt={urun.atolyeIsmi} className="w-full h-full object-cover" />
-      ) : (
-        urun.atolyeIsmi ? urun.atolyeIsmi[0].toUpperCase() : 'A'
-      )}
-    </div>
+  ><div className="w-20 h-20 rounded-full bg-amber-100 flex items-center justify-center text-amber-700 text-xl font-bold group-hover:ring-2 group-hover:ring-amber-200 transition-all overflow-hidden border border-stone-200 flex-shrink-0">
+  {urun.atolyeAvatar ? (
+    <img src={urun.atolyeAvatar} alt={urun.atolyeIsmi} className="w-full h-full object-cover" />
+  ) : (
+    urun.atolyeIsmi ? urun.atolyeIsmi[0].toUpperCase() : 'A'
+  )}
+</div>
     <div className="text-left">
       <h4 className="text-xs font-bold text-stone-800 uppercase tracking-tight group-hover:text-amber-700 transition-colors">
         {urun.atolyeIsmi || "Tasarım Atölyesi"}
