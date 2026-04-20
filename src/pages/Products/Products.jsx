@@ -2,13 +2,13 @@ import React, { useState, useMemo, useEffect } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { toast } from 'react-hot-toast';
-import { 
-  Heart, 
-  Search, 
-  ChevronDown, 
-  Filter, 
-  Grid3X3, 
-  X, 
+import {
+  Heart,
+  Search,
+  ChevronDown,
+  Filter,
+  Grid3X3,
+  X,
   Star,
   ShoppingBag,
   Truck,
@@ -34,10 +34,10 @@ const Products = () => {
   const [gridCols, setGridCols] = useState(3);
   const [sortBy, setSortBy] = useState('best-seller');
   const dispatch = useDispatch();
-  
+
   // URL'den State okuma fonksiyonları
   const getArrayParam = (key) => searchParams.getAll(key);
-  
+
   // State from URL
   const selectedCategory = searchParams.get('category') || '';
   const selectedSubcategories = getArrayParam('subcategory');
@@ -56,7 +56,7 @@ const Products = () => {
   // Parametre Güncelleme Fonksiyonu
   const updateParams = (key, value, isArray = false) => {
     const newParams = new URLSearchParams(searchParams);
-    
+
     if (isArray) {
       if (newParams.getAll(key).includes(value)) {
         // Remove item if already exists via filtering
@@ -92,17 +92,17 @@ const Products = () => {
     if (selectedSizes.length > 0) result = result.filter(p => selectedSizes.includes(p.size));
     if (selectedSellers.length > 0) result = result.filter(p => selectedSellers.includes(p.seller));
     if (selectedGenders.length > 0) result = result.filter(p => selectedGenders.includes(p.gender));
-    
+
     if (minPrice) result = result.filter(p => p.price >= Number(minPrice));
     if (maxPrice) result = result.filter(p => p.price <= Number(maxPrice));
     if (minRating > 0) result = result.filter(p => p.rating >= minRating);
-    
+
     if (isFreeShipping) result = result.filter(p => p.isFreeShipping);
     if (isFastDelivery) result = result.filter(p => p.isFastDelivery);
 
-    if (sortBy === 'price-asc') result.sort((a,b) => a.price - b.price);
-    else if (sortBy === 'price-desc') result.sort((a,b) => b.price - a.price);
-    else if (sortBy === 'newest') result.sort((a,b) => (b.isNew ? 1 : 0) - (a.isNew ? 1 : 0));
+    if (sortBy === 'price-asc') result.sort((a, b) => a.price - b.price);
+    else if (sortBy === 'price-desc') result.sort((a, b) => b.price - a.price);
+    else if (sortBy === 'newest') result.sort((a, b) => (b.isNew ? 1 : 0) - (a.isNew ? 1 : 0));
 
     return result;
   }, [searchParams, sortBy]);
@@ -130,12 +130,12 @@ const Products = () => {
 
   return (
     <div className="bg-gray-50 dark:bg-stone-900 min-h-screen pb-12 transition-colors duration-300">
-      
+
       {/* Category Banner */}
       <div className="relative w-full h-48 md:h-64 overflow-hidden bg-black mb-0">
-        <img 
-          src={selectedCategory ? CATEGORY_BANNERS[selectedCategory] : CATEGORY_BANNERS['Genel']} 
-          alt="Category Banner" 
+        <img
+          src={selectedCategory ? CATEGORY_BANNERS[selectedCategory] : CATEGORY_BANNERS['Genel']}
+          alt="Category Banner"
           className="w-full h-full object-cover opacity-60"
         />
         <div className="absolute inset-0 flex flex-col justify-center items-center text-white">
@@ -163,7 +163,7 @@ const Products = () => {
       </div>
 
       <div className="container mx-auto px-4 text-gray-900 dark:text-gray-100">
-        
+
         {/* Upper Controls */}
         <div className="flex flex-col md:flex-row md:items-center justify-between mb-6 pb-4 border-b dark:border-gray-800">
           <div>
@@ -176,12 +176,12 @@ const Products = () => {
             </nav>
             <p className="text-sm font-semibold">{filteredProducts.length} <span className="text-gray-500 font-normal">ürün bulundu</span></p>
           </div>
-          
+
           <div className="flex items-center gap-4 mt-4 md:mt-0 flex-wrap">
             <div className="relative">
-              <input 
-                type="text" 
-                placeholder="Arama yap..." 
+              <input
+                type="text"
+                placeholder="Arama yap..."
                 value={searchQuery}
                 onChange={(e) => updateParams('q', e.target.value)}
                 className="pl-10 pr-4 py-2 bg-white dark:bg-stone-800 border border-gray-200 dark:border-stone-700 rounded-lg outline-none focus:ring-2 focus:ring-amber-500 w-full sm:w-64 text-gray-900 dark:text-gray-100"
@@ -200,9 +200,9 @@ const Products = () => {
                 </button>
               ))}
             </div>
-            
+
             <div className="relative">
-              <select 
+              <select
                 value={sortBy}
                 onChange={(e) => setSortBy(e.target.value)}
                 className="appearance-none bg-white dark:bg-stone-800 border border-gray-200 dark:border-stone-700 rounded-lg px-4 py-2 pr-10 outline-none focus:ring-2 focus:ring-amber-500 cursor-pointer text-sm font-medium"
@@ -236,10 +236,10 @@ const Products = () => {
         )}
 
         <div className="flex flex-col lg:flex-row gap-8">
-          
+
           {/* Sidebar */}
           <aside className="w-full lg:w-[280px] flex-shrink-0 space-y-10 bg-white/50 dark:bg-stone-900/40 backdrop-blur-2xl border border-white/40 dark:border-stone-800/60 rounded-3xl p-7 self-start sticky top-24 max-h-[calc(100vh-120px)] overflow-y-auto custom-scrollbar shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.2)]">
-            
+
             {/* Kategoriler */}
             <div>
               <div className="flex items-center gap-2 mb-5">
@@ -247,14 +247,14 @@ const Products = () => {
                 <h3 className="font-extrabold text-[11px] uppercase tracking-[0.2em] text-stone-900 dark:text-stone-100">Kategoriler</h3>
               </div>
               <div className="flex flex-col gap-1.5">
-                <button 
+                <button
                   onClick={() => updateParams('category', '')}
                   className={`block w-full text-left px-4 py-2.5 rounded-xl transition-all font-bold text-xs tracking-wide border ${!selectedCategory ? 'bg-amber-500 text-white border-amber-500 shadow-md shadow-amber-500/20' : 'bg-transparent text-stone-600 dark:text-stone-400 border-transparent hover:bg-white dark:hover:bg-stone-800 hover:text-stone-900 dark:hover:text-stone-200 hover:shadow-sm'}`}
                 >
                   Tüm Kategoriler
                 </button>
                 {Object.keys(CATEGORY_TREE).map(cat => (
-                  <button 
+                  <button
                     key={cat}
                     onClick={() => updateParams('category', cat)}
                     className={`block w-full text-left px-4 py-2.5 rounded-xl transition-all font-bold text-xs tracking-wide border ${selectedCategory === cat ? 'bg-amber-500 text-white border-amber-500 shadow-md shadow-amber-500/20' : 'bg-transparent text-stone-600 dark:text-stone-400 border-transparent hover:bg-white dark:hover:bg-stone-800 hover:text-stone-900 dark:hover:text-stone-200 hover:shadow-sm'}`}
@@ -295,23 +295,23 @@ const Products = () => {
               <div className="flex gap-2 items-center">
                 <div className="relative w-full">
                   <span className="absolute left-3 top-1/2 -translate-y-1/2 text-stone-400 text-xs font-bold">₺</span>
-                  <input 
-                    type="number" 
-                    placeholder="Min" 
+                  <input
+                    type="number"
+                    placeholder="Min"
                     value={minPrice}
                     onChange={e => updateParams('minPrice', e.target.value)}
-                    className="w-full border-0 bg-stone-100/80 dark:bg-stone-800/80 focus:bg-white dark:focus:bg-stone-800 focus:ring-2 focus:ring-amber-500 rounded-xl pl-7 pr-3 py-2.5 text-xs font-bold outline-none transition-all placeholder:text-stone-400 text-stone-800 dark:text-stone-100 shadow-inner" 
+                    className="w-full border-0 bg-stone-100/80 dark:bg-stone-800/80 focus:bg-white dark:focus:bg-stone-800 focus:ring-2 focus:ring-amber-500 rounded-xl pl-7 pr-3 py-2.5 text-xs font-bold outline-none transition-all placeholder:text-stone-400 text-stone-800 dark:text-stone-100 shadow-inner"
                   />
                 </div>
                 <span className="text-stone-300 dark:text-stone-600 font-bold">-</span>
                 <div className="relative w-full">
                   <span className="absolute left-3 top-1/2 -translate-y-1/2 text-stone-400 text-xs font-bold">₺</span>
-                  <input 
-                    type="number" 
-                    placeholder="Max" 
+                  <input
+                    type="number"
+                    placeholder="Max"
                     value={maxPrice}
                     onChange={e => updateParams('maxPrice', e.target.value)}
-                    className="w-full border-0 bg-stone-100/80 dark:bg-stone-800/80 focus:bg-white dark:focus:bg-stone-800 focus:ring-2 focus:ring-amber-500 rounded-xl pl-7 pr-3 py-2.5 text-xs font-bold outline-none transition-all placeholder:text-stone-400 text-stone-800 dark:text-stone-100 shadow-inner" 
+                    className="w-full border-0 bg-stone-100/80 dark:bg-stone-800/80 focus:bg-white dark:focus:bg-stone-800 focus:ring-2 focus:ring-amber-500 rounded-xl pl-7 pr-3 py-2.5 text-xs font-bold outline-none transition-all placeholder:text-stone-400 text-stone-800 dark:text-stone-100 shadow-inner"
                   />
                 </div>
               </div>
@@ -346,7 +346,7 @@ const Products = () => {
                 <label className="flex items-center gap-3 cursor-pointer group p-3 rounded-xl border border-stone-200 dark:border-stone-700/50 hover:border-amber-500/40 dark:hover:border-amber-500/40 hover:bg-white dark:hover:bg-stone-800 transition-all bg-stone-50/50 dark:bg-stone-800/30">
                   <input type="checkbox" checked={isFreeShipping} onChange={() => updateParams('freeShipping', isFreeShipping ? '' : 'true')} className="sr-only" />
                   <div className={`w-4 h-4 rounded border flex items-center justify-center transition-all duration-200 ${isFreeShipping ? 'bg-amber-500 border-amber-500 shadow-sm shadow-amber-500/30' : 'bg-white dark:bg-stone-900 border-stone-300 dark:border-stone-600'}`}>
-                     {isFreeShipping && <svg className="w-2.5 h-2.5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" /></svg>}
+                    {isFreeShipping && <svg className="w-2.5 h-2.5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" /></svg>}
                   </div>
                   <div className="flex items-center gap-2 text-xs font-bold text-stone-800 dark:text-stone-200">
                     <Truck className="w-3.5 h-3.5 text-emerald-500" /> Ücretsiz Kargo
@@ -355,7 +355,7 @@ const Products = () => {
                 <label className="flex items-center gap-3 cursor-pointer group p-3 rounded-xl border border-stone-200 dark:border-stone-700/50 hover:border-amber-500/40 dark:hover:border-amber-500/40 hover:bg-white dark:hover:bg-stone-800 transition-all bg-stone-50/50 dark:bg-stone-800/30">
                   <input type="checkbox" checked={isFastDelivery} onChange={() => updateParams('fastDelivery', isFastDelivery ? '' : 'true')} className="sr-only" />
                   <div className={`w-4 h-4 rounded border flex items-center justify-center transition-all duration-200 ${isFastDelivery ? 'bg-amber-500 border-amber-500 shadow-sm shadow-amber-500/30' : 'bg-white dark:bg-stone-900 border-stone-300 dark:border-stone-600'}`}>
-                     {isFastDelivery && <svg className="w-2.5 h-2.5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" /></svg>}
+                    {isFastDelivery && <svg className="w-2.5 h-2.5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" /></svg>}
                   </div>
                   <div className="flex items-center gap-2 text-xs font-bold text-stone-800 dark:text-stone-200">
                     <Zap className="w-3.5 h-3.5 text-amber-500 fill-amber-500" /> Hızlı Teslimat
@@ -393,12 +393,12 @@ const Products = () => {
                 {[4, 3, 2, 1].map(rating => (
                   <label key={rating} className="block cursor-pointer">
                     <div className={`flex items-center gap-3 w-full px-3 py-2 rounded-xl border transition-all duration-300 ${minRating === rating ? 'bg-white dark:bg-stone-800 border-amber-500 shadow-sm shadow-amber-500/10' : 'bg-transparent border-transparent hover:bg-white/50 dark:hover:bg-stone-800/50'}`}>
-                      <input 
-                        type="radio" 
-                        name="rating" 
+                      <input
+                        type="radio"
+                        name="rating"
                         checked={minRating === rating}
                         onChange={() => updateParams('rating', rating.toString())}
-                        className="sr-only" 
+                        className="sr-only"
                       />
                       <div className={`w-3.5 h-3.5 rounded-full border-2 flex items-center justify-center transition-all ${minRating === rating ? 'border-amber-500' : 'border-stone-300 dark:border-stone-600'}`}>
                         {minRating === rating && <div className="w-1.5 h-1.5 bg-amber-500 rounded-full"></div>}
@@ -423,8 +423,8 @@ const Products = () => {
               </div>
               <div className="flex flex-wrap gap-2.5">
                 {COLORS.map((color) => (
-                  <button 
-                    key={color.id} 
+                  <button
+                    key={color.id}
                     title={color.name}
                     onClick={() => updateParams('color', color.id, true)}
                     className={`relative w-8 h-8 rounded-full border shadow-sm transition-all duration-300 flex items-center justify-center
@@ -447,7 +447,7 @@ const Products = () => {
                   </div>
                   <div className="flex flex-wrap gap-2">
                     {['Erkek', 'Kadın', 'Unisex'].map(g => (
-                      <button 
+                      <button
                         key={g}
                         onClick={() => updateParams('gender', g, true)}
                         className={`px-4 py-2 rounded-xl border text-[11px] uppercase tracking-wider font-extrabold transition-all duration-300 shadow-sm
@@ -465,7 +465,7 @@ const Products = () => {
                   </div>
                   <div className="grid grid-cols-3 gap-2.5">
                     {['XS', 'S', 'M', 'L', 'XL'].map(size => (
-                      <button 
+                      <button
                         key={size}
                         onClick={() => updateParams('size', size, true)}
                         className={`h-11 rounded-xl border flex items-center justify-center text-xs font-black transition-all duration-300 shadow-sm
@@ -488,7 +488,7 @@ const Products = () => {
                 <Filter className="w-16 h-16 text-gray-200 dark:text-stone-700 mx-auto mb-6" />
                 <h3 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-2">Eyvah, sonuç bulamadık!</h3>
                 <p className="text-gray-500 dark:text-gray-400 mb-8 max-w-sm mx-auto">Seçtiğiniz filtrelere uyan bir ürün maalesef şu an stoklarımızda yok. Farklı filtreler denemeye ne dersiniz?</p>
-                <button 
+                <button
                   onClick={clearAllFilters}
                   className="bg-amber-600 text-white px-8 py-3 rounded-xl font-bold hover:bg-amber-700 transition-colors shadow-lg shadow-amber-500/30"
                 >
@@ -496,14 +496,14 @@ const Products = () => {
                 </button>
               </div>
             ) : (
-              <div 
+              <div
                 className="grid gap-6 transition-all duration-300"
                 style={{ gridTemplateColumns: `repeat(${gridCols}, minmax(0, 1fr))` }}
               >
                 {filteredProducts.map(product => (
                   <div key={product.id} className="group relative rounded-2xl overflow-hidden hover:shadow-2xl transition-all duration-300 border border-gray-100 dark:border-stone-800 bg-white dark:bg-stone-800 flex flex-col h-full">
                     <Link to={`/urunler/${product.id}`} className="block relative aspect-square md:aspect-[4/5] overflow-hidden bg-gray-50 dark:bg-stone-900">
-                      
+
                       <div className="absolute top-3 left-3 z-10 flex flex-col gap-1.5">
                         {product.isNew && (
                           <span className="bg-black dark:bg-white text-white dark:text-black text-[10px] font-extrabold px-2 py-1 rounded shadow-md w-max">
@@ -517,7 +517,7 @@ const Products = () => {
                         )}
                       </div>
 
-                      <button 
+                      <button
                         onClick={() => {
                           dispatch(addToFavorites({
                             id: product.id,
@@ -532,14 +532,14 @@ const Products = () => {
                       >
                         <Heart className="w-5 h-5" />
                       </button>
-                      
-                      <img 
-                        src={product.image} 
-                        alt={product.name} 
+
+                      <img
+                        src={product.image}
+                        alt={product.name}
                         className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700 ease-out"
                       />
                     </Link>
-                    
+
                     <div className="p-5 flex flex-col flex-1">
                       {/* Name & Details Stacked */}
                       <div className="mb-3">
@@ -550,7 +550,7 @@ const Products = () => {
                           {product.brand} • {product.subcategory}
                         </p>
                       </div>
-                      
+
                       {/* Price and Stars Side-by-Side (at the bottom of info) */}
                       <div className="mt-auto pt-3 border-t border-gray-50 dark:border-stone-800/50">
                         <div className="flex items-center justify-between gap-2">
@@ -578,13 +578,13 @@ const Products = () => {
 
                         {/* Quick View / Add to Cart Link area */}
                         <div className="mt-4 flex items-center justify-between">
-                          <Link 
+                          <Link
                             to={`/urunler/${product.id}`}
                             className="text-[10px] font-black text-stone-800 dark:text-stone-200 hover:text-amber-600 transition-colors uppercase tracking-[0.15em] border-b border-stone-200 dark:border-stone-700 pb-0.5"
                           >
                             İncele
                           </Link>
-                          <button 
+                          <button
                             onClick={() => {
                               dispatch(addToCart({
                                 id: product.id,
@@ -614,5 +614,6 @@ const Products = () => {
     </div>
   );
 };
+
 
 export default Products;

@@ -7,7 +7,7 @@ import { addToCart } from '../../store/slices/cartSlice';
 import { addToFavorites, removeFromFavorites } from '../../store/slices/favoritesSlice';
 import { atolyelerVerisi } from '../../data/atolyeData';
 import { Link } from 'react-router-dom';
-import { Store, MapPin, Star, PlusCircle, ArrowRight, ShieldCheck } from 'lucide-react';
+import { MapPin, Star, ArrowRight, ShieldCheck } from 'lucide-react';
 
 function AtolyeUrunDetay() {
   const location = useLocation();
@@ -33,8 +33,7 @@ function AtolyeUrunDetay() {
   // Atölye Bilgisini Bul
   const atolye = atolyelerVerisi.find((a) => a.urunler?.some((u) => u.id === urun?.id));
   
-  // Mock: Satıcı modunu simüle edelim (Gerçekte Redux'tan user role check yapılır)
-  const isSellerOwner = true; // Geliştirme amaçlı aktif bırakıldı
+
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -462,36 +461,7 @@ function AtolyeUrunDetay() {
                   </Link>
                 </div>
 
-                {/* SATICI KONTROL PANELİ (Sadece Mağaza Sahibi İçin) */}
-                {isSellerOwner && (
-                  <div className="bg-amber-50 border border-amber-100 rounded-2xl p-6 relative overflow-hidden group">
-                    <div className="absolute -right-8 -bottom-8 opacity-5 group-hover:scale-110 transition-transform duration-700">
-                      <Store size={120} />
-                    </div>
-                    <div className="relative z-10">
-                      <div className="flex items-center gap-2 mb-4">
-                        <div className="w-2 h-2 bg-amber-500 rounded-full animate-pulse" />
-                        <h4 className="text-[10px] font-black text-amber-800 uppercase tracking-[0.2em]">Mağaza Yönetimi</h4>
-                      </div>
-                      <p className="text-sm font-bold text-amber-900 mb-4 tracking-tight">Bu atölyenin sahibi olarak yeni ürünler ekleyebilir, mevcut siparişlerinizi yönetebilirsiniz.</p>
-                      
-                      <div className="grid grid-cols-2 gap-3">
-                        <Link 
-                          to="/satici/atolye-urun-ekle" 
-                          className="flex items-center justify-center gap-2 py-3 bg-amber-600 text-white rounded-xl text-[10px] font-black tracking-widest uppercase hover:bg-amber-700 transition-all shadow-lg shadow-amber-600/20"
-                        >
-                          <PlusCircle size={14} /> ÜRÜN EKLE
-                        </Link>
-                        <Link 
-                          to="/satici/siparisler" 
-                          className="flex items-center justify-center gap-2 py-3 bg-white text-amber-900 border border-amber-200 rounded-xl text-[10px] font-black tracking-widest uppercase hover:bg-amber-100 transition-all"
-                        >
-                          <Store size={14} /> PANEL
-                        </Link>
-                      </div>
-                    </div>
-                  </div>
-                )}
+
               </div>
             )}
           </div>

@@ -265,14 +265,14 @@ function Home() {
                 
                 {/* Title */}
                 <div className="overflow-hidden mb-6">
-                  <h1 className={`text-4xl md:text-7xl font-sans font-light tracking-tight leading-[1.1] transition-all duration-[1500ms] ease-out delay-200 ${idx === currentHero ? 'translate-y-0 opacity-100' : 'translate-y-full opacity-0'}`}>
+                  <h1 className={`text-4xl md:text-7xl font-serif font-light tracking-tight leading-[1.1] transition-all duration-[1500ms] ease-out delay-200 ${idx === currentHero ? 'translate-y-0 opacity-100' : 'translate-y-full opacity-0'}`}>
                     {hero.title}
                   </h1>
                 </div>
 
                 {/* Description */}
                 <div className="overflow-hidden mb-10">
-                  <p className={`text-stone-300 text-sm md:text-lg font-light tracking-wide max-w-md transition-all duration-[1500ms] ease-out delay-400 ${idx === currentHero ? 'translate-y-0 opacity-100' : 'translate-y-full opacity-0'}`}>
+                  <p className={`text-stone-300 text-sm md:text-lg font-medium tracking-wide max-w-md transition-all duration-[1500ms] ease-out delay-400 ${idx === currentHero ? 'translate-y-0 opacity-100' : 'translate-y-full opacity-0'}`}>
                     {hero.desc}
                   </p>
                 </div>
@@ -281,7 +281,7 @@ function Home() {
                 <div className={`overflow-hidden transition-all duration-[1500ms] ease-out delay-500 ${idx === currentHero ? 'translate-y-0 opacity-100' : 'translate-y-12 opacity-0'}`}>
                   <Link
                     to="/urunler"
-                    className="inline-flex h-14 px-10 bg-amber-500 text-white text-[11px] font-black uppercase tracking-[0.2em] rounded-full items-center justify-center hover:bg-stone-100 hover:text-stone-900 transition-all duration-500 shadow-2xl shadow-amber-500/20"
+                    className="inline-flex h-14 px-10 bg-amber-600 text-white text-[11px] font-black uppercase tracking-[0.2em] rounded-full items-center justify-center hover:bg-white hover:text-stone-900 transition-all duration-500 shadow-2xl shadow-amber-600/20"
                   >
                     Koleksiyonu Keşfet
                   </Link>
