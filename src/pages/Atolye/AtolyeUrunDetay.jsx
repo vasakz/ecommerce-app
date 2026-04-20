@@ -247,8 +247,9 @@ function YorumFormu({ dispatch }) {
 
 
 /* Değerlendirmeler Bölümü */
-function DegerlendirmelerBolumu() {
-  const [state, dispatch] = useReducer(yorumReducer, { yorumlar: ORNEK_YORUMLAR });
+function DegerlendirmelerBolumu({ urun }) {
+  // Başlangıç verisini ürünün içinden okuyoruz
+  const [state, dispatch] = useReducer(yorumReducer, { yorumlar: urun.yorumlar || [] });
   const [siralama, setSiralama] = useState('en_yeni');
   const [filtre, setFiltre] = useState(0);
 
@@ -634,15 +635,18 @@ function AtolyeUrunDetay() {
       </div>
 
 
-       {/* Atölye Sahibi Bilgisi ve Mesaj Butonu */}
+         {/* Atölye Sahibi Bilgisi ve Mesaj Butonu */}
 <div className="flex items-center gap-3 my-6 p-4 bg-stone-50 rounded-xl border border-stone-100">
-  {/* Tıklanabilir Alan: Avatar ve İsim */}
   <Link 
-    to={`/atolyeler/${urun.atolyeId || urun.id}`} // Atölye ID'sine göre yönlendirir
+    to={`/atolyeler/${urun.atolyeId}`} // Burası backend'den gelecek ID ile çalışacak
     className="flex items-center gap-3 flex-1 group"
   >
-    <div className="w-10 h-10 rounded-full bg-amber-100 flex items-center justify-center text-amber-700 font-bold group-hover:ring-2 group-hover:ring-amber-200 transition-all">
-      {urun.atolyeIsmi ? urun.atolyeIsmi[0] : 'A'}
+    <div className="w-10 h-10 rounded-full bg-amber-100 flex items-center justify-center text-amber-700 font-bold group-hover:ring-2 group-hover:ring-amber-200 transition-all overflow-hidden border border-stone-200">
+      {urun.atolyeAvatar ? (
+        <img src={urun.atolyeAvatar} alt={urun.atolyeIsmi} className="w-full h-full object-cover" />
+      ) : (
+        urun.atolyeIsmi ? urun.atolyeIsmi[0].toUpperCase() : 'A'
+      )}
     </div>
     <div className="text-left">
       <h4 className="text-xs font-bold text-stone-800 uppercase tracking-tight group-hover:text-amber-700 transition-colors">
@@ -652,7 +656,6 @@ function AtolyeUrunDetay() {
     </div>
   </Link>
 
-  {/* Soru Sor Butonu (Buna basınca sayfa değişmez, modal açılır) */}
   <button 
     onClick={() => setMesajModalAcik(true)}
     className="px-3 py-2 text-[10px] font-bold uppercase tracking-widest text-amber-700 border border-amber-200 rounded-lg hover:bg-amber-50 transition-colors"
@@ -661,8 +664,8 @@ function AtolyeUrunDetay() {
   </button>
 </div>
 
-      {/* ══ DEĞERLENDİRMELER BÖLÜMÜ ══ */}
-      <DegerlendirmelerBolumu urunId={urun.id} />
+{/* ══ DEĞERLENDİRMELER BÖLÜMÜ ══ */}
+<DegerlendirmelerBolumu urun={urun} />
 
       {/* Bakım Kılavuzu Modalı */}
       {isModalOpen && (
