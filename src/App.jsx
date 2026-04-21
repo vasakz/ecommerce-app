@@ -9,6 +9,7 @@ import Login from './pages/Auth/Login/Login'
 import ForgotPassword from './pages/Auth/ForgotPassword/ForgotPassword'
 import Atolye from './pages/Atolye/Atolye'
 import AtolyelerListesi from './pages/Atolye/AtolyelerListesi'
+import AtolyeDetay from './pages/Atolye/AtolyeDetay'
 import Cart from './pages/Cart/Cart'
 import Favorites from './pages/Favorites/Favorites'
 import Payment from './pages/Payment/Payment'
@@ -22,6 +23,7 @@ import OrderDetail from './pages/Orders/OrderDetail'
 import OrderAction from './pages/Orders/OrderAction'
 import Support from './pages/Support/Support'
 import SaticiKayit from './pages/Satici/SaticiKayit'
+import SaticiProfil from './pages/Satici/SaticiProfil'
 import AtolyeUrunDetay from './pages/Atolye/AtolyeUrunDetay';
 
 // Seller Pages
@@ -33,6 +35,7 @@ import StoreCalendar from './pages/Seller/StoreCalendar'
 import StatisticsDashboard from './pages/Seller/StatisticsDashboard'
 import FinancialManagement from './pages/Seller/FinancialManagement'
 import ShippingManagement from './pages/Seller/ShippingManagement'
+import AddAtolyeProduct from './pages/Seller/AddAtolyeProduct'
 
 // Layout
 import Navbar from './components/layout/Navbar'
@@ -65,6 +68,7 @@ function Layout() {
         {/* Atölye */}
         <Route path="/atolye" element={<Atolye />} />
         <Route path="/atolyeler" element={<AtolyelerListesi />} />
+        <Route path="/atolyeler/:id" element={<AtolyeDetay />} />
         <Route path="/atolye-urun/:id" element={<AtolyeUrunDetay />} />
         
         {/* Sepet & Ödeme */}
@@ -97,6 +101,7 @@ function Layout() {
         {/* Seller */}
         <Route path="/satici/urunler" element={<ProductManagement />} />
         <Route path="/satici/urun-ekle" element={<AddProduct />} />
+        <Route path="/satici/atolye-urun-ekle" element={<AddAtolyeProduct />} />
         <Route path="/satici/urun-duzenle/:id" element={<AddProduct />} />
         <Route path="/satici/siparisler" element={<OrderManagement />} />
         <Route path="/satici/talepler" element={<OrderRequests />} />
@@ -107,6 +112,7 @@ function Layout() {
 
         {/* Satici */}
         <Route path="/satici-kayit" element={<SaticiKayit />} />
+        <Route path="/satici/profil/:id" element={<SaticiProfil />} />
 
         {/* 404 */}
         <Route path="*" element={<NotFound />} />
