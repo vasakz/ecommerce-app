@@ -1,10 +1,11 @@
-import React, { useState, useEffect, useReducer } from 'react';
-import { useLocation, useParams, Link } from 'react-router-dom'; // Link eklendi
+import React, { useState, useEffect, useReducer, useRef } from 'react';
+import { useLocation, useParams, Link, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import toast from 'react-hot-toast';
 
 import { addToCart } from '../../store/slices/cartSlice';
 import { addToFavorites, removeFromFavorites } from '../../store/slices/favoritesSlice';
+import { cokSatanlar, yeniTasarimlar } from '../../data/atolyeData';
 
 /* ══════════════════════════════════════════
  Yıldız Bileşeni (interactive destekli)
@@ -244,42 +245,33 @@ function YorumFormu({ dispatch }) {
     </div>
   );
 }
-
 /* ══════════════════════════════════════════
-   SORU-CEVAP SİSTEMİ 
+   SORU-CEVAP VE ÖNERİLER
 ══════════════════════════════════════════ */
+
 function SoruKarti({ soru, atolyeIsmi }) {
   return (
     <div className="py-5 border-b border-stone-100 last:border-0">
-      {/* Soru Kısmı */}
       <div className="flex items-start gap-3">
-        <div className="w-7 h-7 rounded-full bg-stone-100 flex items-center justify-center text-stone-500 font-bold text-xs flex-shrink-0">
-          S
-        </div>
+        <div className="w-8 h-8 rounded-full bg-stone-100 flex items-center justify-center text-stone-500 font-bold text-xs flex-shrink-0">S</div>
         <div className="flex-1">
           <p className="text-sm font-medium text-stone-800 leading-relaxed">{soru.metin}</p>
           <p className="text-[10px] text-stone-400 mt-1.5">{soru.yazar} • {soru.tarih}</p>
         </div>
       </div>
-
-      {/* Cevap Kısmı (Veya Bekleniyor Durumu) */}
       <div className="mt-4 ml-10">
         {soru.cevap ? (
-          <div className="relative p-4 bg-stone-50 rounded-2xl rounded-tl-sm border border-stone-100">
-            <div className="absolute -top-2 left-0 w-4 h-4 bg-stone-50 border-t border-l border-stone-100 transform rotate-45 translate-x-1 translate-y-1" />
-            <div className="relative z-10">
-              <div className="flex items-center gap-2 mb-1.5">
-                <span className="text-[10px] font-bold uppercase tracking-widest text-amber-700">{atolyeIsmi || 'Atölye'}</span>
-                <span className="bg-amber-100 text-amber-800 text-[8px] px-1.5 py-0.5 rounded font-bold uppercase tracking-wider">Satıcı</span>
-              </div>
-              <p className="text-sm text-stone-600 leading-relaxed">{soru.cevap}</p>
-              {soru.cevapTarihi && <p className="text-[10px] text-stone-400 mt-2">{soru.cevapTarihi}</p>}
+          <div className="p-4 bg-stone-50 rounded-2xl rounded-tl-sm border border-stone-100">
+            <div className="flex items-center gap-2 mb-1.5">
+              <span className="text-[10px] font-bold uppercase tracking-widest text-amber-700">{atolyeIsmi}</span>
+              <span className="bg-amber-100 text-amber-800 text-[8px] px-1.5 py-0.5 rounded font-bold">SATICI</span>
             </div>
+            <p className="text-sm text-stone-600 leading-relaxed">{soru.cevap}</p>
           </div>
         ) : (
           <div className="flex items-center gap-2 px-3 py-2 bg-amber-50/50 border border-amber-100 rounded-lg w-fit">
             <span className="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse" />
-            <span className="text-[10px] font-semibold text-amber-700 tracking-wide uppercase">Atölye Yanıtı Bekleniyor...</span>
+            <span className="text-[10px] font-semibold text-amber-700 uppercase">Yanıt Bekleniyor</span>
           </div>
         )}
       </div>
@@ -287,127 +279,145 @@ function SoruKarti({ soru, atolyeIsmi }) {
   );
 }
 
-function SoruFormu({ setSorular }) {
-  const [acik, setAcik] = useState(false);
-  const [yazar, setYazar] = useState('');
+function SoruFormu({ onSoruEkle }) {
   const [metin, setMetin] = useState('');
-
-  const handleSoruGonder = () => {
+  const handleGonder = () => {
     if (!metin.trim()) return toast.error('Lütfen bir soru yazın.');
-    
-    // Anında state'e eklenen yeni soru objesi
-    const yeniSoru = {
+    onSoruEkle({
       id: Date.now(),
-      yazar: yazar.trim() || 'Anonim Müşteri',
+      yazar: 'Ziyaretçi',
       metin: metin.trim(),
       tarih: new Date().toLocaleDateString('tr-TR'),
-      cevap: null 
-    };
-
-    setSorular(prev => [yeniSoru, ...prev]);
-    setAcik(false);
+      cevap: null
+    });
     setMetin('');
-    setYazar('');
-    toast.success('Sorunuz atölyeye iletildi!');
+    toast.success('Sorunuz iletildi!');
   };
-
   return (
-    <div className="mt-6 border-t border-stone-100 pt-6">
-      {!acik ? (
-        <button onClick={() => setAcik(true)} className="w-full py-3.5 border border-stone-200 bg-white rounded-xl text-xs font-semibold uppercase tracking-widest text-stone-600 hover:border-amber-400 hover:text-amber-700 hover:bg-amber-50/30 transition-all shadow-sm">
-          Satıcıya Soru Sor
-        </button>
-      ) : (
-        <div className="bg-white border border-stone-200 rounded-2xl p-5 shadow-sm">
-          <div className="flex items-center justify-between mb-4">
-            <p className="text-xs font-bold uppercase tracking-widest text-stone-700">Sorunu Yaz</p>
-            <button onClick={() => setAcik(false)} className="text-stone-400 hover:text-stone-600">✕</button>
-          </div>
-          <div className="space-y-3">
-            <input type="text" value={yazar} onChange={e => setYazar(e.target.value)} placeholder="İsminiz (Opsiyonel)" className="w-full border border-stone-200 rounded-lg p-2.5 text-sm outline-none focus:border-amber-300 focus:ring-1 focus:ring-amber-300 transition-all" />
-            <textarea value={metin} onChange={e => setMetin(e.target.value)} placeholder="Ürünle ilgili merak ettiklerinizi yazın..." rows="3" className="w-full border border-stone-200 rounded-lg p-2.5 text-sm outline-none focus:border-amber-300 focus:ring-1 focus:ring-amber-300 resize-none transition-all" />
-            <button onClick={handleSoruGonder} disabled={!metin.trim()} className="w-full bg-stone-900 text-white text-[11px] uppercase tracking-widest py-3 rounded-lg hover:bg-amber-700 disabled:opacity-50 disabled:hover:bg-stone-900 transition-all">
-              Gönder
-            </button>
-          </div>
-        </div>
-      )}
+    <div className="mt-6">
+      <textarea 
+        value={metin} 
+        onChange={(e) => setMetin(e.target.value)}
+        placeholder="Ürün hakkında bir soru sor..." 
+        className="w-full p-4 text-sm bg-stone-50 border border-stone-200 rounded-xl focus:outline-none focus:border-amber-400 resize-none h-24"
+      />
+      <button onClick={handleGonder} className="w-full mt-2 py-3 bg-stone-900 text-white text-[10px] font-bold uppercase tracking-widest rounded-xl hover:bg-stone-800 transition-all">Gönder</button>
     </div>
   );
 }
 
 function DegerlendirmeVeSoruBolumu({ urun }) {
-  // Yorum State'i
   const [yorumState, dispatch] = useReducer(yorumReducer, { yorumlar: urun.yorumlar || [] });
-  const [siralama, setSiralama] = useState('en_yeni');
 
-  // Gerçek zamanlı Soru-Cevap State'i
-  const ornekSorular = [
-    { id: 101, yazar: 'Selin K.', metin: 'Özel ölçü seçtiğimde teslimat süresi ne kadar uzar?', cevap: 'Özel ölçü siparişlerinde kalıp yeniden çıkarıldığı için üretim süresine +2 iş günü eklenmektedir.', tarih: '14 Mart 2026', cevapTarihi: '14 Mart 2026' }
-  ];
-  const [sorular, setSorular] = useState(urun.sorular || ornekSorular);
-
-  const siralanmisYorumlar = [...yorumState.yorumlar].sort((a, b) => {
-    if (siralama === 'en_yeni') return b.id - a.id;
-    if (siralama === 'en_yuksek') return b.puan - a.puan;
-    return 0;
-  });
+  const [sorular, setSorular] = useState([
+    { id: 1, yazar: 'Merve K.', metin: 'Ürünün farklı renk seçenekleri gelecek mi?', tarih: '20 Nisan 2026', cevap: 'Önümüzdeki ay yeni renkleri stoklarımıza eklemeyi planlıyoruz.' },
+    { id: 2, yazar: 'Caner T.', metin: 'Hediye paketi yapıyor musunuz?', tarih: '18 Nisan 2026', cevap: null }
+  ]);
 
   return (
-    <section className="max-w-7xl mx-auto px-4 py-16 border-t border-stone-100 bg-stone-50/30">
-      
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16">
-        
-        {/* SOL KOLON: YORUMLAR */}
-        <div>
-          <div className="flex items-center gap-3 mb-8">
-            <div className="w-1.5 h-6 bg-amber-400 rounded-full" />
-            <h2 className="text-xs font-bold uppercase tracking-[0.2em] text-stone-800">Müşteri Değerlendirmeleri</h2>
-          </div>
-          
-          {/* Eğer eski DegerlendirmeOzeti bileşenin varsa burada sorunsuz çalışır */}
+    <section className="max-w-7xl mx-auto px-4 py-16 border-t border-stone-100">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-stretch">
+        <div className="flex flex-col h-full bg-white rounded-3xl border border-stone-100 p-8 shadow-sm">
+          <h2 className="text-xs font-bold uppercase tracking-[0.2em] text-stone-800 mb-6">Değerlendirmeler</h2>
           <DegerlendirmeOzeti yorumlar={yorumState.yorumlar} />
-          
-          <div className="flex justify-end mb-4">
-            <select value={siralama} onChange={e => setSiralama(e.target.value)} className="text-[10px] font-semibold tracking-wider uppercase text-stone-500 bg-transparent border-b border-stone-200 pb-1 outline-none focus:border-amber-400 cursor-pointer">
-              <option value="en_yeni">En Yeni</option>
-              <option value="en_yuksek">En Yüksek Puan</option>
-            </select>
+          <div className="mt-6 flex-1 overflow-y-auto no-scrollbar max-h-[400px]">
+            {yorumState.yorumlar.map(y => <YorumKarti key={y.id} yorum={y} dispatch={dispatch} />)}
           </div>
-          
-          <div className="bg-white rounded-2xl border border-stone-100 p-6 shadow-sm">
-            {siralanmisYorumlar.length > 0
-              ? siralanmisYorumlar.map(yorum => <YorumKarti key={yorum.id} yorum={yorum} dispatch={dispatch} />)
-              : <div className="text-center py-10 text-stone-400 text-sm">Henüz değerlendirme yapılmamış. İlk yorumu siz yapın!</div>
-            }
-            <YorumFormu dispatch={dispatch} />
-          </div>
+          <YorumFormu dispatch={dispatch} />
         </div>
+        <div className="flex flex-col h-full bg-white rounded-3xl border border-stone-100 p-8 shadow-sm">
+          <h2 className="text-xs font-bold uppercase tracking-[0.2em] text-stone-800 mb-6">Soru & Cevap</h2>
+          <div className="flex-1 overflow-y-auto no-scrollbar max-h-[500px]">
+            {sorular.map(s => <SoruKarti key={s.id} soru={s} atolyeIsmi={urun.atolyeIsmi} />)}
+          </div>
+          <SoruFormu onSoruEkle={(yeni) => setSorular([yeni, ...sorular])} />
+        </div>
+      </div>
+    </section>
+  );
+}
+/* ══════════════════════════════════════════
+   ÖNERİLEN ÜRÜNLER 
+══════════════════════════════════════════ */
+function OnerilenUrunler({ mevcutUrun }) {
+  const sliderRef = useRef(null);
+  const navigate = useNavigate(); // Yönlendirme için eklendi
 
-        {/* SAĞ KOLON: SORU-CEVAP */}
+  // Mevcut ürün dışındaki önerileri al
+  const tumOneriler = [...cokSatanlar, ...yeniTasarimlar].filter(u => u.id !== mevcutUrun?.id);
+
+  // Sonsuz döngü hissi vermek için diziyi kopyalıyoruz 
+  const vitrinGosterimi = [
+    ...tumOneriler.map((u) => ({ ...u, _key: `${u.id}-0` })),
+    ...tumOneriler.map((u) => ({ ...u, _key: `${u.id}-1` })),
+  ];
+
+  if (tumOneriler.length === 0) return null;
+
+  // Ana sayfandaki otomatik kaydırma mantığı
+  useEffect(() => {
+    const randomSure = Math.floor(Math.random() * 1000) + 3500;
+    const otoKaydir = setInterval(() => {
+      if (sliderRef.current) {
+        const { scrollLeft, scrollWidth, clientWidth } = sliderRef.current;
+        if (scrollLeft + clientWidth >= scrollWidth - 5) {
+          sliderRef.current.scrollTo({ left: 0, behavior: 'smooth' });
+        } else {
+          sliderRef.current.scrollBy({ left: 284, behavior: 'smooth' });
+        }
+      }
+    }, randomSure);
+    return () => clearInterval(otoKaydir);
+  }, []);
+
+  const manuelKaydir = (yon) => {
+    if (sliderRef.current) sliderRef.current.scrollBy({ left: yon * 284, behavior: 'smooth' });
+  };
+
+  return (
+    <section className="max-w-7xl mx-auto py-16 mt-8 border-t border-stone-100">
+      <div className="flex items-center justify-between mb-8 px-4">
         <div>
-          <div className="flex items-center gap-3 mb-8">
-            <div className="w-1.5 h-6 bg-stone-800 rounded-full" />
-            <h2 className="text-xs font-bold uppercase tracking-[0.2em] text-stone-800">Soru & Cevap</h2>
-          </div>
-
-          <div className="bg-white rounded-2xl border border-stone-100 p-6 shadow-sm">
-            <div className="flex items-center justify-between mb-6 pb-4 border-b border-stone-100">
-              <p className="text-sm text-stone-500">Bu ürün hakkında <strong>{sorular.length}</strong> soru soruldu.</p>
-            </div>
-
-            <div className="space-y-2">
-              {sorular.length > 0 
-                ? sorular.map(soru => <SoruKarti key={soru.id} soru={soru} atolyeIsmi={urun.atolyeIsmi} />)
-                : <div className="text-center py-10 text-stone-400 text-sm">Bu ürüne henüz soru sorulmamış. İlk soran siz olun.</div>
-              }
-            </div>
-
-           
-            <SoruFormu setSorular={setSorular} />
-          </div>
+          <h2 className="text-2xl font-serif text-stone-800 mb-2">Tamamlayıcı Tasarımlar</h2>
+          <p className="text-[10px] text-stone-400 uppercase tracking-[0.2em]">Senin için seçtiklerimiz</p>
         </div>
+      </div>
 
+      <div className="relative group px-4">
+      
+        <button onClick={() => manuelKaydir(-1)} className="absolute left-0 top-[130px] -translate-y-1/2 -ml-2 z-10 bg-white/90 shadow-md border border-stone-200 text-stone-600 rounded-full w-10 h-10 flex items-center justify-center hover:bg-stone-800 hover:text-white transition-colors opacity-0 group-hover:opacity-100">‹</button>
+        <button onClick={() => manuelKaydir(1)} className="absolute right-0 top-[130px] -translate-y-1/2 -mr-2 z-10 bg-white/90 shadow-md border border-stone-200 text-stone-600 rounded-full w-10 h-10 flex items-center justify-center hover:bg-stone-800 hover:text-white transition-colors opacity-0 group-hover:opacity-100">›</button>
+        
+        <div ref={sliderRef} className="flex gap-6 overflow-x-auto no-scrollbar pb-4 scroll-smooth snap-x snap-mandatory">
+          {vitrinGosterimi.map((urun) => (
+            <div key={urun._key} className="snap-start shrink-0">
+              
+              <div 
+                onClick={() => {
+                  // Tıklandığında sayfayı yukarı kaydır ve yeni ürünü yükle
+                  window.scrollTo({ top: 0, behavior: 'smooth' });
+                  navigate(`/atolye-urun/${urun.id}`, { state: { urun }, replace: true });
+                }} 
+                className="w-[260px] flex-shrink-0 cursor-pointer group"
+              >
+                <div className="relative bg-stone-100 w-[260px] h-[260px] mb-3 overflow-hidden rounded-md border border-stone-100">
+                  <img src={urun.gorseller?.[0] || urun.gorsel} alt={urun.isim} className="object-cover w-full h-full transition duration-500 group-hover:scale-105" />
+                  {urun.yeni && (
+                    <div className="absolute top-3 left-3 bg-white/90 backdrop-blur-sm text-teal-700 text-[9px] font-bold uppercase tracking-wider px-2 py-1 rounded shadow-sm">
+                      Yeni
+                    </div>
+                  )}
+                </div>
+                <div className="flex flex-col px-1">
+                  <p className="font-medium tracking-wide text-sm text-stone-800 line-clamp-1 group-hover:text-amber-700 transition-colors">{urun.isim}</p>
+                  <div className="flex justify-between items-center mt-2">
+                    <p className="font-bold text-stone-900">{urun.fiyat}</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
       </div>
     </section>
   );
@@ -789,6 +799,9 @@ function AtolyeUrunDetay() {
 
 {/* ══ DEĞERLENDİRMELER BÖLÜMÜ ══ */}
 <DegerlendirmeVeSoruBolumu urun={urun} />
+
+{/* ══ TAMAMLAYICI TASARIMLAR BÖLÜMÜ ══ */}
+<OnerilenUrunler mevcutUrun={urun} />
 
       {/* Bakım Kılavuzu Modalı */}
       {isModalOpen && (
