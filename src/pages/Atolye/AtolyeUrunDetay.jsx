@@ -245,54 +245,169 @@ function YorumFormu({ dispatch }) {
   );
 }
 
+/* ══════════════════════════════════════════
+   SORU-CEVAP SİSTEMİ 
+══════════════════════════════════════════ */
+function SoruKarti({ soru, atolyeIsmi }) {
+  return (
+    <div className="py-5 border-b border-stone-100 last:border-0">
+      {/* Soru Kısmı */}
+      <div className="flex items-start gap-3">
+        <div className="w-7 h-7 rounded-full bg-stone-100 flex items-center justify-center text-stone-500 font-bold text-xs flex-shrink-0">
+          S
+        </div>
+        <div className="flex-1">
+          <p className="text-sm font-medium text-stone-800 leading-relaxed">{soru.metin}</p>
+          <p className="text-[10px] text-stone-400 mt-1.5">{soru.yazar} • {soru.tarih}</p>
+        </div>
+      </div>
 
-/* Değerlendirmeler Bölümü */
-function DegerlendirmelerBolumu({ urun }) {
-  // Başlangıç verisini ürünün içinden okuyoruz
-  const [state, dispatch] = useReducer(yorumReducer, { yorumlar: urun.yorumlar || [] });
-  const [siralama, setSiralama] = useState('en_yeni');
-  const [filtre, setFiltre] = useState(0);
+      {/* Cevap Kısmı (Veya Bekleniyor Durumu) */}
+      <div className="mt-4 ml-10">
+        {soru.cevap ? (
+          <div className="relative p-4 bg-stone-50 rounded-2xl rounded-tl-sm border border-stone-100">
+            <div className="absolute -top-2 left-0 w-4 h-4 bg-stone-50 border-t border-l border-stone-100 transform rotate-45 translate-x-1 translate-y-1" />
+            <div className="relative z-10">
+              <div className="flex items-center gap-2 mb-1.5">
+                <span className="text-[10px] font-bold uppercase tracking-widest text-amber-700">{atolyeIsmi || 'Atölye'}</span>
+                <span className="bg-amber-100 text-amber-800 text-[8px] px-1.5 py-0.5 rounded font-bold uppercase tracking-wider">Satıcı</span>
+              </div>
+              <p className="text-sm text-stone-600 leading-relaxed">{soru.cevap}</p>
+              {soru.cevapTarihi && <p className="text-[10px] text-stone-400 mt-2">{soru.cevapTarihi}</p>}
+            </div>
+          </div>
+        ) : (
+          <div className="flex items-center gap-2 px-3 py-2 bg-amber-50/50 border border-amber-100 rounded-lg w-fit">
+            <span className="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse" />
+            <span className="text-[10px] font-semibold text-amber-700 tracking-wide uppercase">Atölye Yanıtı Bekleniyor...</span>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
 
-  const siralanmis = [...state.yorumlar]
-    .filter(y => filtre === 0 || y.puan === filtre)
-    .sort((a, b) => {
-      if (siralama === 'en_yeni') return b.id - a.id;
-      if (siralama === 'en_yuksek') return b.puan - a.puan;
-      if (siralama === 'en_faydali') return b.begeni - a.begeni;
-      return 0;
-    });
+function SoruFormu({ setSorular }) {
+  const [acik, setAcik] = useState(false);
+  const [yazar, setYazar] = useState('');
+  const [metin, setMetin] = useState('');
+
+  const handleSoruGonder = () => {
+    if (!metin.trim()) return toast.error('Lütfen bir soru yazın.');
+    
+    // Anında state'e eklenen yeni soru objesi
+    const yeniSoru = {
+      id: Date.now(),
+      yazar: yazar.trim() || 'Anonim Müşteri',
+      metin: metin.trim(),
+      tarih: new Date().toLocaleDateString('tr-TR'),
+      cevap: null 
+    };
+
+    setSorular(prev => [yeniSoru, ...prev]);
+    setAcik(false);
+    setMetin('');
+    setYazar('');
+    toast.success('Sorunuz atölyeye iletildi!');
+  };
 
   return (
-    <section className="max-w-7xl mx-auto px-4 py-16 border-t border-stone-100">
-      <div className="max-w-3xl mx-auto">
-        <div className="flex items-center gap-3 mb-8">
-          <div className="w-6 h-px bg-amber-400" />
-          <h2 className="text-[10px] font-bold uppercase tracking-[0.3em] text-stone-500">Müşteri Değerlendirmeleri</h2>
-        </div>
-        <DegerlendirmeOzeti yorumlar={state.yorumlar} />
-        <div className="flex flex-wrap items-center justify-between gap-3 mb-6">
-          <div className="flex items-center gap-1.5 flex-wrap">
-            <button onClick={() => setFiltre(0)} className={`text-[10px] font-medium px-3 py-1.5 rounded-full border transition-all ${filtre === 0 ? 'bg-stone-800 text-white border-stone-800' : 'border-stone-200 text-stone-500 hover:border-stone-400'}`}>Tümü</button>
-            {[5, 4, 3, 2, 1].map(p => (
-              <button key={p} onClick={() => setFiltre(filtre === p ? 0 : p)} className={`flex items-center gap-1 text-[10px] font-medium px-2.5 py-1.5 rounded-full border transition-all ${filtre === p ? 'bg-amber-500 text-white border-amber-500' : 'border-stone-200 text-stone-500 hover:border-amber-300'}`}>
-                {p}
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-2.5 h-2.5">
-                  <path fillRule="evenodd" d="M10.788 3.21c.448-1.077 1.976-1.077 2.424 0l2.082 5.007 5.404.433c1.164.093 1.636 1.545.749 2.305l-4.117 3.527 1.257 5.273c.271 1.136-.964 2.033-1.96 1.425L12 18.354 7.373 21.18c-.996.608-2.231-.29-1.96-1.425l1.257-5.273-4.117-3.527c-.887-.76-.415-2.212.749-2.305l5.404-.433 2.082-5.006z" clipRule="evenodd" />
-                </svg>
-              </button>
-            ))}
+    <div className="mt-6 border-t border-stone-100 pt-6">
+      {!acik ? (
+        <button onClick={() => setAcik(true)} className="w-full py-3.5 border border-stone-200 bg-white rounded-xl text-xs font-semibold uppercase tracking-widest text-stone-600 hover:border-amber-400 hover:text-amber-700 hover:bg-amber-50/30 transition-all shadow-sm">
+          Satıcıya Soru Sor
+        </button>
+      ) : (
+        <div className="bg-white border border-stone-200 rounded-2xl p-5 shadow-sm">
+          <div className="flex items-center justify-between mb-4">
+            <p className="text-xs font-bold uppercase tracking-widest text-stone-700">Sorunu Yaz</p>
+            <button onClick={() => setAcik(false)} className="text-stone-400 hover:text-stone-600">✕</button>
           </div>
-          <select value={siralama} onChange={e => setSiralama(e.target.value)} className="text-[11px] text-stone-600 border border-stone-200 rounded-lg px-3 py-1.5 focus:outline-none focus:border-amber-300 bg-white cursor-pointer">
-            <option value="en_yeni">En Yeni</option>
-            <option value="en_yuksek">En Yüksek Puan</option>
-            <option value="en_faydali">En Faydalı</option>
-          </select>
+          <div className="space-y-3">
+            <input type="text" value={yazar} onChange={e => setYazar(e.target.value)} placeholder="İsminiz (Opsiyonel)" className="w-full border border-stone-200 rounded-lg p-2.5 text-sm outline-none focus:border-amber-300 focus:ring-1 focus:ring-amber-300 transition-all" />
+            <textarea value={metin} onChange={e => setMetin(e.target.value)} placeholder="Ürünle ilgili merak ettiklerinizi yazın..." rows="3" className="w-full border border-stone-200 rounded-lg p-2.5 text-sm outline-none focus:border-amber-300 focus:ring-1 focus:ring-amber-300 resize-none transition-all" />
+            <button onClick={handleSoruGonder} disabled={!metin.trim()} className="w-full bg-stone-900 text-white text-[11px] uppercase tracking-widest py-3 rounded-lg hover:bg-amber-700 disabled:opacity-50 disabled:hover:bg-stone-900 transition-all">
+              Gönder
+            </button>
+          </div>
         </div>
-        {siralanmis.length > 0
-          ? siralanmis.map(yorum => <YorumKarti key={yorum.id} yorum={yorum} dispatch={dispatch} />)
-          : <div className="text-center py-12 text-stone-400"><p className="text-sm">Bu filtre için yorum bulunamadı.</p></div>
-        }
-        <YorumFormu dispatch={dispatch} />
+      )}
+    </div>
+  );
+}
+
+function DegerlendirmeVeSoruBolumu({ urun }) {
+  // Yorum State'i
+  const [yorumState, dispatch] = useReducer(yorumReducer, { yorumlar: urun.yorumlar || [] });
+  const [siralama, setSiralama] = useState('en_yeni');
+
+  // Gerçek zamanlı Soru-Cevap State'i
+  const ornekSorular = [
+    { id: 101, yazar: 'Selin K.', metin: 'Özel ölçü seçtiğimde teslimat süresi ne kadar uzar?', cevap: 'Özel ölçü siparişlerinde kalıp yeniden çıkarıldığı için üretim süresine +2 iş günü eklenmektedir.', tarih: '14 Mart 2026', cevapTarihi: '14 Mart 2026' }
+  ];
+  const [sorular, setSorular] = useState(urun.sorular || ornekSorular);
+
+  const siralanmisYorumlar = [...yorumState.yorumlar].sort((a, b) => {
+    if (siralama === 'en_yeni') return b.id - a.id;
+    if (siralama === 'en_yuksek') return b.puan - a.puan;
+    return 0;
+  });
+
+  return (
+    <section className="max-w-7xl mx-auto px-4 py-16 border-t border-stone-100 bg-stone-50/30">
+      
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16">
+        
+        {/* SOL KOLON: YORUMLAR */}
+        <div>
+          <div className="flex items-center gap-3 mb-8">
+            <div className="w-1.5 h-6 bg-amber-400 rounded-full" />
+            <h2 className="text-xs font-bold uppercase tracking-[0.2em] text-stone-800">Müşteri Değerlendirmeleri</h2>
+          </div>
+          
+          {/* Eğer eski DegerlendirmeOzeti bileşenin varsa burada sorunsuz çalışır */}
+          <DegerlendirmeOzeti yorumlar={yorumState.yorumlar} />
+          
+          <div className="flex justify-end mb-4">
+            <select value={siralama} onChange={e => setSiralama(e.target.value)} className="text-[10px] font-semibold tracking-wider uppercase text-stone-500 bg-transparent border-b border-stone-200 pb-1 outline-none focus:border-amber-400 cursor-pointer">
+              <option value="en_yeni">En Yeni</option>
+              <option value="en_yuksek">En Yüksek Puan</option>
+            </select>
+          </div>
+          
+          <div className="bg-white rounded-2xl border border-stone-100 p-6 shadow-sm">
+            {siralanmisYorumlar.length > 0
+              ? siralanmisYorumlar.map(yorum => <YorumKarti key={yorum.id} yorum={yorum} dispatch={dispatch} />)
+              : <div className="text-center py-10 text-stone-400 text-sm">Henüz değerlendirme yapılmamış. İlk yorumu siz yapın!</div>
+            }
+            <YorumFormu dispatch={dispatch} />
+          </div>
+        </div>
+
+        {/* SAĞ KOLON: SORU-CEVAP */}
+        <div>
+          <div className="flex items-center gap-3 mb-8">
+            <div className="w-1.5 h-6 bg-stone-800 rounded-full" />
+            <h2 className="text-xs font-bold uppercase tracking-[0.2em] text-stone-800">Soru & Cevap</h2>
+          </div>
+
+          <div className="bg-white rounded-2xl border border-stone-100 p-6 shadow-sm">
+            <div className="flex items-center justify-between mb-6 pb-4 border-b border-stone-100">
+              <p className="text-sm text-stone-500">Bu ürün hakkında <strong>{sorular.length}</strong> soru soruldu.</p>
+            </div>
+
+            <div className="space-y-2">
+              {sorular.length > 0 
+                ? sorular.map(soru => <SoruKarti key={soru.id} soru={soru} atolyeIsmi={urun.atolyeIsmi} />)
+                : <div className="text-center py-10 text-stone-400 text-sm">Bu ürüne henüz soru sorulmamış. İlk soran siz olun.</div>
+              }
+            </div>
+
+           
+            <SoruFormu setSorular={setSorular} />
+          </div>
+        </div>
+
       </div>
     </section>
   );
@@ -673,7 +788,7 @@ function AtolyeUrunDetay() {
 </div>
 
 {/* ══ DEĞERLENDİRMELER BÖLÜMÜ ══ */}
-<DegerlendirmelerBolumu urun={urun} />
+<DegerlendirmeVeSoruBolumu urun={urun} />
 
       {/* Bakım Kılavuzu Modalı */}
       {isModalOpen && (
