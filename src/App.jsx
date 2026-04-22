@@ -35,6 +35,7 @@ import StoreCalendar from './pages/Seller/StoreCalendar'
 import StatisticsDashboard from './pages/Seller/StatisticsDashboard'
 import FinancialManagement from './pages/Seller/FinancialManagement'
 import ShippingManagement from './pages/Seller/ShippingManagement'
+import AddAtolyeProduct from './pages/Seller/AddAtolyeProduct'
 
 // Layout
 import Navbar from './components/layout/Navbar'
@@ -107,6 +108,7 @@ function Layout() {
         <Route path="/satici/istatistikler" element={<StatisticsDashboard />} />
         <Route path="/satici/finans" element={<FinancialManagement />} />
         <Route path="/satici/kargo" element={<ShippingManagement />} />
+        <Route path="/satici/atolye-urun-ekle" element={<AddAtolyeProduct />} />
 
         {/* Satici */}
         <Route path="/satici-kayit" element={<SaticiKayit />} />

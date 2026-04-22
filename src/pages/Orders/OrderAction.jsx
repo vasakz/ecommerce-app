@@ -63,7 +63,7 @@ const OrderAction = () => {
             <AlertCircle className="w-12 h-12 text-amber-500 mx-auto mb-4" />
             <h2 className="text-xl font-bold mb-2 dark:text-white">İşlem Yapılamaz</h2>
             <p className="text-gray-500 text-sm mb-6">Bu sipariş iptal veya iade kurallarına uygun bir aşamada değil. Sadece "Hazırlanıyor" aşamasındaki siparişleri iptal edebilir veya "Teslim Edildi" statüsündeki siparişleri iade edebilirsiniz.</p>
-            <button onClick={() => navigate('/siparislerim')} className="bg-primary-600 text-white px-6 py-2 rounded-lg font-medium hover:bg-primary-700">Siparişlerime Dön</button>
+            <button onClick={() => navigate('/siparislerim')} className="bg-amber-600 text-white px-6 py-2 rounded-lg font-medium hover:bg-amber-700">Siparişlerime Dön</button>
          </div>
       </div>
     );
@@ -88,7 +88,7 @@ const OrderAction = () => {
                 </div>
             )}
 
-            <button onClick={() => navigate('/siparislerim')} className="w-full bg-primary-600 text-white py-3 rounded-xl font-medium hover:bg-primary-700 transition">
+            <button onClick={() => navigate('/siparislerim')} className="w-full bg-amber-600 text-white py-3 rounded-xl font-medium hover:bg-amber-700 transition">
                 Siparişlerime Dön
             </button>
         </div>
@@ -203,7 +203,7 @@ const OrderAction = () => {
                <button 
                   type="submit" 
                   disabled={!reason || (isReturnable && (!returnMethod || !refundMethod))}
-                  className="bg-black text-white px-8 py-3 rounded-xl font-bold disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-900 transition-colors"
+                  className="bg-amber-600 text-white px-8 py-3 rounded-xl font-bold disabled:opacity-50 disabled:cursor-not-allowed hover:bg-amber-700 transition-colors"
                 >
                   Talebi Oluştur
                </button>
