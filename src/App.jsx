@@ -109,6 +109,7 @@ function Layout() {
         <Route path="/satici/istatistikler" element={<StatisticsDashboard />} />
         <Route path="/satici/finans" element={<FinancialManagement />} />
         <Route path="/satici/kargo" element={<ShippingManagement />} />
+        <Route path="/satici/atolye-urun-ekle" element={<AddAtolyeProduct />} />
 
         {/* Satici */}
         <Route path="/satici-kayit" element={<SaticiKayit />} />

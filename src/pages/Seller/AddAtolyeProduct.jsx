@@ -208,7 +208,7 @@ const AddAtolyeProduct = () => {
                 <button 
                   type="button"
                   onClick={() => setActiveStep(2)}
-                  className="bg-stone-900 text-white px-10 py-4 rounded-2xl font-bold hover:bg-stone-800 transition-all flex items-center gap-3 shadow-lg group"
+                  className="bg-amber-600 text-white px-10 py-4 rounded-2xl font-bold hover:bg-amber-700 transition-all flex items-center gap-3 shadow-lg group"
                 >
                   Sonraki Adım
                   <ChevronRight size={18} className="group-hover:translate-x-1 transition-transform" />
@@ -286,7 +286,7 @@ const AddAtolyeProduct = () => {
                 <button type="button" onClick={() => setActiveStep(1)} className="px-8 py-4 text-stone-500 hover:text-stone-900 font-bold flex items-center gap-2 transition-all">
                    <ArrowLeft size={18} /> Geri
                 </button>
-                <button type="button" onClick={() => setActiveStep(3)} className="bg-stone-900 text-white px-10 py-4 rounded-2xl font-bold hover:bg-stone-800 transition-all flex items-center gap-3 shadow-lg">
+                <button type="button" onClick={() => setActiveStep(3)} className="bg-amber-600 text-white px-10 py-4 rounded-2xl font-bold hover:bg-amber-700 transition-all flex items-center gap-3 shadow-lg">
                   Sonraki Adım <ChevronRight size={18} />
                 </button>
               </div>
@@ -353,8 +353,8 @@ const AddAtolyeProduct = () => {
                 <button type="button" onClick={() => setActiveStep(2)} className="px-8 py-4 text-stone-500 hover:text-stone-900 font-bold flex items-center gap-2">
                    <ArrowLeft size={18} /> Geri
                 </button>
-                <button type="submit" className="bg-stone-900 text-white px-12 py-4 rounded-2xl font-bold hover:bg-black transition-all flex items-center gap-3 shadow-xl shadow-stone-900/10">
-                  <Package size={20} className="text-amber-500" /> Atölye Tasarımını Yayınla
+                <button type="submit" className="bg-amber-600 text-white px-12 py-4 rounded-2xl font-bold hover:bg-amber-700 transition-all flex items-center gap-3 shadow-xl shadow-amber-600/10">
+                  <Package size={20} className="text-white" /> Atölye Tasarımını Yayınla
                 </button>
               </div>
             </div>
@@ -404,7 +404,7 @@ const AddAtolyeProduct = () => {
 
             <div className="p-8 bg-stone-50 flex gap-4">
                <button onClick={() => setShowSummary(false)} className="flex-1 py-5 px-6 border border-stone-200 rounded-2xl font-black text-xs text-stone-400 uppercase tracking-widest hover:bg-white transition-all">Düzenle</button>
-               <button onClick={handleFinalSubmit} className="flex-[2] py-5 px-6 bg-stone-900 text-white rounded-2xl font-black text-xs tracking-[0.2em] uppercase hover:bg-black transition-all shadow-xl shadow-stone-900/20">Yayınla</button>
+               <button onClick={handleFinalSubmit} className="flex-[2] py-5 px-6 bg-amber-600 text-white rounded-2xl font-black text-xs tracking-[0.2em] uppercase hover:bg-amber-700 transition-all shadow-xl shadow-amber-600/20">Yayınla</button>
             </div>
           </div>
         </div>
