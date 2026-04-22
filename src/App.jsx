@@ -101,6 +101,7 @@ function Layout() {
         {/* Seller */}
         <Route path="/satici/urunler" element={<ProductManagement />} />
         <Route path="/satici/urun-ekle" element={<AddProduct />} />
+        <Route path="/satici/atolye-urun-ekle" element={<AddAtolyeProduct />} />
         <Route path="/satici/urun-duzenle/:id" element={<AddProduct />} />
         <Route path="/satici/siparisler" element={<OrderManagement />} />
         <Route path="/satici/talepler" element={<OrderRequests />} />

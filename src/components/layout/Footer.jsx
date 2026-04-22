@@ -41,15 +41,15 @@ function Footer() {
                             <li>Facebook</li>
                         </ul>
                     </div>
-                    
+
                 </div>
             </div>
 
             {/* Alt Çizgi ve Telif Hakkı Bölümü */}
-                    <div className="border-t border-white-700/2 py-6 text-center text-white text-sm">
-                        <p>©2026 e-commerce. Tüm hakları saklıdır.</p>
-                    </div>
-            
+            <div className="border-t border-white-700/2 py-6 text-center text-white text-sm">
+                <p>©2026 e-commerce. Tüm hakları saklıdır.</p>
+            </div>
+
         </footer>
     )
 

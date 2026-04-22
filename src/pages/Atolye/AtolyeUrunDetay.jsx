@@ -5,6 +5,9 @@ import toast from 'react-hot-toast';
 
 import { addToCart } from '../../store/slices/cartSlice';
 import { addToFavorites, removeFromFavorites } from '../../store/slices/favoritesSlice';
+import { atolyelerVerisi } from '../../data/atolyeData';
+import { Link } from 'react-router-dom';
+import { MapPin, Star, ArrowRight, ShieldCheck } from 'lucide-react';
 
 function AtolyeUrunDetay() {
   const location = useLocation();
@@ -27,6 +30,11 @@ function AtolyeUrunDetay() {
   const [seciliEkstralar, setSeciliEkstralar] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
+  // Atölye Bilgisini Bul
+  const atolye = atolyelerVerisi.find((a) => a.urunler?.some((u) => u.id === urun?.id));
+  
+
+
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
@@ -46,8 +54,8 @@ function AtolyeUrunDetay() {
     urun.gorseller && urun.gorseller.length > 0
       ? urun.gorseller
       : urun.gorsel
-      ? [urun.gorsel]
-      : [];
+        ? [urun.gorsel]
+        : [];
 
   const tabanFiyat = parseInt(urun.fiyat?.replace(/\D/g, '') || 1200);
 
@@ -168,11 +176,10 @@ function AtolyeUrunDetay() {
                   <button
                     key={idx}
                     onClick={() => setSeciliGorsel(idx)}
-                    className={`w-16 h-16 md:w-20 md:h-20 rounded-md overflow-hidden border-2 transition-all flex-shrink-0 ${
-                      seciliGorsel === idx
+                    className={`w-16 h-16 md:w-20 md:h-20 rounded-md overflow-hidden border-2 transition-all flex-shrink-0 ${seciliGorsel === idx
                         ? 'border-amber-500'
                         : 'border-transparent opacity-60 hover:opacity-100'
-                    }`}
+                      }`}
                   >
                     <img src={img} alt="" className="w-full h-full object-cover" />
                   </button>
@@ -190,9 +197,8 @@ function AtolyeUrunDetay() {
               <img
                 src={tumGorseller[seciliGorsel]}
                 alt={urun.isim}
-                className={`w-full h-full object-cover transition-transform duration-200 ${
-                  isZoomed ? 'scale-[2.5]' : 'scale-100'
-                }`}
+                className={`w-full h-full object-cover transition-transform duration-200 ${isZoomed ? 'scale-[2.5]' : 'scale-100'
+                  }`}
                 style={
                   isZoomed
                     ? { transformOrigin: `${mousePos.x}% ${mousePos.y}%` }
@@ -235,11 +241,10 @@ function AtolyeUrunDetay() {
                 </h1>
                 <button
                   onClick={favoriToggle}
-                  className={`p-3 rounded-full flex-shrink-0 transition-all ${
-                    isFavorited
+                  className={`p-3 rounded-full flex-shrink-0 transition-all ${isFavorited
                       ? 'bg-rose-50 text-rose-500'
                       : 'bg-stone-50 text-stone-400 hover:text-rose-500 hover:bg-rose-50'
-                  }`}
+                    }`}
                   title={isFavorited ? 'Favorilerden Çıkar' : 'Favorilere Ekle'}
                 >
                   <svg
@@ -298,17 +303,15 @@ function AtolyeUrunDetay() {
                   <button
                     key={b.id}
                     onClick={() => setSeciliBoyut(b)}
-                    className={`py-3 px-2 rounded-md border text-center transition-all ${
-                      seciliBoyut?.id === b.id
+                    className={`py-3 px-2 rounded-md border text-center transition-all ${seciliBoyut?.id === b.id
                         ? 'border-amber-500 bg-amber-500 text-white shadow-md'
                         : 'border-stone-200 text-stone-500 hover:border-stone-400 hover:bg-stone-50'
-                    }`}
+                      }`}
                   >
                     <span className="block text-xs font-semibold mb-1">{b.isim}</span>
                     <span
-                      className={`text-[10px] ${
-                        seciliBoyut?.id === b.id ? 'text-amber-50' : 'text-stone-400'
-                      }`}
+                      className={`text-[10px] ${seciliBoyut?.id === b.id ? 'text-amber-50' : 'text-stone-400'
+                        }`}
                     >
                       {b.ekUcret > 0 ? `+${b.ekUcret} ₺` : 'Ücretsiz'}
                     </span>
@@ -337,18 +340,16 @@ function AtolyeUrunDetay() {
                 {RENKLER.map((r) => (
                   <button key={r.id} onClick={() => setSeciliRenk(r)} className="flex flex-col items-center gap-2 group">
                     <div
-                      className={`w-8 h-8 rounded-full p-0.5 border-2 transition-colors ${
-                        seciliRenk?.id === r.id
+                      className={`w-8 h-8 rounded-full p-0.5 border-2 transition-colors ${seciliRenk?.id === r.id
                           ? 'border-amber-500'
                           : 'border-transparent group-hover:border-stone-300'
-                      }`}
+                        }`}
                     >
                       <div className="w-full h-full rounded-full shadow-inner" style={{ background: r.hex }} />
                     </div>
                     <span
-                      className={`text-[10px] font-medium ${
-                        seciliRenk?.id === r.id ? 'text-stone-800' : 'text-stone-400'
-                      }`}
+                      className={`text-[10px] font-medium ${seciliRenk?.id === r.id ? 'text-stone-800' : 'text-stone-400'
+                        }`}
                     >
                       {r.isim}
                     </span>
@@ -369,11 +370,10 @@ function AtolyeUrunDetay() {
                     <div key={e.id} className="flex flex-col gap-2">
                       <button
                         onClick={() => toggleEkstra(e)}
-                        className={`flex items-center justify-between p-4 rounded-md border transition-all text-left ${
-                          isSelected
+                        className={`flex items-center justify-between p-4 rounded-md border transition-all text-left ${isSelected
                             ? 'border-amber-500 bg-amber-50/50'
                             : 'border-stone-200 hover:border-stone-300'
-                        }`}
+                          }`}
                       >
                         <span className={`text-sm ${isSelected ? 'text-stone-900 font-medium' : 'text-stone-600'}`}>
                           {e.isim}
@@ -417,6 +417,53 @@ function AtolyeUrunDetay() {
                 <span>{toplamFiyat.toLocaleString('tr-TR')} ₺</span>
               </button>
             </div>
+
+            {/* Atölye Bilgileri & Satıcı Kontrolü */}
+            {atolye && (
+              <div className="mt-12 space-y-4">
+                <div className="bg-stone-50 border border-stone-100 rounded-2xl p-6 shadow-sm">
+                  <div className="flex items-center gap-4 mb-4">
+                    <div className="w-14 h-14 rounded-full overflow-hidden border-2 border-white shadow-sm ring-1 ring-stone-100">
+                      <img src={atolye.avatar} alt={atolye.isim} className="w-full h-full object-cover" />
+                    </div>
+                    <div>
+                      <h4 className="text-xs font-black text-stone-400 uppercase tracking-widest mb-0.5">Zanaatkar / Atölye</h4>
+                      <Link to={`/atolyeler/${atolye.id}`} className="text-lg font-serif text-stone-800 hover:text-amber-600 transition-colors">
+                        {atolye.isim}
+                      </Link>
+                    </div>
+                  </div>
+                  
+                  <div className="flex flex-wrap gap-4 text-[11px] text-stone-500 font-medium mb-6">
+                    <div className="flex items-center gap-1.5 bg-white px-3 py-1.5 rounded-full border border-stone-100 shadow-sm">
+                      <MapPin size={12} className="text-amber-600" />
+                      {atolye.lokasyon}
+                    </div>
+                    <div className="flex items-center gap-1.5 bg-white px-3 py-1.5 rounded-full border border-stone-100 shadow-sm">
+                      <Star size={12} className="text-amber-500 fill-amber-500" />
+                      {atolye.puan} ({atolye.degerlendirmeSayisi})
+                    </div>
+                    <div className="flex items-center gap-1.5 bg-white px-3 py-1.5 rounded-full border border-stone-100 shadow-sm">
+                      <ShieldCheck size={12} className="text-emerald-600" />
+                      Onaylı Atölye
+                    </div>
+                  </div>
+
+                  <p className="text-sm text-stone-600 leading-relaxed mb-6 line-clamp-3 italic">
+                    "{atolye.aciklama}"
+                  </p>
+
+                  <Link 
+                    to={`/atolyeler/${atolye.id}`} 
+                    className="w-full inline-flex items-center justify-center gap-2 py-3 bg-white border border-stone-200 text-stone-800 rounded-xl text-xs font-black tracking-widest uppercase hover:bg-stone-50 hover:border-stone-400 transition-all shadow-sm"
+                  >
+                    TÜM KOLEKSİYONU GÖR <ArrowRight size={14} />
+                  </Link>
+                </div>
+
+
+              </div>
+            )}
           </div>
         </div>
       </div>
