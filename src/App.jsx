@@ -37,6 +37,15 @@ import FinancialManagement from './pages/Seller/FinancialManagement'
 import ShippingManagement from './pages/Seller/ShippingManagement'
 import AddAtolyeProduct from './pages/Seller/AddAtolyeProduct'
 
+// Admin Pages
+import AdminLogin from './pages/Admin/AdminLogin'
+import AdminDashboard from './pages/Admin/AdminDashboard'
+import AdminUsers from './pages/Admin/AdminUsers'
+import AdminOrders from './pages/Admin/AdminOrders'
+import AdminProducts from './pages/Admin/AdminProducts'
+import AdminSellers from './pages/Admin/AdminSellers'
+import AdminLayout from './pages/Admin/AdminLayout'
+
 // Layout
 import Navbar from './components/layout/Navbar'
 import Footer from './components/layout/Footer'
@@ -45,7 +54,7 @@ function Layout() {
   const location = useLocation()
 
   const hideFooterRoutes = ['/kayit-ol', '/giris-yap', '/sifremi-unuttum']
-  const hideNavbarRoutes = ['/satici-kayit', '/satici-panel', '/satici-giris']
+  const hideNavbarRoutes = ['/satici-kayit', '/satici-panel', '/satici-giris', '/admin']
 
   const shouldHideFooter = hideFooterRoutes.includes(location.pathname)
   const shouldHideNavbar = hideNavbarRoutes.some(r =>
@@ -114,6 +123,16 @@ function Layout() {
         <Route path="/satici-kayit" element={<SaticiKayit />} />
         <Route path="/satici/profil/:id" element={<SaticiProfil />} />
 
+        {/* Admin */}
+        <Route path="/admin/giris" element={<AdminLogin />} />
+        <Route path="/admin" element={<AdminLayout />}>
+          <Route index element={<AdminDashboard />} />
+          <Route path="kullanicilar" element={<AdminUsers />} />
+          <Route path="siparisler" element={<AdminOrders />} />
+          <Route path="urunler" element={<AdminProducts />} />
+          <Route path="saticilar" element={<AdminSellers />} />
+        </Route>
+
         {/* 404 */}
         <Route path="*" element={<NotFound />} />
       </Routes>
@@ -126,7 +145,6 @@ function Layout() {
 function App() {
   return (
     <BrowserRouter>
-      {/* Toaster bileşeni*/}
       <Toaster 
         position="top-center" 
         reverseOrder={false} 
