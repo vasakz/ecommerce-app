@@ -19,7 +19,7 @@ import {
   FileText
 } from 'lucide-react';
 import { generateInvoicePDF } from '../../utils/generateInvoice';
-import { toast } from 'react-toastify';
+import toast from 'react-hot-toast';
 
 const SELLER_ORDERS = [
   {
@@ -147,7 +147,7 @@ const OrderManagement = () => {
     link.href = URL.createObjectURL(blob);
     link.download = `Siparis_Raporu_${new Date().toLocaleDateString()}.csv`;
     link.click();
-    toast.info('Sipariş raporu hazırlandı ve indiriliyor.');
+    toast.success('Sipariş raporu hazırlandı ve indiriliyor.');
   };
 
   const handleDailyPrint = () => {

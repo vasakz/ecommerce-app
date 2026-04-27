@@ -1,4 +1,6 @@
 import { useState, useEffect } from 'react'
+import { Link } from 'react-router-dom'
+import toast from 'react-hot-toast'
 import { 
     LayoutDashboard, Package, ShoppingBag, 
     TrendingUp, Users, Star, ArrowUpRight,
@@ -67,19 +69,40 @@ const statusStyles = {
 export default function SellerDashboard() {
     const [seller, setSeller] = useState({
         name: 'Hanımeli Atölyesi',
-        owner: 'Aylin Şahin',
+        location: 'İstanbul, Türkiye',
         email: 'info@hanimeli.com',
         phone: '+90 555 123 45 67',
-        location: 'İstanbul, Türkiye',
         website: 'www.hanimeliatolye.com',
         bio: 'Doğal malzemelerle el yapımı dekorasyon ürünleri ve aksesuarlar üretiyoruz. Her ürünümüz bir hikaye taşır.',
         since: 'Temmuz 2022',
         rating: 4.9,
         reviews: 124,
-        products: 42
+        products: 42,
+        avatar: null
     })
 
     const [isEditing, setIsEditing] = useState(false)
+    const [editForm, setEditForm] = useState({ ...seller })
+
+    const handleSave = () => {
+        setSeller(editForm)
+        setIsEditing(false)
+    }
+
+    const handleImageChange = (e) => {
+        const file = e.target.files[0]
+        if (file) {
+            const reader = new FileReader()
+            reader.onloadend = () => {
+                setEditForm(prev => ({ ...prev, avatar: reader.result }))
+                if (!isEditing) {
+                    setSeller(prev => ({ ...prev, avatar: reader.result }))
+                    toast.success('Profil fotoğrafı güncellendi');
+                }
+            }
+            reader.readAsDataURL(file)
+        }
+    }
 
     return (
         <div className="space-y-8 animate-in fade-in duration-700">
@@ -88,58 +111,160 @@ export default function SellerDashboard() {
                 <div className="absolute top-0 right-0 w-64 h-64 bg-amber-500/5 rounded-full -mr-32 -mt-32 blur-3xl"></div>
                 
                 <div className="flex flex-col md:flex-row gap-8 items-start relative z-10">
-                    <div className="relative group">
-                        <div className="w-24 h-24 rounded-full bg-stone-100 dark:bg-stone-800 flex items-center justify-center border-4 border-white dark:border-stone-800 shadow-md overflow-hidden">
-                             <div className="text-3xl font-serif font-bold text-amber-600">H</div>
-                        </div>
-                        <button className="absolute bottom-0 right-0 p-1.5 bg-white dark:bg-stone-800 rounded-full shadow-sm border border-stone-100 dark:border-stone-700 text-stone-400 hover:text-amber-600 transition-colors">
-                            <Edit2 size={12} />
-                        </button>
+                    <div className="relative group cursor-pointer">
+                        <input 
+                            type="file" 
+                            id="avatar-upload" 
+                            className="hidden" 
+                            accept="image/*" 
+                            onChange={handleImageChange}
+                        />
+                        <label htmlFor="avatar-upload" className="block cursor-pointer">
+                            <div className="w-24 h-24 rounded-full bg-stone-100 dark:bg-stone-800 flex items-center justify-center border-4 border-white dark:border-stone-800 shadow-md overflow-hidden transition-transform group-hover:scale-105 duration-500">
+                                {seller.avatar || editForm.avatar ? (
+                                    <img src={isEditing ? editForm.avatar : seller.avatar} alt={seller.name} className="w-full h-full object-cover" />
+                                ) : (
+                                    <div className="text-3xl font-serif font-bold text-amber-600">H</div>
+                                )}
+                            </div>
+                            <div className="absolute bottom-0 right-0 p-1.5 bg-white dark:bg-stone-800 rounded-full shadow-sm border border-stone-100 dark:border-stone-700 text-stone-400 hover:text-amber-600 transition-colors shadow-lg">
+                                <Edit2 size={12} />
+                            </div>
+                        </label>
                     </div>
 
                     <div className="flex-1 space-y-4">
-                        <div className="flex items-center justify-between flex-wrap gap-4">
-                            <div>
-                                <h1 className="text-2xl font-black text-stone-900 dark:text-white tracking-tight">{seller.name}</h1>
-                                <p className="text-sm text-stone-400 flex items-center gap-1 mt-1 font-medium">
-                                    <MapPin size={14} /> {seller.location} · {seller.since}'den beri
+                        {!isEditing ? (
+                            <>
+                                <div className="flex items-center justify-between flex-wrap gap-4">
+                                    <div>
+                                        <h1 className="text-2xl font-black text-stone-900 dark:text-white tracking-tight">{seller.name}</h1>
+                                        <p className="text-sm text-stone-400 flex items-center gap-1 mt-1 font-medium">
+                                            <MapPin size={14} /> {seller.location} · {seller.since}'den beri
+                                        </p>
+                                    </div>
+                                    <div className="flex gap-3">
+                                        <Link 
+                                            to={`/satici/profil/1`} 
+                                            className="px-6 py-2.5 text-[11px] font-black tracking-widest uppercase border border-stone-200 dark:border-stone-800 text-stone-600 dark:text-gray-400 hover:bg-stone-50 dark:hover:bg-stone-800 rounded-2xl transition-all"
+                                        >
+                                            Mağazayı Gör
+                                        </Link>
+                                        <button 
+                                            onClick={() => setIsEditing(true)}
+                                            className="px-6 py-2.5 text-[11px] font-black tracking-widest uppercase bg-stone-900 dark:bg-white text-white dark:text-stone-900 hover:opacity-90 rounded-2xl transition-all shadow-lg flex items-center gap-2"
+                                        >
+                                            <Edit2 size={12} /> Düzenle
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 py-2">
+                                    <div className="flex items-center gap-2 text-stone-600 dark:text-gray-400 text-sm font-medium">
+                                        <Mail size={14} className="text-stone-300" />
+                                        <span>{seller.email}</span>
+                                    </div>
+                                    <div className="flex items-center gap-2 text-stone-600 dark:text-gray-400 text-sm font-medium">
+                                        <Phone size={14} className="text-stone-300" />
+                                        <span>{seller.phone}</span>
+                                    </div>
+                                    <div className="flex items-center gap-2 text-stone-600 dark:text-gray-400 text-sm font-medium">
+                                        <Globe size={14} className="text-stone-300" />
+                                        <span>{seller.website}</span>
+                                    </div>
+                                    <div className="flex items-center gap-2 text-stone-600 dark:text-gray-400 text-sm font-medium">
+                                        <Calendar size={14} className="text-stone-300" />
+                                        <span>{seller.since}</span>
+                                    </div>
+                                </div>
+
+                                <p className="text-sm text-stone-500 dark:text-gray-400 leading-relaxed max-w-2xl bg-stone-50 dark:bg-stone-800/50 p-4 rounded-2xl italic font-medium mt-2">
+                                    "{seller.bio}"
                                 </p>
+                            </>
+                        ) : (
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 animate-in fade-in slide-in-from-top-4 duration-500">
+                                <div className="space-y-2">
+                                    <label className="text-[10px] font-black uppercase text-stone-400 tracking-widest">Mağaza Adı</label>
+                                    <input 
+                                        type="text" 
+                                        className="w-full bg-stone-50 dark:bg-stone-800 border-none rounded-xl text-sm p-3 focus:ring-2 focus:ring-amber-500/20 transition-all"
+                                        value={editForm.name}
+                                        onChange={e => setEditForm({...editForm, name: e.target.value})}
+                                    />
+                                </div>
+                                <div className="space-y-2">
+                                    <label className="text-[10px] font-black uppercase text-stone-400 tracking-widest">Konum</label>
+                                    <input 
+                                        type="text" 
+                                        className="w-full bg-stone-50 dark:bg-stone-800 border-none rounded-xl text-sm p-3 focus:ring-2 focus:ring-amber-500/20 transition-all"
+                                        value={editForm.location}
+                                        onChange={e => setEditForm({...editForm, location: e.target.value})}
+                                    />
+                                </div>
+                                <div className="space-y-2">
+                                    <label className="text-[10px] font-black uppercase text-stone-400 tracking-widest">E-posta</label>
+                                    <input 
+                                        type="email" 
+                                        className="w-full bg-stone-50 dark:bg-stone-800 border-none rounded-xl text-sm p-3 focus:ring-2 focus:ring-amber-500/20 transition-all"
+                                        value={editForm.email}
+                                        onChange={e => setEditForm({...editForm, email: e.target.value})}
+                                    />
+                                </div>
+                                <div className="space-y-2">
+                                    <label className="text-[10px] font-black uppercase text-stone-400 tracking-widest">Telefon</label>
+                                    <input 
+                                        type="text" 
+                                        className="w-full bg-stone-50 dark:bg-stone-800 border-none rounded-xl text-sm p-3 focus:ring-2 focus:ring-amber-500/20 transition-all"
+                                        value={editForm.phone}
+                                        onChange={e => setEditForm({...editForm, phone: e.target.value})}
+                                    />
+                                </div>
+                                <div className="space-y-2">
+                                    <label className="text-[10px] font-black uppercase text-stone-400 tracking-widest">Web Sitesi</label>
+                                    <input 
+                                        type="text" 
+                                        className="w-full bg-stone-50 dark:bg-stone-800 border-none rounded-xl text-sm p-3 focus:ring-2 focus:ring-amber-500/20 transition-all"
+                                        value={editForm.website}
+                                        onChange={e => setEditForm({...editForm, website: e.target.value})}
+                                    />
+                                </div>
+                                <div className="space-y-2">
+                                    <label className="text-[10px] font-black uppercase text-stone-400 tracking-widest">Katılım Tarihi</label>
+                                    <input 
+                                        type="text" 
+                                        className="w-full bg-stone-50 dark:bg-stone-800 border-none rounded-xl text-sm p-3 focus:ring-2 focus:ring-amber-500/20 transition-all"
+                                        value={editForm.since}
+                                        onChange={e => setEditForm({...editForm, since: e.target.value})}
+                                    />
+                                </div>
+                                <div className="md:col-span-2 space-y-2">
+                                    <label className="text-[10px] font-black uppercase text-stone-400 tracking-widest">Hakkında</label>
+                                    <textarea 
+                                        className="w-full bg-stone-50 dark:bg-stone-800 border-none rounded-xl text-sm p-3 focus:ring-2 focus:ring-amber-500/20 transition-all min-h-[100px]"
+                                        value={editForm.bio}
+                                        onChange={e => setEditForm({...editForm, bio: e.target.value})}
+                                    ></textarea>
+                                </div>
+                                <div className="md:col-span-2 flex gap-3 pt-2">
+                                    <button 
+                                        onClick={() => {
+                                            handleSave();
+                                            toast.success('Profil başarıyla güncellendi');
+                                        }}
+                                        className="flex-1 bg-amber-600 text-white font-black text-[11px] uppercase tracking-widest py-3 rounded-2xl hover:bg-amber-700 transition-all shadow-lg"
+                                    >
+                                        Kaydet
+                                    </button>
+                                    <button 
+                                        onClick={() => setIsEditing(false)}
+                                        className="flex-1 bg-stone-100 dark:bg-stone-800 text-stone-600 dark:text-gray-400 font-black text-[11px] uppercase tracking-widest py-3 rounded-2xl hover:bg-stone-200 dark:hover:bg-stone-700 transition-all"
+                                    >
+                                        İptal
+                                    </button>
+                                </div>
                             </div>
-                            <div className="flex gap-3">
-                                <button className="px-6 py-2.5 text-[11px] font-black tracking-widest uppercase border border-stone-200 dark:border-stone-800 text-stone-600 dark:text-gray-400 hover:bg-stone-50 dark:hover:bg-stone-800 rounded-2xl transition-all">
-                                    Mağazayı Gör
-                                </button>
-                                <button 
-                                    onClick={() => setIsEditing(!isEditing)}
-                                    className="px-6 py-2.5 text-[11px] font-black tracking-widest uppercase bg-stone-900 dark:bg-white text-white dark:text-stone-900 hover:opacity-90 rounded-2xl transition-all shadow-lg flex items-center gap-2"
-                                >
-                                    <Edit2 size={12} /> Düzenle
-                                </button>
-                            </div>
-                        </div>
-
-                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 py-2">
-                            <div className="flex items-center gap-2 text-stone-600 dark:text-gray-400 text-sm font-medium">
-                                <Mail size={14} className="text-stone-300" />
-                                <span>{seller.email}</span>
-                            </div>
-                            <div className="flex items-center gap-2 text-stone-600 dark:text-gray-400 text-sm font-medium">
-                                <Phone size={14} className="text-stone-300" />
-                                <span>{seller.phone}</span>
-                            </div>
-                            <div className="flex items-center gap-2 text-stone-600 dark:text-gray-400 text-sm font-medium">
-                                <Globe size={14} className="text-stone-300" />
-                                <span>{seller.website}</span>
-                            </div>
-                            <div className="flex items-center gap-2 text-stone-600 dark:text-gray-400 text-sm font-medium">
-                                <Calendar size={14} className="text-stone-300" />
-                                <span>{seller.since}</span>
-                            </div>
-                        </div>
-
-                        <p className="text-sm text-stone-500 dark:text-gray-400 leading-relaxed max-w-2xl bg-stone-50 dark:bg-stone-800/50 p-4 rounded-2xl italic font-medium mt-2">
-                            "{seller.bio}"
-                        </p>
+                        )}
                     </div>
                 </div>
             </div>

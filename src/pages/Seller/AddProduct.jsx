@@ -21,7 +21,7 @@ import {
   Maximize,
   Package
 } from 'lucide-react';
-import { toast } from 'react-toastify';
+import toast from 'react-hot-toast';
 
 const CATEGORIES = ['Giyim', 'Elektronik', 'Kozmetik', 'Aksesuar', 'Ev & Yaşam', 'Spor'];
 const SUB_CATEGORIES = {
