@@ -3,13 +3,12 @@ import { Link, Navigate, useParams } from 'react-router-dom'
 import { atolyelerVerisi } from '../../data/atolyeData'
 
 function AtolyeDetay() {
-  const { id } = useParams()
-  const atolye = atolyelerVerisi.find((item) => item.id === id)
+  const { id } = useParams();
+const atolye = atolyelerVerisi.find((item) => String(item.id) === String(id));
 
-  if (!atolye) {
-    return <Navigate to="/404" replace />
-  }
-
+if (!atolye) {
+  return <Navigate to="/404" replace />
+}
   return (
     <div className="bg-stone-50 min-h-screen pb-16">
       <div className="max-w-6xl mx-auto px-6 pt-10">
