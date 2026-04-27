@@ -19,6 +19,7 @@ import Kampanyalar from './pages/Kampanyalar/Kampanyalar'
 import KampanyaDetail from './pages/Kampanyalar/KampanyaDetail'
 import Profile from './pages/Profile/Profile'
 import MyOrders from './pages/Orders/MyOrders'
+import MyReturns from './pages/Orders/MyReturns'
 import OrderDetail from './pages/Orders/OrderDetail'
 import OrderAction from './pages/Orders/OrderAction'
 import Support from './pages/Support/Support'
@@ -36,18 +37,22 @@ import StatisticsDashboard from './pages/Seller/StatisticsDashboard'
 import FinancialManagement from './pages/Seller/FinancialManagement'
 import ShippingManagement from './pages/Seller/ShippingManagement'
 import AddAtolyeProduct from './pages/Seller/AddAtolyeProduct'
+import IbanSettings from './pages/Seller/IbanSettings'
+import ReturnRequests from './pages/Seller/ReturnRequests'
+import SellerDashboard from './pages/Seller/SellerDashboard'
 
 // Layout
 import Navbar from './components/layout/Navbar'
 import Footer from './components/layout/Footer'
+import SellerLayout from './components/layout/SellerLayout'
 
 function Layout() {
   const location = useLocation()
 
-  const hideFooterRoutes = ['/kayit-ol', '/giris-yap', '/sifremi-unuttum']
-  const hideNavbarRoutes = ['/satici-kayit', '/satici-panel', '/satici-giris']
+  const hideFooterRoutes = ['/kayit-ol', '/giris-yap', '/sifremi-unuttum', '/satici']
+  const hideNavbarRoutes = ['/satici-kayit', '/satici-panel', '/satici-giris', '/satici']
 
-  const shouldHideFooter = hideFooterRoutes.includes(location.pathname)
+  const shouldHideFooter = hideFooterRoutes.some(r => location.pathname.startsWith(r))
   const shouldHideNavbar = hideNavbarRoutes.some(r =>
     location.pathname.startsWith(r)
   )
@@ -92,24 +97,30 @@ function Layout() {
 
         {/* Siparişler */}
         <Route path="/siparislerim" element={<MyOrders />} />
+        <Route path="/iadelerim" element={<MyReturns />} />
         <Route path="/siparislerim/:id" element={<OrderDetail />} />
         <Route path="/siparislerim/:id/islem" element={<OrderAction />} />
 
         {/* Destek */}
         <Route path="/destek" element={<Support />} />
 
-        {/* Seller */}
-        <Route path="/satici/urunler" element={<ProductManagement />} />
-        <Route path="/satici/urun-ekle" element={<AddProduct />} />
-        <Route path="/satici/atolye-urun-ekle" element={<AddAtolyeProduct />} />
-        <Route path="/satici/urun-duzenle/:id" element={<AddProduct />} />
-        <Route path="/satici/siparisler" element={<OrderManagement />} />
-        <Route path="/satici/talepler" element={<OrderRequests />} />
-        <Route path="/satici/takvim" element={<StoreCalendar />} />
-        <Route path="/satici/istatistikler" element={<StatisticsDashboard />} />
-        <Route path="/satici/finans" element={<FinancialManagement />} />
-        <Route path="/satici/kargo" element={<ShippingManagement />} />
-        <Route path="/satici/atolye-urun-ekle" element={<AddAtolyeProduct />} />
+        {/* Seller Panel (New Layout) */}
+        <Route path="/satici" element={<SellerLayout />}>
+          <Route index element={<SellerDashboard />} />
+          <Route path="panel" element={<SellerDashboard />} />
+          <Route path="urunler" element={<ProductManagement />} />
+          <Route path="urun-ekle" element={<AddProduct />} />
+          <Route path="atolye-urun-ekle" element={<AddAtolyeProduct />} />
+          <Route path="urun-duzenle/:id" element={<AddProduct />} />
+          <Route path="siparisler" element={<OrderManagement />} />
+          <Route path="talepler" element={<OrderRequests />} />
+          <Route path="iadeler" element={<ReturnRequests />} />
+          <Route path="takvim" element={<StoreCalendar />} />
+          <Route path="istatistikler" element={<StatisticsDashboard />} />
+          <Route path="finans" element={<FinancialManagement />} />
+          <Route path="kargo" element={<ShippingManagement />} />
+          <Route path="iban-ayarlari" element={<IbanSettings />} />
+        </Route>
 
         {/* Satici */}
         <Route path="/satici-kayit" element={<SaticiKayit />} />

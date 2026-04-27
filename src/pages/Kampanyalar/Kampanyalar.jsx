@@ -1,13 +1,27 @@
 import React, { useEffect, useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useDispatch } from 'react-redux'
+import { 
+  Sparkles, 
+  Search, 
+  Filter, 
+  Clock, 
+  ShoppingBag, 
+  ArrowUpRight, 
+  Tag, 
+  Navigation,
+  ChevronRight,
+  Zap,
+  Ticket
+} from 'lucide-react'
 import { OFFERS } from '../../data/offers'
 import { MOCK_PRODUCTS } from '../../data/products'
 import { addToCart } from '../../store/slices/cartSlice'
+import { toast } from 'react-toastify'
 
 const formatRemaining = (endsAt) => {
   const ms = new Date(endsAt).getTime() - Date.now()
-  if (ms <= 0) return 'Bitti'
+  if (ms <= 0) return 'Süre Doldu'
 
   const totalSeconds = Math.floor(ms / 1000)
   const days = Math.floor(totalSeconds / 86400)
@@ -15,40 +29,36 @@ const formatRemaining = (endsAt) => {
   const minutes = Math.floor((totalSeconds % 3600) / 60)
   const seconds = totalSeconds % 60
 
-  const parts = []
-  if (days) parts.push(`${days}g`)
-  if (hours || parts.length) parts.push(`${hours}s`)
-  if (minutes || parts.length) parts.push(`${minutes}d`)
-  parts.push(`${seconds}sn`)
-
-  return parts.join(' ')
+  if (days > 0) return `${days} gün kaldı`
+  return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`
 }
 
 function Kampanyalar() {
   const dispatch = useDispatch()
   const [search, setSearch] = useState('')
-  const [category, setCategory] = useState('Tümü')
+  const [activeCategory, setActiveCategory] = useState('Tümü')
   const [tick, setTick] = useState(0)
-
-  // Dynamic state simulation
   const [offers, setOffers] = useState([])
   const [isLoading, setIsLoading] = useState(true)
 
   useEffect(() => {
-    // Simulate API fetch
     const fetchOffers = async () => {
       setIsLoading(true)
       try {
-        // Mock network delay
-        await new Promise(resolve => setTimeout(resolve, 800))
+        await new Promise(resolve => setTimeout(resolve, 1000))
         setOffers(OFFERS)
       } catch (error) {
-        console.error("Failed to fetch campaigns", error)
+        console.error("Kampanyalar yüklenemedi", error)
       } finally {
         setIsLoading(false)
       }
     }
     fetchOffers()
+  }, [])
+
+  useEffect(() => {
+    const timer = setInterval(() => setTick((t) => t + 1), 1000)
+    return () => clearInterval(timer)
   }, [])
 
   const addOfferToCart = (offer) => {
@@ -63,138 +73,241 @@ function Kampanyalar() {
           image: product.image,
         })
       )
+      toast.success(`${product.name} sepete eklendi!`, {
+        icon: <ShoppingBag className="text-amber-500" />,
+        className: "dark:bg-stone-900 border border-stone-800"
+      })
       return
     }
-
-    // fallback kalau product yok
-    dispatch(
-      addToCart({
-        id: `offer-${offer.id}`,
-        isim: offer.title,
-        fiyat: `${offer.discount > 0 ? 100 - offer.discount : 100}TL`,
-        image: offer.image,
-      })
-    )
+    toast.error("Ürün bulunamadı.")
   }
 
-  useEffect(() => {
-    const timer = setInterval(() => setTick((t) => t + 1), 1000)
-    return () => clearInterval(timer)
-  }, [])
-
-  const categories = useMemo(() => ['Tümü', ...new Set(offers.map((offer) => offer.category))], [offers])
+  const categories = useMemo(() => ['Tümü', ...new Set(OFFERS.map((o) => o.category))], [])
 
   const filtered = useMemo(
     () =>
       offers.filter((offer) => {
-        const matchesCategory = category === 'Tümü' || offer.category === category
+        const matchesCategory = activeCategory === 'Tümü' || offer.category === activeCategory
         const matchesSearch =
           offer.title.toLowerCase().includes(search.toLowerCase()) ||
           offer.description.toLowerCase().includes(search.toLowerCase())
         return matchesCategory && matchesSearch
       }),
-    [category, search, offers]
+    [activeCategory, search, offers]
   )
 
   return (
-    <main className="min-h-screen px-6 py-10 bg-stone-50 dark:bg-stone-950 text-stone-900 dark:text-stone-100">
-      <div className="max-w-6xl mx-auto">
-        <h1 className="text-4xl font-extrabold mb-3">Kampanyalar</h1>
-        <p className="mb-8 text-sm text-stone-600 dark:text-stone-300">
-          En yeni fırsatlar ve indirimler burada. Hemen uygulamak için bir kampanya seçin.
-        </p>
-
-        <div className="mb-6 grid gap-3 sm:grid-cols-[1fr_auto] items-center">
-          <input
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            placeholder="Kampanya ara..."
-            className="px-4 py-2 rounded-lg border border-stone-200 dark:border-stone-800 bg-white dark:bg-stone-900 text-stone-800 dark:text-stone-100 outline-none focus:ring-2 focus:ring-amber-400"
+    <main className="min-h-screen bg-stone-50 dark:bg-stone-950 text-stone-900 dark:text-stone-100">
+      
+      {/* Cinematic Hero Section */}
+      <section className="relative h-[60vh] flex items-center justify-center overflow-hidden">
+        <div className="absolute inset-0 z-0">
+          <img 
+            src="https://images.unsplash.com/photo-1441986300917-64674bd600d8?auto=format&fit=crop&q=80&w=2000" 
+            className="w-full h-full object-cover scale-110 animate-pulse-slow"
+            alt="Hero Background"
           />
-
-          <select
-            value={category}
-            onChange={(e) => setCategory(e.target.value)}
-            className="px-4 py-2 rounded-lg border border-stone-200 dark:border-stone-800 bg-white dark:bg-stone-900 text-stone-800 dark:text-stone-100"
-          >
-            {categories.map((cat) => (
-              <option key={cat} value={cat}>
-                {cat}
-              </option>
-            ))}
-          </select>
+          <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/40 to-stone-50 dark:to-stone-950"></div>
         </div>
 
-        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {isLoading && (
-            // Skeleton loader
-            Array.from({ length: 6 }).map((_, i) => (
-              <div key={i} className="border border-stone-200 dark:border-stone-800 rounded-xl p-5 bg-white dark:bg-stone-900 shadow-sm animate-pulse">
-                <div className="h-6 bg-stone-200 dark:bg-stone-800 rounded w-3/4 mb-3"></div>
-                <div className="h-4 bg-stone-200 dark:bg-stone-800 rounded w-full mb-3"></div>
-                <div className="flex flex-wrap gap-2 mb-3">
-                  <div className="h-4 bg-stone-200 dark:bg-stone-800 rounded w-16"></div>
-                  <div className="h-4 bg-stone-200 dark:bg-stone-800 rounded w-24"></div>
-                </div>
-                <div className="mt-4 flex flex-col gap-3">
-                  <div className="h-4 bg-stone-200 dark:bg-stone-800 rounded w-1/2"></div>
-                  <div className="h-6 bg-stone-200 dark:bg-stone-800 rounded w-1/3"></div>
-                  <div className="flex gap-2">
-                    <div className="flex-1 h-10 bg-stone-200 dark:bg-stone-800 rounded"></div>
-                    <div className="flex-1 h-10 bg-stone-200 dark:bg-stone-800 rounded"></div>
-                  </div>
-                </div>
+        <div className="relative z-10 text-center px-6 max-w-4xl mx-auto animate-in fade-in slide-in-from-bottom-8 duration-1000">
+          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-amber-500/20 backdrop-blur-md border border-amber-500/30 text-amber-400 text-xs font-bold uppercase tracking-widest mb-6 shadow-2xl">
+            <Sparkles className="w-4 h-4" />
+            Özel Fırsatlar Keşfedilmeyi Bekliyor
+          </div>
+          <h1 className="text-5xl md:text-7xl font-black text-white mb-6 tracking-tight">
+            Sezonun En <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-400 to-orange-500">Şık</span> Kampanyaları
+          </h1>
+          <p className="text-stone-300 md:text-xl font-medium max-w-2xl mx-auto mb-10 leading-relaxed">
+            Stiliniz için küratörlüğünü yaptığımız benzersiz teklifleri ve sınırlı süreli indirimleri keşfedin.
+          </p>
+          <div className="flex flex-wrap justify-center gap-4">
+            <a href="#firsatlar" className="px-8 py-4 bg-amber-500 hover:bg-amber-600 text-white rounded-2xl font-black transition-all shadow-xl shadow-amber-500/30 active:scale-95">
+              Kampanyaları Gör
+            </a>
+            <Link to="/urunler" className="px-8 py-4 bg-white/10 backdrop-blur-md border border-white/20 hover:bg-white/20 text-white rounded-2xl font-black transition-all active:scale-95">
+              Yeni Gelenler
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      <div className="max-w-7xl mx-auto px-6 py-16" id="firsatlar">
+        
+        {/* Modern Filter & Search Bar */}
+        <div className="sticky top-24 z-30 mb-20">
+          <div className="bg-white/70 dark:bg-stone-900/70 backdrop-blur-2xl p-4 md:p-6 rounded-[2.5rem] border border-white/20 dark:border-stone-800/50 shadow-2xl flex flex-col lg:flex-row items-center gap-6">
+            
+            {/* Search Input */}
+            <div className="relative flex-1 group w-full">
+              <Search className="absolute left-5 top-1/2 -translate-y-1/2 w-5 h-5 text-stone-400 group-focus-within:text-amber-500 transition-colors" />
+              <input 
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                placeholder="Örn: Hafta Sonu, İndirim, Kargo..."
+                className="w-full pl-14 pr-6 py-4 bg-stone-100/50 dark:bg-stone-800/50 border-none rounded-2xl focus:ring-2 focus:ring-amber-500 transition-all font-bold text-sm"
+              />
+            </div>
+
+            {/* Category Chips */}
+            <div className="flex items-center gap-2 overflow-x-auto pb-2 lg:pb-0 scrollbar-none w-full lg:w-auto px-2">
+              <div className="p-3 bg-stone-100 dark:bg-stone-800 rounded-xl mr-2">
+                <Filter className="w-4 h-4 text-stone-500" />
               </div>
+              {categories.map((cat) => (
+                <button
+                  key={cat}
+                  onClick={() => setActiveCategory(cat)}
+                  className={`px-6 py-3 rounded-2xl text-xs font-black uppercase tracking-widest transition-all whitespace-nowrap border
+                    ${activeCategory === cat 
+                      ? 'bg-stone-900 dark:bg-amber-500 text-white border-stone-900 dark:border-amber-400 shadow-lg shadow-amber-500/20' 
+                      : 'bg-white dark:bg-stone-800 text-stone-500 border-gray-100 dark:border-stone-700 hover:border-amber-500/50 hover:bg-amber-50 dark:hover:bg-amber-900/20'}`}
+                >
+                  {cat}
+                </button>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        {/* Campaign Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          {isLoading ? (
+             Array.from({ length: 6 }).map((_, i) => (
+               <div key={i} className="aspect-[4/5] rounded-[2.5rem] bg-stone-200 dark:bg-stone-900 animate-pulse"></div>
+             ))
+          ) : filtered.length === 0 ? (
+            <div className="col-span-full py-20 text-center">
+              <div className="w-24 h-24 bg-stone-100 dark:bg-stone-900 rounded-full flex items-center justify-center mx-auto mb-6">
+                <Zap className="w-10 h-10 text-stone-300" />
+              </div>
+              <h3 className="text-2xl font-black text-stone-900 dark:text-white">Hiçbir fırsat bulunamadı</h3>
+              <p className="text-stone-500 dark:text-stone-400 mt-2">Arama kriterlerinizi değiştirmeyi deneyin.</p>
+            </div>
+          ) : (
+            filtered.map((offer) => (
+              <article 
+                key={offer.id} 
+                className="group relative h-[500px] rounded-[2.5rem] overflow-hidden shadow-2xl shadow-stone-900/20 transition-all duration-700 hover:scale-[1.02] hover:-translate-y-2"
+              >
+                {/* Image Background */}
+                <img 
+                  src={offer.image} 
+                  className="absolute inset-0 w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110"
+                  alt={offer.title}
+                />
+                
+                {/* Overlays */}
+                <div className="absolute inset-0 bg-gradient-to-t from-stone-950 via-stone-950/40 to-transparent"></div>
+                <div className="absolute inset-0 opacity-0 group-hover:opacity-100 bg-amber-600/10 transition-opacity duration-700"></div>
+
+                {/* Badges */}
+                <div className="absolute top-6 left-6 flex flex-col gap-2">
+                   <div className="px-4 py-2 rounded-xl bg-white/90 backdrop-blur-md text-stone-900 text-[10px] font-black uppercase tracking-widest shadow-xl">
+                      {offer.badge}
+                   </div>
+                   <div className="px-4 py-2 rounded-xl bg-amber-500 text-white text-[10px] font-black uppercase tracking-widest shadow-xl flex items-center gap-1.5 animate-pulse">
+                      <Zap className="w-3 h-3" />
+                      {offer.category}
+                   </div>
+                </div>
+
+                {/* Countdown Floating Card */}
+                <div className="absolute top-6 right-6 px-4 py-2 rounded-xl bg-black/40 backdrop-blur-md border border-white/20 text-white text-[10px] font-black flex items-center gap-2">
+                   <Clock className="w-3.5 h-3.5 text-amber-500" />
+                   {formatRemaining(offer.endsAt)}
+                </div>
+
+                {/* Content */}
+                <div className="absolute inset-x-0 bottom-0 p-8 pt-20">
+                   <div className="mb-4 translate-y-4 transition-transform group-hover:translate-y-0 duration-700">
+                      <h2 className="text-3xl font-black text-white leading-tight mb-2 group-hover:text-amber-400 transition-colors">
+                        {offer.title}
+                      </h2>
+                      <p className="text-stone-300 text-sm font-medium line-clamp-2">
+                        {offer.description}
+                      </p>
+                   </div>
+
+                   <div className="flex items-center gap-4 opacity-0 group-hover:opacity-100 translate-y-8 group-hover:translate-y-0 transition-all duration-700 delay-100">
+                      <button 
+                        onClick={() => addOfferToCart(offer)}
+                        className="flex-1 px-6 py-4 bg-white hover:bg-amber-500 hover:text-white text-stone-900 rounded-2xl font-black text-sm transition-all flex items-center justify-center gap-2 active:scale-95"
+                      >
+                        <ShoppingBag className="w-4 h-4" />
+                        Sepete Ekle
+                      </button>
+                      <Link 
+                        to={`/kampanyalar/${offer.id}`}
+                        className="p-4 bg-white/10 backdrop-blur-md border border-white/20 hover:bg-white/25 text-white rounded-2xl transition-all active:scale-95"
+                      >
+                         <ChevronRight className="w-6 h-6" />
+                      </Link>
+                   </div>
+                   
+                   {/* Discount Tag */}
+                   <div className="mt-6 flex items-center gap-3 border-t border-white/10 pt-6">
+                      <Tag className="w-5 h-5 text-amber-500" />
+                      <span className="text-2xl font-black text-white">
+                        {offer.discount > 0 ? `%${offer.discount} İndirim` : 'Ücretsiz Kargo'}
+                      </span>
+                   </div>
+                </div>
+              </article>
             ))
           )}
-
-          {!isLoading && filtered.length === 0 && (
-            <div className="col-span-full text-center text-sm text-stone-500 dark:text-stone-400">
-              Aradığınız kriterlere uygun kampanya bulunamadı.
-            </div>
-          )}
-
-          {!isLoading && filtered.map((offer) => (
-            <article
-              key={offer.id}
-              className="border border-stone-200 dark:border-stone-800 rounded-xl p-5 bg-white dark:bg-stone-900 shadow-sm"
-            >
-              <h2 className="text-xl font-bold mb-2">{offer.title}</h2>
-              <p className="text-sm text-stone-600 dark:text-stone-300 mb-3">{offer.description}</p>
-              <div className="flex flex-wrap gap-2 mb-3">
-                <span className="text-xs uppercase font-bold text-amber-500">{offer.category}</span>
-                <span className="text-xs px-2 py-1 bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-300 rounded-full">{offer.badge}</span>
-              </div>
-              <div className="mt-4 flex flex-col gap-3">
-                <div className="text-sm text-stone-500 dark:text-stone-400">Kalan süre: <strong>{formatRemaining(offer.endsAt)}</strong></div>
-                <span className="text-lg font-bold text-amber-600 dark:text-amber-300">{offer.discount > 0 ? `${offer.discount}% İNDİRİM` : 'Kargo Ücretsiz'}</span>
-                <div className="flex gap-2">
-                  <Link
-                    to={`/kampanyalar/${offer.id}`}
-                    className="flex-1 text-center rounded-md bg-amber-500 text-white px-3 py-2 text-sm font-semibold hover:bg-amber-600 transition"
-                  >
-                    Teklifi Gör
-                  </Link>
-                  <button
-                    onClick={() => addOfferToCart(offer)}
-                    className="flex-1 text-center rounded-md border border-amber-500 text-amber-600 dark:text-amber-300 px-3 py-2 text-sm font-semibold hover:bg-amber-50 dark:hover:bg-amber-500/20 transition"
-                  >
-                    Sepete Ekle
-                  </button>
-                </div>
-              </div>
-            </article>
-          ))}
         </div>
 
-        <div className="mt-10">
-          <Link
-            to="/urunler"
-            className="inline-block px-5 py-2 rounded-md bg-amber-500 text-white font-bold hover:bg-amber-600 transition"
-          >
-            Tüm Ürünlere Gözat
-          </Link>
+        {/* Promo Banner */}
+        <section className="mt-32 relative rounded-[3rem] overflow-hidden p-12 md:p-20 bg-stone-900">
+           <div className="absolute inset-0">
+              <img 
+                src="https://images.unsplash.com/photo-1548036328-c9fa89d128fa?auto=format&fit=crop&q=80&w=2000" 
+                className="w-full h-full object-cover opacity-50 grayscale hover:grayscale-0 transition-all duration-1000"
+                alt="Promo Banner"
+              />
+              <div className="absolute inset-0 bg-gradient-to-r from-stone-950 via-stone-950/60 to-transparent"></div>
+           </div>
+           
+           <div className="relative z-10 max-w-2xl">
+              <div className="p-3 bg-amber-500 w-fit rounded-2xl text-white shadow-2xl mb-8">
+                 <Ticket className="w-8 h-8" />
+              </div>
+              <h2 className="text-4xl md:text-5xl font-black text-white mb-6">
+                Özel Kupon Kodlarını Kaçırmayın
+              </h2>
+              <p className="text-stone-400 text-lg font-medium mb-10">
+                E-bültenimize abone olun, haftalık gizli indirim kodları ve özel koleksiyon duyurularını ilk siz alın.
+              </p>
+              
+              <div className="flex flex-col sm:flex-row gap-4">
+                 <input 
+                  type="email" 
+                  placeholder="E-posta adresiniz..."
+                  className="flex-1 px-8 py-4 bg-white/10 backdrop-blur-lg border border-white/10 rounded-2xl text-white outline-none focus:ring-2 focus:ring-amber-500 font-bold"
+                 />
+                 <button className="px-10 py-4 bg-amber-500 hover:bg-amber-600 text-white rounded-2xl font-black transition-all shadow-xl shadow-amber-500/30 active:scale-95 whitespace-nowrap">
+                   Abone Ol
+                 </button>
+              </div>
+           </div>
+        </section>
+
+        {/* Floating Call to Action */}
+        <div className="mt-20 text-center">
+           <div className="inline-flex items-center gap-6 p-2 pr-8 bg-stone-100 dark:bg-stone-900 rounded-full border border-stone-200 dark:border-stone-800 animate-bounce-slow">
+              <div className="w-14 h-14 bg-amber-500 rounded-full flex items-center justify-center text-white shadow-lg">
+                 <Navigation className="w-6 h-6" />
+              </div>
+              <div>
+                 <p className="text-sm font-black text-stone-900 dark:text-white tracking-tight">Hala ne bekliyorsun?</p>
+                 <Link to="/urunler" className="text-xs font-bold text-amber-500 hover:underline flex items-center gap-1 uppercase tracking-widest">
+                    Koleksiyonu Keşfet <ArrowUpRight className="w-3 h-3" />
+                 </Link>
+              </div>
+           </div>
         </div>
+
       </div>
     </main>
   )

@@ -5,7 +5,7 @@ import {
     User, ShoppingBag, Heart, MapPin, Settings, LogOut,
     Mail, Phone, Calendar, Eye, EyeOff, Star,
     Plus, Trash2, Edit2, CheckCircle, Loader2,
-    ChevronDown, Package, Truck, RotateCcw
+    ChevronDown, ChevronRight, Package, Truck, RotateCcw
 } from 'lucide-react'
 
 import ahsapTahta from '../../assets/ahsap-tahta.jpg'
@@ -618,9 +618,81 @@ function Ayarlar() {
     )
 }
 
+function IadeTaleplerim() {
+    const [iadeler, setIadeler] = useState([])
+    const [yukleniyor, setYukleniyor] = useState(true)
+
+    useEffect(() => {
+        // Simulating return requests data
+        const returnRequests = orders.filter(o => o.status === 'İade Sürecinde' || o.returnDetails).map(o => ({
+            id: o.id,
+            urun: o.items[0].name,
+            fiyat: o.total.toLocaleString('tr-TR', { style: 'currency', currency: 'TRY' }),
+            tarih: o.date,
+            durum: o.status,
+            kod: o.returnDetails?.code || '-'
+        }))
+        setIadeler(returnRequests)
+        setYukleniyor(false)
+    }, [])
+
+    if (yukleniyor) return <Yukleniyor />
+
+    return (
+        <div>
+            <p className="text-[10px] font-bold tracking-[0.3em] text-stone-400 uppercase mb-6">İade Taleplerim</p>
+            {iadeler.length === 0
+                ? <BosEkran mesaj="Henüz iade talebiniz bulunmuyor" />
+                : (
+                    <div className="space-y-4">
+                        {iadeler.map(i => (
+                            <div key={i.id} className="border border-stone-100 rounded-sm p-5 hover:border-stone-300 transition group">
+                                <div className="flex items-center gap-4">
+                                    <div className="w-12 h-12 bg-amber-50 text-amber-400 rounded-sm flex items-center justify-center shrink-0 group-hover:bg-amber-600 group-hover:text-white transition-colors">
+                                        <RotateCcw size={20} />
+                                    </div>
+                                    <div className="flex-1">
+                                        <div className="flex justify-between items-start">
+                                            <div>
+                                               <p className="text-sm font-bold text-stone-800 tracking-tight">{i.urun}</p>
+                                               <p className="text-[10px] text-stone-400 uppercase tracking-widest mt-0.5">Talep No: {i.id} · {i.tarih}</p>
+                                            </div>
+                                            <span className="text-[10px] font-black uppercase text-amber-600 bg-amber-50 px-2 py-0.5 rounded-sm">{i.durum}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div className="mt-4 pt-4 border-t border-stone-50 flex items-center justify-between">
+                                    <div className="flex items-center gap-4">
+                                       <div>
+                                          <p className="text-[9px] text-stone-400 uppercase tracking-widest">İade Kodu</p>
+                                          <p className="text-xs font-mono font-bold text-stone-700">{i.kod}</p>
+                                       </div>
+                                       <div className="h-4 w-[1px] bg-stone-100"></div>
+                                       <div>
+                                          <p className="text-[9px] text-stone-400 uppercase tracking-widest">Tutar</p>
+                                          <p className="text-xs font-bold text-stone-700">{i.fiyat}</p>
+                                       </div>
+                                    </div>
+                                    <Link to={`/siparislerim/${i.id}`} className="text-[10px] font-black uppercase text-stone-400 hover:text-stone-900 transition flex items-center gap-1.5">
+                                       Süreci Takip Et <ChevronRight size={12} />
+                                    </Link>
+                                </div>
+                            </div>
+                        ))}
+                        <Link to="/iadelerim" className="block text-center py-4 bg-stone-50 text-stone-400 hover:text-stone-900 text-[10px] font-black uppercase tracking-[0.2em] rounded-sm transition">
+                            Tüm İadeleri Görüntüle →
+                        </Link>
+                    </div>
+                )
+            }
+        </div>
+    )
+}
+
 const menuItems = [
     { key: 'profil',     label: 'Profil Bilgilerim', icon: User },
     { key: 'siparisler', label: 'Siparişlerim',      icon: ShoppingBag },
+    { key: 'iadeler',    label: 'İade Taleplerim',   icon: RotateCcw },
     { key: 'favoriler',  label: 'Favorilerim',        icon: Heart },
     { key: 'adresler',   label: 'Adreslerim',         icon: MapPin },
     { key: 'ayarlar',    label: 'Ayarlar',            icon: Settings },
@@ -633,6 +705,7 @@ function Profile() {
         switch (aktif) {
             case 'profil':     return <ProfilBilgilerim />
             case 'siparisler': return <Siparislerim />
+            case 'iadeler':    return <IadeTaleplerim />
             case 'favoriler':  return <Favorilerim />
             case 'adresler':   return <Adreslerim />
             case 'ayarlar':    return <Ayarlar />
