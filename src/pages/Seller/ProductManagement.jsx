@@ -21,7 +21,7 @@ import {
   ArrowUpRight,
   ArrowDownRight
 } from 'lucide-react';
-import { toast } from 'react-toastify';
+import toast from 'react-hot-toast';
 
 // Mock data based on user requirements
 const INITIAL_PRODUCTS = [
@@ -129,7 +129,7 @@ const ProductManagement = () => {
     setProducts(prev => prev.map(p => {
       if (p.id === id) {
         const newStatus = p.status === 'Published' ? 'Draft' : 'Published';
-        toast.info(`Ürün durumu "${newStatus === 'Published' ? 'Yayında' : 'Pasif'}" olarak güncellendi`);
+        toast.success(`Ürün durumu "${newStatus === 'Published' ? 'Yayında' : 'Pasif'}" olarak güncellendi`);
         return { ...p, status: newStatus };
       }
       return p;

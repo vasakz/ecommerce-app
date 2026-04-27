@@ -8,6 +8,7 @@ import {
 } from 'lucide-react'
 
 const menuItems = [
+    { key: 'profil', label: 'Mağaza Profili', icon: User, path: '/satici' },
     { key: 'urunler', label: 'Ürün Yönetimi', icon: Package, path: '/satici/urunler' },
     { key: 'urun-ekle', label: 'Yeni Ürün Ekle', icon: PlusCircle, path: '/satici/urun-ekle' },
     { key: 'siparisler', label: 'Sipariş Yönetimi', icon: ShoppingBag, path: '/satici/siparisler' },
@@ -37,8 +38,10 @@ export default function SellerLayout({ children }) {
             <aside className="hidden lg:flex w-64 bg-white border-r border-stone-100 flex-col sticky top-0 h-screen">
                 <div className="p-6 border-b border-stone-50">
                     <Link to="/satici" className="flex items-center gap-2">
-                        <div className="w-8 h-8 bg-amber-600 rounded-lg flex items-center justify-center text-white font-serif font-bold italic text-xl">A</div>
-                        <span className="text-xl font-serif font-bold text-stone-800 italic">Antigravity</span>
+                        <div className="w-8 h-8 bg-amber-600 rounded-lg flex items-center justify-center text-white">
+                            <Store size={18} />
+                        </div>
+                        <span className="text-lg font-black text-stone-900 tracking-tight">Satıcı Paneli</span>
                     </Link>
                 </div>
 
@@ -93,8 +96,10 @@ export default function SellerLayout({ children }) {
                     <aside className="fixed inset-y-0 left-0 w-72 bg-white flex flex-col shadow-2xl">
                         <div className="p-6 flex items-center justify-between border-b border-stone-50">
                             <Link to="/satici" className="flex items-center gap-2">
-                                <div className="w-8 h-8 bg-amber-600 rounded-lg flex items-center justify-center text-white font-serif font-bold italic text-xl">A</div>
-                                <span className="text-xl font-serif font-bold text-stone-800 italic">Antigravity</span>
+                                <div className="w-8 h-8 bg-amber-600 rounded-lg flex items-center justify-center text-white">
+                                    <Store size={18} />
+                                </div>
+                                <span className="text-lg font-black text-stone-900 tracking-tight">Satıcı Paneli</span>
                             </Link>
                             <button onClick={() => setSidebarOpen(false)} className="text-stone-400">
                                 <X size={20} />
