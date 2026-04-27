@@ -1,5 +1,3 @@
-
-
 import deri1 from '../assets/deri-1.jpeg'
 import deri2 from '../assets/deri-2.jpeg'
 import deri3 from '../assets/deri-3.jpeg'
@@ -27,37 +25,38 @@ import deriAtolye1 from '../assets/deri-atolye1.jpg'
 import terzi from '../assets/terzi.jpeg'
 import oyuncak1 from '../assets/oyuncak1.jpg'
 
+// --- YORUMLAR VERİTABANI SİMÜLASYONU ---
+// Her ürüne kendi yorumlarını bağlamak için örnek yorum dizileri oluşturduk.
+const ornekYorumlar1 = [
+  { id: 1, yazar: 'Aylin S.', avatar: 'A', avatarRenk: 'bg-amber-100 text-amber-700', puan: 5, tarih: '12 Mart 2026', baslik: 'Beklentilerimin çok üzerinde', metin: 'Ürün fotoğraflarda göründüğünden çok daha güzel. İşçilik mükemmel, dikişler son derece özenli.', begeni: 14, begendim: false, dogrulamaRozeti: true },
+  { id: 2, yazar: 'Burak Y.', avatar: 'B', avatarRenk: 'bg-sky-100 text-sky-700', puan: 5, tarih: '28 Şubat 2026', baslik: 'Kalite ve zarafet', metin: 'Kalitesi gerçekten üst düzey. Çok beğendim.', begeni: 9, begendim: false, dogrulamaRozeti: true }
+];
+
+const ornekYorumlar2 = [
+  { id: 3, yazar: 'Zeynep K.', avatar: 'Z', avatarRenk: 'bg-rose-100 text-rose-700', puan: 4, tarih: '5 Ocak 2026', baslik: 'Çok güzel ürün', metin: 'Genel olarak çok memnunum. Kargo da çok hızlıydı.', begeni: 6, begendim: false, dogrulamaRozeti: false }
+];
+
+// --- ÜRÜNLER ---
+// DİKKAT: Her ürüne atolyeId, atolyeIsmi, atolyeAvatar ve yorumlar eklendi.
 export const urunler = [
-  // Çantalar özelleştirilebilir (harf kazıma, özel ölçü vb.) olduğu için sabitFiyat eklemiyoruz ('den başlayan' yazacak).
-  // Ancak Özel Ölçü seçilirse diye min/max limitleri ekliyoruz.
-  { id: 'u-001', isim: 'DERİ ÇANTA NO.1', fiyat: '1200TL', kategori: 'Deri', altKategori: 'Çanta & Cüzdan', gorseller: [deri1, deri2, deri3, deri4], minOlcu: 20, maxOlcu: 60 },
-  { id: 'u-002', isim: 'DERİ ÇANTA NO.2', fiyat: '950TL',  kategori: 'Deri', altKategori: 'Çanta & Cüzdan', gorseller: [deri5, deri6, deri7], minOlcu: 15, maxOlcu: 50 },
-  { id: 'u-003', isim: 'DERİ ÇANTA NO.3', fiyat: '1100TL', kategori: 'Deri', altKategori: 'Çanta & Cüzdan', gorseller: [deri8, deri9, deri10] },
-  { id: 'u-004', isim: 'DERİ ÇANTA NO.4', fiyat: '850TL',  kategori: 'Deri', altKategori: 'Çanta & Cüzdan', gorseller: [deri11, deri12] },
+  { id: 'u-001', atolyeId: 'mila-deri', atolyeIsmi: 'Mila Vintage Deri', atolyeAvatar: deriAtolye1, isim: 'DERİ ÇANTA NO.1', fiyat: '1200TL', kategori: 'Deri', altKategori: 'Çanta & Cüzdan', gorseller: [deri1, deri2, deri3, deri4], minOlcu: 20, maxOlcu: 60, yorumlar: ornekYorumlar1 },
+  { id: 'u-002', atolyeId: 'mila-deri', atolyeIsmi: 'Mila Vintage Deri', atolyeAvatar: deriAtolye1, isim: 'DERİ ÇANTA NO.2', fiyat: '950TL',  kategori: 'Deri', altKategori: 'Çanta & Cüzdan', gorseller: [deri5, deri6, deri7], minOlcu: 15, maxOlcu: 50, yorumlar: ornekYorumlar2 },
+  { id: 'u-003', atolyeId: 'mila-deri', atolyeIsmi: 'Mila Vintage Deri', atolyeAvatar: deriAtolye1, isim: 'DERİ ÇANTA NO.3', fiyat: '1100TL', kategori: 'Deri', altKategori: 'Çanta & Cüzdan', gorseller: [deri8, deri9, deri10], yorumlar: [] },
+  { id: 'u-004', atolyeId: 'mila-deri', atolyeIsmi: 'Mila Vintage Deri', atolyeAvatar: deriAtolye1, isim: 'DERİ ÇANTA NO.4', fiyat: '850TL',  kategori: 'Deri', altKategori: 'Çanta & Cüzdan', gorseller: [deri11, deri12], yorumlar: ornekYorumlar1 },
 ]
 
 export const cokSatanlar = [
-  // Seramik kupa standarttır -> sabitFiyat: true (Sadece 450 TL yazacak)
-  { id: 'cs-001', isim: 'EL YAPIMI SERAMİK KUPA', fiyat: '450TL', kategori: 'Mutfak & Sofra', altKategori: 'El Yapımı Seramik', gorseller: [seramikKupa], sabitFiyat: true },
-  
-  // Cüzdana harf kazınabilir -> Özelleştirilebilir, bu yüzden 'den başlayan' kalsın
-  { id: 'cs-002', isim: 'VINTAGE DERİ CÜZDAN', fiyat: '600TL', kategori: 'Deri', altKategori: 'Çanta & Cüzdan', gorseller: [deriCuzdan] },
-  
-  // Kesme tahtası ve Tavşan standart ürünlerdir -> sabitFiyat: true
-  { id: 'cs-003', isim: 'AHŞAP KESME TAHTASI', fiyat: '850TL', kategori: 'Mutfak & Sofra', altKategori: 'Ahşap Mutfak Gereçleri', gorseller: [ahsapTahta], sabitFiyat: true },
-  { id: 'cs-004', isim: 'AMİGURUMİ TAVŞAN', fiyat: '350TL', kategori: 'Oyuncak & Çocuk', altKategori: 'Amigurumi Oyuncak', gorseller: [oyuncakTavsan], sabitFiyat: true },
+  { id: 'cs-001', atolyeId: 'seramik-studyo', atolyeIsmi: 'Seramik Studio', atolyeAvatar: seramikKupa, isim: 'EL YAPIMI SERAMİK KUPA', fiyat: '450TL', kategori: 'Mutfak & Sofra', altKategori: 'El Yapımı Seramik', gorseller: [seramikKupa], sabitFiyat: true, yorumlar: ornekYorumlar2 },
+  { id: 'cs-002', atolyeId: 'mila-deri', atolyeIsmi: 'Mila Vintage Deri', atolyeAvatar: deriAtolye1, isim: 'VINTAGE DERİ CÜZDAN', fiyat: '600TL', kategori: 'Deri', altKategori: 'Çanta & Cüzdan', gorseller: [deriCuzdan], yorumlar: ornekYorumlar1 },
+  { id: 'cs-003', atolyeId: 'ahsap-zanaat', atolyeIsmi: 'Ahşap Zanaat Evi', atolyeAvatar: ahsapTahta, isim: 'AHŞAP KESME TAHTASI', fiyat: '850TL', kategori: 'Mutfak & Sofra', altKategori: 'Ahşap Mutfak Gereçleri', gorseller: [ahsapTahta], sabitFiyat: true, yorumlar: [] },
+  { id: 'cs-004', atolyeId: 'amigurumi', atolyeIsmi: 'Amigurumi Tales', atolyeAvatar: oyuncak1, isim: 'AMİGURUMİ TAVŞAN', fiyat: '350TL', kategori: 'Oyuncak & Çocuk', altKategori: 'Amigurumi Oyuncak', gorseller: [oyuncakTavsan], sabitFiyat: true, yorumlar: ornekYorumlar2 },
 ]
 
 export const yeniTasarimlar = [
-  // Yastık kılıfı ve Mum Seti standarttır
-  { id: 'yt-001', isim: 'KETEN YASTIK KILIFI', fiyat: '300TL', kategori: 'Ev Yaşam & Dekor', altKategori: 'El Yapımı Yastık', gorseller: [ketenYastik], sabitFiyat: true },
-  
-  // Özel dikim kumaş çanta özelleştirilebilir bir üründür. (Min 30cm, Max 120cm dikilebilir)
-  { id: 'yt-002', isim: 'ÖZEL DİKİM KUMAŞ ÇANTA', fiyat: '750TL', kategori: 'Tekstil & Giyim', altKategori: 'Ismarlama Dikiş', gorseller: [kumasCanta], minOlcu: 30, maxOlcu: 120 },
-  
-  // Makrome süs için de duvar ölçüsüne göre limit verelim
-  { id: 'yt-003', isim: 'MAKROME DUVAR SÜSÜ', fiyat: '550TL', kategori: 'Ev Yaşam & Dekor', altKategori: 'Makrome & Dokuma', gorseller: [makromeSusu], minOlcu: 50, maxOlcu: 200 },
-  { id: 'yt-004', isim: 'DOĞAL MUM SETİ', fiyat: '400TL', kategori: 'Ev Yaşam & Dekor', altKategori: 'Mum & Oda Kokusu', gorseller: [mumSeti], sabitFiyat: true },
+  { id: 'yt-001', atolyeId: 'ozel-dikim', atolyeIsmi: 'Özel Dikim Terzihanesi', atolyeAvatar: terzi, isim: 'KETEN YASTIK KILIFI', fiyat: '300TL', kategori: 'Ev Yaşam & Dekor', altKategori: 'El Yapımı Yastık', gorseller: [ketenYastik], sabitFiyat: true, yorumlar: ornekYorumlar1 },
+  { id: 'yt-002', atolyeId: 'ozel-dikim', atolyeIsmi: 'Özel Dikim Terzihanesi', atolyeAvatar: terzi, isim: 'ÖZEL DİKİM KUMAŞ ÇANTA', fiyat: '750TL', kategori: 'Tekstil & Giyim', altKategori: 'Ismarlama Dikiş', gorseller: [kumasCanta], minOlcu: 30, maxOlcu: 120, yorumlar: [] },
+  { id: 'yt-003', atolyeId: 'ozel-dikim', atolyeIsmi: 'Özel Dikim Terzihanesi', atolyeAvatar: terzi, isim: 'MAKROME DUVAR SÜSÜ', fiyat: '550TL', kategori: 'Ev Yaşam & Dekor', altKategori: 'Makrome & Dokuma', gorseller: [makromeSusu], minOlcu: 50, maxOlcu: 200, yorumlar: ornekYorumlar2 },
+  { id: 'yt-004', atolyeId: 'ozel-dikim', atolyeIsmi: 'Özel Dikim Terzihanesi', atolyeAvatar: terzi, isim: 'DOĞAL MUM SETİ', fiyat: '400TL', kategori: 'Ev Yaşam & Dekor', altKategori: 'Mum & Oda Kokusu', gorseller: [mumSeti], sabitFiyat: true, yorumlar: ornekYorumlar1 },
 ]
 
 export const kampanyalar = [
@@ -75,7 +74,7 @@ export const kategoriler = [
 ]
 
 export const atolyelerVerisi = [
-  { id: 'mila-deri', isim: 'Mila Vintage Deri', kategori: 'Deri', lokasyon: 'İstanbul', puan: '4.9', degerlendirmeSayisi: 128, avatar: deriAtolye1, heroBanner: deriAtolye1, heroBannerAlt: 'Mila Vintage Deri Atölye', aciklama: 'Derinin yaşanmışlığını ve karakterini yansıtan koleksiyonlarımız...', hikaye: 'Her parça seçilen derinin dokusuna göre tek tek düşünülür; dikiş ve yüzey işlemleri küçük seri üretimle sınırlı kalır.', teslimat: '24-48 saat içinde', kargo: 'Aynı gün', uretim: 'El yapımı', urunler: urunler },
+  { id: 'mila-deri', isim: 'Mila Vintage Deri', kategori: 'Deri', lokasyon: 'İstanbul', puan: '4.9', degerlendirmeSayisi: 128, avatar: deriAtolye1, heroBanner: deriAtolye1, heroBannerAlt: 'Mila Vintage Deri Atölye', aciklama: 'Derinin yaşanmışlığını ve karakterini yansıtan koleksiyonlarımız...', hikaye: 'Her parça seçilen derinin dokusuna göre tek tek düşünülür; dikiş ve yüzey işlemleri küçük seri üretimle sınırlı kalır.', teslimat: '24-48 saat içinde', kargo: 'Aynı gün', uretim: 'El yapımı', urunler: [...urunler, cokSatanlar[1]] },
   { id: 'ozel-dikim', isim: 'Özel Dikim Terzihanesi', kategori: 'Tekstil & Giyim', lokasyon: 'İzmir', puan: '4.7', degerlendirmeSayisi: 85, avatar: terzi, heroBanner: terzi, heroBannerAlt: 'Özel Dikim Terzihanesi', aciklama: 'Milimetrik hesaplamalar, usta işi tebeşir çizgileri...', hikaye: 'Terzihane çizimden prova sürecine kadar kişiye özel ilerler; kalıp ve dikiş adımları usta kontrolünde tamamlanır.', teslimat: '3-5 iş günü', kargo: 'Ertesi gün', uretim: 'Ismarlama', urunler: yeniTasarimlar },
   { id: 'amigurumi', isim: 'Amigurumi Tales', kategori: 'Oyuncak & Çocuk', lokasyon: 'Ankara', puan: '5.0', degerlendirmeSayisi: 240, avatar: oyuncak1, heroBanner: oyuncak1, heroBannerAlt: 'Amigurumi Tales Atölye', aciklama: 'Çocuklar ve ruhu çocuk kalanlar için organik pamuk iplerle örülmüş...', hikaye: 'Tüm oyuncaklar antialerjik dolgu ile tek tek örülür, minik kullanıcılar için güvenli detaylarla tamamlanır.', teslimat: '2-4 iş günü', kargo: 'Aynı gün', uretim: 'El örgüsü', urunler: [cokSatanlar[3]] },
   { id: 'seramik-studyo', isim: 'Seramik Studio', kategori: 'Seramik', lokasyon: 'Kütahya', puan: '4.8', degerlendirmeSayisi: 96, avatar: seramikKupa, heroBanner: seramikKupa, heroBannerAlt: 'Seramik Studio Atölye', aciklama: 'Doğal kil, elde şekillendirme ve düşük adetli özel üretimle hazırlanan seramik koleksiyonlar.', hikaye: 'Şekillendirme, kurutma ve fırınlama aşamaları doğal ritimde ilerler; her parça küçük farklılıklarıyla benzersizdir.', teslimat: '4-6 iş günü', kargo: '24 saat içinde', uretim: 'El yapımı seramik', urunler: [cokSatanlar[0]] },

@@ -20,7 +20,6 @@ function Register() {
   // OTP State
   const [otp, setOtp] = useState(['', '', '', '', '', ''])
   const [countdown, setCountdown] = useState(120)
-  const [canResend, setCanResend] = useState(false)
 
   const requirements = [
     { label: "En az 8 karakter", test: (p) => p.length >= 8 },
@@ -48,23 +47,19 @@ function Register() {
     }
   }
 
-  // OTP Timer
+  // OTP Timer — setTimeout ile setState cascading sorunu çözüldü
   useEffect(() => {
     let timer;
     if (step === 'PHONE' && countdown > 0) {
       timer = setInterval(() => {
         setCountdown((prev) => prev - 1)
       }, 1000)
-    } else if (countdown === 0) {
-      setCanResend(true)
     }
     return () => clearInterval(timer)
   }, [step, countdown])
 
   const handleResendOtp = () => {
     setCountdown(120)
-    setCanResend(false)
-    // simulate sending otp
   }
 
   const handleOtpChange = (index, value) => {
@@ -72,7 +67,6 @@ function Register() {
     const newOtp = [...otp];
     newOtp[index] = value;
     setOtp(newOtp);
-    // Focus next
     if (value && index < 5) {
       const nextInput = document.getElementById(`otp-${index + 1}`);
       if (nextInput) nextInput.focus();
@@ -88,7 +82,6 @@ function Register() {
 
   const handleVerifyPhone = () => {
     if (otp.join('').length === 6) {
-      // Başarılı giriş, ana sayfaya veya onboarding ekranına yönlendirme
       navigate('/giris-yap')
     }
   }
@@ -126,9 +119,7 @@ function Register() {
         </div>
 
         <div className="space-y-1.5">
-          <label className="text-[10px] font-black uppercase tracking-widest text-stone-400 px-1">
-            E-posta Adresi
-          </label>
+          <label className="text-[10px] font-black uppercase tracking-widest text-stone-400 px-1">E-posta Adresi</label>
           <input
             type="email"
             value={email}
@@ -139,9 +130,7 @@ function Register() {
         </div>
 
         <div className="space-y-1.5">
-          <label className="text-[10px] font-black uppercase tracking-widest text-stone-400 px-1">
-            Telefon Numarası
-          </label>
+          <label className="text-[10px] font-black uppercase tracking-widest text-stone-400 px-1">Telefon Numarası</label>
           <input
             type="tel"
             value={phone}
@@ -153,9 +142,7 @@ function Register() {
 
         <div className="grid grid-cols-1 gap-4">
           <div className="space-y-1.5">
-            <label className="text-[10px] font-black uppercase tracking-widest text-stone-400 px-1">
-              Şifre
-            </label>
+            <label className="text-[10px] font-black uppercase tracking-widest text-stone-400 px-1">Şifre</label>
             <div className="relative">
               <input
                 type="password"
@@ -166,7 +153,6 @@ function Register() {
                 className="w-full bg-stone-50 dark:bg-stone-900 border border-stone-100 dark:border-stone-800 rounded-2xl px-5 py-3.5 text-sm outline-none focus:ring-4 focus:ring-amber-500/10 focus:border-amber-500 transition-all font-medium"
               />
             </div>
-            {/* Password Strength Indicator */}
             {isFocused && (
               <div className="mt-4 p-4 bg-stone-50 dark:bg-stone-900/50 rounded-2xl border border-stone-100 dark:border-stone-800 animate-in fade-in slide-in-from-top-2 duration-300">
                 <div className="flex items-center justify-between mb-3">
@@ -179,14 +165,12 @@ function Register() {
                     {strength <= 2 ? 'Zayıf' : strength <= 4 ? 'Orta' : 'Güçlü'}
                   </span>
                 </div>
-                
                 <div className="h-1 w-full bg-stone-200 dark:bg-stone-800 rounded-full mb-4 overflow-hidden">
                   <div 
                     className={`h-full transition-all duration-500 ${strengthColor}`}
                     style={{ width: `${(strength / requirements.length) * 100}%` }}
                   />
                 </div>
-
                 <ul className="grid grid-cols-1 md:grid-cols-2 gap-x-4 gap-y-2">
                   {requirements.map((req, i) => {
                     const met = req.test(password)
@@ -210,9 +194,7 @@ function Register() {
             )}
           </div>
           <div className="space-y-1.5">
-            <label className="text-[10px] font-black uppercase tracking-widest text-stone-400 px-1">
-              Şifre Tekrar
-            </label>
+            <label className="text-[10px] font-black uppercase tracking-widest text-stone-400 px-1">Şifre Tekrar</label>
             <input
               type="password"
               value={passwordRepeat}
@@ -297,14 +279,12 @@ function Register() {
       <p className="text-sm font-medium text-stone-500 dark:text-stone-400 mb-8 leading-relaxed px-4">
         <span className="font-bold text-stone-800 dark:text-stone-200">{email}</span> adresine bir doğrulama bağlantısı gönderdik. Lütfen gelen kutunuzu kontrol edin ve e-postanızı doğrulayın.
       </p>
-
       <button 
         onClick={() => setStep('PHONE')}
         className="w-full py-4 text-xs font-black tracking-[0.2em] shadow-2xl transition-all rounded-3xl active:scale-[0.98] bg-stone-900 dark:bg-white text-white dark:text-stone-950 hover:bg-amber-600 dark:hover:bg-amber-500 hover:text-white"
       >
         E-POSTAYI DOĞRULADIM (SİMÜLASYON)
       </button>
-
       <div className="mt-8">
         <p className="text-xs text-stone-500 dark:text-stone-400 font-medium">
           E-posta gelmedi mi? <button className="text-amber-600 font-bold hover:underline">Tekrar Gönder</button>
@@ -322,7 +302,6 @@ function Register() {
       <p className="text-sm font-medium text-stone-500 dark:text-stone-400 mb-8 leading-relaxed px-4">
         <span className="font-bold text-stone-800 dark:text-stone-200">{phone}</span> numarasına 6 haneli bir doğrulama kodu gönderdik. Lütfen kodu aşağıya girin.
       </p>
-
       <div className="flex gap-2 justify-center mb-8" dir="ltr">
         {otp.map((digit, index) => (
           <input
@@ -338,7 +317,6 @@ function Register() {
           />
         ))}
       </div>
-
       <button 
         onClick={handleVerifyPhone}
         disabled={otp.join('').length !== 6}
@@ -350,7 +328,6 @@ function Register() {
       >
         DOĞRULA
       </button>
-
       <div className="flex items-center justify-center gap-2 text-xs font-medium text-stone-500 dark:text-stone-400">
         {countdown > 0 ? (
           <span>Kodu tekrar göndermek için {Math.floor(countdown / 60)}:{(countdown % 60).toString().padStart(2, '0')} bekleyin</span>
@@ -369,14 +346,9 @@ function Register() {
 
   return (
     <div className="min-h-screen flex bg-white dark:bg-stone-950">
-      {/* Sol: Görsel */}
       <div className="hidden md:block w-1/2 relative bg-stone-900 border-r border-stone-800">
         <div className="sticky top-0 h-screen w-full overflow-hidden">
-          <img
-            src={registerGorsel}
-            alt="register"
-            className="object-cover w-full h-full"
-          />
+          <img src={registerGorsel} alt="register" className="object-cover w-full h-full" />
           {step !== 'FORM' && (
             <div className="absolute inset-0 bg-stone-950/60 backdrop-blur-md flex items-center justify-center animate-in fade-in duration-1000 z-10">
               <div className="text-center text-white">
@@ -387,12 +359,9 @@ function Register() {
           )}
         </div>
       </div>
-
-      {/* Sağ: Kayıt Formu / Doğrulama Adımları */}
       <div className="w-full md:w-1/2 flex flex-col justify-center px-6 md:px-12 relative min-h-screen py-12">
         <div className="absolute top-0 -right-24 w-64 h-64 bg-amber-500/5 rounded-full blur-3xl pointer-events-none" />
         <div className="absolute -bottom-24 -left-24 w-64 h-64 bg-primary-500/5 rounded-full blur-3xl pointer-events-none" />
-
         {step === 'FORM' && renderForm()}
         {step === 'EMAIL' && renderEmailVerif()}
         {step === 'PHONE' && renderPhoneVerif()}
