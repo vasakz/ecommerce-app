@@ -1,4 +1,4 @@
-import React  from 'react';
+import React from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { addToCart } from '../../store/slices/cartSlice';
@@ -13,7 +13,10 @@ import {
   ChevronRight,
   Minus,
   Plus,
-  ShoppingBag
+  ShoppingBag,
+  Info,
+  Clock,
+  ArrowRight
 } from 'lucide-react';
 
 import { MOCK_PRODUCTS, COLORS } from '../../data/products';
@@ -22,6 +25,7 @@ const ProductDetail = () => {
   const { id } = useParams();
   const dispatch = useDispatch();
   const favorites = useSelector(state => state.favorites.items);
+  const isFavorited = favorites.some(item => item.id === Number(id));
   
   const productData = MOCK_PRODUCTS.find(p => p.id === Number(id)) || MOCK_PRODUCTS[0];
   
@@ -29,7 +33,6 @@ const ProductDetail = () => {
     .filter(p => p.category === productData.category && p.id !== productData.id)
     .slice(0, 4);
   
-  // Find other images in the same subcategory to use as mock "alternative angles"
   const alternativeAngles = MOCK_PRODUCTS
     .filter(p => p.subcategory === productData.subcategory && p.id !== productData.id)
     .map(p => p.image);
@@ -37,20 +40,18 @@ const ProductDetail = () => {
   const MOCK_PRODUCT = {
     ...productData,
     oldPrice: Math.floor(productData.price * 1.25),
-    description: `Özel olarak tasarlanan bu ${productData.brand} markalı ${productData.subcategory}, benzersiz şıklığı ve üstün kalitesiyle dikkat çekiyor. ${productData.isFreeShipping ? 'Ücretsiz kargo avantajıyla hemen sahip olabilirsiniz.' : ''}`,
+    description: `Özel olarak tasarlanan bu ${productData.brand} markalı ${productData.subcategory}, benzersiz şıklığı ve üstün kalitesiyle dikkat çekiyor. Zanaatkarlarımız tarafından özenle hazırlanan bu parça, gardırobunuzun en değerli üyelerinden biri olmaya aday.`,
     features: [
-      "Orijinal Ürün Garantisi",
-      `${productData.brand} Kalitesi`,
-      "14 Gün İade Hakkı",
-      "Güvenilir Teslimat"
+      "Sınırlı Üretim Özel Tasarım",
+      `${productData.brand} El İşçiliği`,
+      "Premium Malzeme Kalitesi",
+      "Sürdürülebilir Üretim Teknikleri",
+      "Kişiye Özel Uyum Seçenekleri"
     ],
-    // Use the main image, plus 3 from the same specific category/subcategory
     images: [
       productData.image,
       ...alternativeAngles,
-      productData.image,
-      productData.image
-    ].slice(0, 4),
+    ].slice(0, 4).length < 4 ? [productData.image, productData.image, productData.image, productData.image] : [productData.image, ...alternativeAngles].slice(0, 4),
     colors: COLORS,
     sizes: [
       { name: 'S', inStock: true },
@@ -65,7 +66,8 @@ const ProductDetail = () => {
   const [selectedSize, setSelectedSize] = React.useState(MOCK_PRODUCT.sizes[1]);
   const [quantity, setQuantity] = React.useState(1);
   const [activeTab, setActiveTab] = React.useState('description');
-  const [zoomStyle, setZoomStyle] = React.useState({ display: 'none' });
+  const [isZoomed, setIsZoomed] = React.useState(false);
+  const [mousePos, setMousePos] = React.useState({ x: 0, y: 0 });
 
   React.useEffect(() => {
     setMainImage(productData.image);
@@ -77,163 +79,153 @@ const ProductDetail = () => {
     const { left, top, width, height } = e.currentTarget.getBoundingClientRect();
     const x = ((e.clientX - left) / width) * 100;
     const y = ((e.clientY - top) / height) * 100;
-
-    setZoomStyle({
-      display: 'block',
-      backgroundPosition: `${x}% ${y}%`
-    });
+    setMousePos({ x, y });
   };
 
-  const handleMouseLeave = () => {
-    setZoomStyle({ display: 'none' });
+  const toggleFavorite = () => {
+    if (isFavorited) {
+      dispatch(removeFromFavorites(MOCK_PRODUCT.id));
+      toast.success('Favorilerden çıkarıldı');
+    } else {
+      dispatch(addToFavorites({
+        id: MOCK_PRODUCT.id,
+        name: MOCK_PRODUCT.name,
+        price: MOCK_PRODUCT.price,
+        category: MOCK_PRODUCT.category,
+        image: MOCK_PRODUCT.image
+      }));
+      toast.success('Favorilere eklendi');
+    }
   };
 
   return (
-    <div className="container mx-auto px-4 py-8 text-gray-900 dark:text-gray-100">
-      {/* Breadcrumb */}
-      <nav className="flex text-sm text-gray-500 dark:text-gray-400 mb-8 items-center gap-2">
-        <Link to="/" className="hover:text-black dark:hover:text-white transition-colors">Ana Sayfa</Link>
-        <ChevronRight className="w-4 h-4" />
-        <Link to={`/urunler?category=${productData.category}`} className="hover:text-black dark:hover:text-white transition-colors">{productData.category}</Link>
-        <ChevronRight className="w-4 h-4" />
-        <Link to={`/urunler?category=${productData.category}&subcategory=${productData.subcategory}`} className="hover:text-black dark:hover:text-white transition-colors">{productData.subcategory}</Link>
-        <ChevronRight className="w-4 h-4" />
-        <span className="text-gray-900 dark:text-gray-100 font-medium">{productData.name}</span>
-      </nav>
+    <div className="bg-white min-h-screen">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8">
+        {/* Breadcrumb - Clean & Minimal */}
+        <nav className="flex items-center gap-2 text-[10px] sm:text-xs uppercase tracking-[0.2em] text-stone-400 mb-10 overflow-x-auto whitespace-nowrap hide-scrollbar">
+          <Link to="/" className="hover:text-stone-900 transition-colors">Ana Sayfa</Link>
+          <ChevronRight size={12} className="text-stone-300" />
+          <Link to={`/urunler?category=${productData.category}`} className="hover:text-stone-900 transition-colors">{productData.category}</Link>
+          <ChevronRight size={12} className="text-stone-300" />
+          <span className="text-stone-900 font-bold">{productData.name}</span>
+        </nav>
 
-      <div className="flex flex-col lg:flex-row gap-12 mb-16">
-        {/* Left: Image Gallery */}
-        <div className="w-full lg:w-1/2 flex flex-col md:flex-row-reverse gap-4">
-          
-          {/* Main Image with Zoom */}
-          <div className="flex-1 relative aspect-square rounded-2xl overflow-hidden bg-gray-100 border">
-            <div 
-              className="absolute inset-0 cursor-crosshair z-10"
-              onMouseMove={handleMouseMove}
-              onMouseLeave={handleMouseLeave}
-            />
-            <img 
-              src={mainImage} 
-              alt={MOCK_PRODUCT.name} 
-              className="w-full h-full object-cover"
-            />
-            {/* Zoom Overlay */}
-            <div 
-              className="absolute inset-0 pointer-events-none bg-no-repeat transition-opacity duration-200"
-              style={{
-                backgroundImage: `url(${mainImage})`,
-                backgroundSize: '200%',
-                opacity: zoomStyle.display === 'block' ? 1 : 0,
-                ...zoomStyle
-              }}
-            />
-          </div>
-
-          {/* Thumbnails */}
-          <div className="flex md:flex-col gap-4 overflow-x-auto md:w-24 flex-shrink-0 hide-scrollbar pb-2 md:pb-0">
-            {MOCK_PRODUCT.images.map((img, idx) => (
-              <button 
-                key={idx}
-                onClick={() => setMainImage(img)}
-                className={`w-20 h-20 md:w-full md:h-24 rounded-lg overflow-hidden border-2 flex-shrink-0 transition-all ${mainImage === img ? 'border-black opacity-100' : 'border-transparent opacity-60 hover:opacity-100'}`}
-              >
-                <img src={img} alt="" className="w-full h-full object-cover" />
-              </button>
-            ))}
-          </div>
-        </div>
-
-        {/* Right: Product Info */}
-        <div className="w-full lg:w-1/2 flex flex-col">
-          <div className="flex justify-between items-start">
-            <div>
-              <Link to={`/marka/${MOCK_PRODUCT.brand}`} className="text-blue-600 dark:text-blue-400 font-semibold hover:underline">
-                {MOCK_PRODUCT.brand}
-              </Link>
-              <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-2">{MOCK_PRODUCT.name}</h1>
-            </div>
-            <div className="flex gap-2">
-              <button 
-                onClick={() => dispatch(addToFavorites({
-                  id: MOCK_PRODUCT.id,
-                  name: MOCK_PRODUCT.name,
-                  price: MOCK_PRODUCT.price,
-                  category: MOCK_PRODUCT.category,
-                  image: MOCK_PRODUCT.image
-                }))}
-                className="p-3 rounded-full hover:bg-gray-100 text-gray-500 hover:text-red-500 transition-colors"
-              >
-                <Heart className="w-6 h-6" />
-              </button>
-              <button className="p-3 rounded-full hover:bg-gray-100 text-gray-500 transition-colors">
-                <Share2 className="w-6 h-6" />
-              </button>
-            </div>
-          </div>
-
-          {/* Rating & Reviews */}
-          <div className="flex items-center gap-4 mt-4">
-            <div className="flex items-center text-yellow-500">
-              {Array.from({ length: 5 }).map((_, i) => (
-                <Star key={i} className={`w-5 h-5 ${i < Math.floor(MOCK_PRODUCT.rating) ? 'fill-current' : 'text-gray-300'}`} />
-              ))}
-              <span className="text-gray-900 font-bold ml-2">{MOCK_PRODUCT.rating}</span>
-            </div>
-            <span className="text-gray-500 text-sm underline cursor-pointer hover:text-black">
-              {MOCK_PRODUCT.reviews} Değerlendirme
-            </span>
-          </div>
-
-          {/* Price */}
-          <div className="mt-6 flex items-baseline gap-4">
-            <span className="text-4xl font-extrabold text-gray-900 dark:text-gray-100">{MOCK_PRODUCT.price} ₺</span>
-            {MOCK_PRODUCT.oldPrice && (
-              <span className="text-xl text-gray-500 dark:text-gray-400 line-through">{MOCK_PRODUCT.oldPrice} ₺</span>
-            )}
-            <span className="bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400 font-bold px-2 py-1 rounded text-sm">
-              %24 İndirim
-            </span>
-          </div>
-
-          <hr className="my-8 border-gray-200 dark:border-gray-800" />
-
-          {/* Variants */}
-          <div className="space-y-6">
-            {/* Color */}
-            <div>
-              <div className="flex items-center justify-between mb-3">
-                <h3 className="text-sm font-medium text-gray-900 dark:text-gray-100">Renk Seçimi</h3>
-                <span className="text-sm text-gray-500 dark:text-gray-400">{selectedColor.name}</span>
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16">
+          {/* ── SOL: GÖRSELLER ── */}
+          <div className="lg:col-span-7 flex flex-col gap-6">
+            <div className="flex flex-col-reverse md:flex-row gap-4">
+              {/* Thumbnails */}
+              <div className="flex md:flex-col gap-3 overflow-x-auto md:w-20 lg:w-24 no-scrollbar">
+                {MOCK_PRODUCT.images.map((img, idx) => (
+                  <button 
+                    key={idx}
+                    onClick={() => setMainImage(img)}
+                    className={`aspect-square rounded-xl overflow-hidden border-2 transition-all flex-shrink-0 ${mainImage === img ? 'border-amber-500 scale-95 shadow-lg shadow-amber-500/10' : 'border-transparent opacity-60 hover:opacity-100 hover:scale-105'}`}
+                  >
+                    <img src={img} alt="" className="w-full h-full object-cover" />
+                  </button>
+                ))}
               </div>
-              <div className="flex gap-3">
+
+              {/* Main Image with Zoom Effect */}
+              <div 
+                className="relative flex-1 aspect-[4/5] bg-stone-50 rounded-3xl overflow-hidden shadow-2xl shadow-stone-200/50 cursor-zoom-in border border-stone-100 group"
+                onMouseEnter={() => setIsZoomed(true)}
+                onMouseLeave={() => setIsZoomed(false)}
+                onMouseMove={handleMouseMove}
+              >
+                <img 
+                  src={mainImage} 
+                  alt={MOCK_PRODUCT.name} 
+                  className={`w-full h-full object-cover transition-transform duration-500 ${isZoomed ? 'scale-[2.5]' : 'scale-100'}`}
+                  style={isZoomed ? { transformOrigin: `${mousePos.x}% ${mousePos.y}%` } : {}}
+                />
+                <button 
+                  onClick={toggleFavorite}
+                  className={`absolute top-6 right-6 p-4 rounded-full backdrop-blur-md transition-all shadow-xl active:scale-95 ${isFavorited ? 'bg-amber-500 text-white shadow-amber-500/20' : 'bg-white/80 text-stone-400 hover:text-amber-500 shadow-stone-900/10'}`}
+                >
+                  <Heart size={24} className={isFavorited ? 'fill-current' : ''} />
+                </button>
+              </div>
+            </div>
+          </div>
+
+          {/* ── SAĞ: ÜRÜN BİLGİLERİ ── */}
+          <div className="lg:col-span-5 flex flex-col">
+            <div className="flex flex-col gap-2 mb-6">
+              <div className="flex items-center gap-2 mb-2">
+                <div className="w-6 h-px bg-amber-500"></div>
+                <Link to={`/marka/${MOCK_PRODUCT.brand}`} className="text-[10px] font-black tracking-[0.3em] uppercase text-amber-600 hover:text-amber-700 transition-colors">
+                  {MOCK_PRODUCT.brand}
+                </Link>
+              </div>
+              <h1 className="text-4xl lg:text-5xl font-serif text-stone-900 leading-tight tracking-tight">
+                {MOCK_PRODUCT.name}
+              </h1>
+              
+              <div className="flex items-center gap-4 mt-4">
+                <div className="flex items-center gap-1.5 text-amber-500">
+                  <Star size={18} className="fill-current" />
+                  <span className="text-stone-900 font-bold text-lg">{MOCK_PRODUCT.rating}</span>
+                </div>
+                <div className="w-px h-4 bg-stone-200"></div>
+                <button className="text-stone-400 text-sm font-medium hover:text-stone-900 hover:underline transition-colors">
+                  {MOCK_PRODUCT.reviews} Değerlendirme
+                </button>
+              </div>
+            </div>
+
+            <div className="flex items-baseline gap-4 mb-10">
+              <p className="text-5xl font-bold text-stone-900 tracking-tighter">
+                {MOCK_PRODUCT.price.toLocaleString('tr-TR')} ₺
+              </p>
+              {MOCK_PRODUCT.oldPrice && (
+                <span className="text-xl text-stone-400 line-through decoration-amber-500/30">
+                  {MOCK_PRODUCT.oldPrice.toLocaleString('tr-TR')} ₺
+                </span>
+              )}
+              <div className="bg-amber-50 text-amber-600 px-3 py-1 rounded-full text-xs font-black uppercase tracking-widest border border-amber-100 flex items-center gap-1.5 animate-pulse">
+                İndirim %24
+              </div>
+            </div>
+
+            {/* Renk Seçimi */}
+            <div className="mb-10">
+              <div className="flex justify-between mb-4 items-center">
+                <h3 className="text-xs font-black uppercase tracking-[0.2em] text-stone-400">Renk</h3>
+                <span className="text-xs font-bold text-stone-900">{selectedColor.name}</span>
+              </div>
+              <div className="flex gap-4">
                 {MOCK_PRODUCT.colors.map(color => (
                   <button
-                    key={color.name}
+                    key={color.id}
                     onClick={() => setSelectedColor(color)}
-                    className={`w-12 h-12 rounded-full border-2 ${selectedColor.name === color.name ? 'border-black p-1' : 'border-transparent'}`}
+                    className={`p-1 rounded-full border-2 transition-all hover:scale-110 ${selectedColor.id === color.id ? 'border-amber-500 shadow-lg shadow-amber-500/10' : 'border-transparent'}`}
                   >
-                    <span className={`block w-full h-full rounded-full ${color.class}`} />
+                    <div className={`w-10 h-10 rounded-full shadow-inner ${color.class}`} />
                   </button>
                 ))}
               </div>
             </div>
 
-            {/* Size */}
-            <div>
-              <div className="flex items-center justify-between mb-3">
-                <h3 className="text-sm font-medium text-gray-900">Beden / Çeşit</h3>
-                <button className="text-sm text-blue-600 hover:underline">Beden Tablosu</button>
+            {/* Beden Seçimi */}
+            <div className="mb-10">
+              <div className="flex justify-between mb-4 items-center">
+                <h3 className="text-xs font-black uppercase tracking-[0.2em] text-stone-400">Beden Seçimi</h3>
+                <button className="text-xs font-bold text-amber-600 hover:underline">Beden Tablosu</button>
               </div>
-              <div className="flex flex-wrap gap-3">
+              <div className="grid grid-cols-4 gap-3">
                 {MOCK_PRODUCT.sizes.map(size => (
                   <button
                     key={size.name}
                     disabled={!size.inStock}
                     onClick={() => setSelectedSize(size)}
                     className={`
-                      px-6 py-3 rounded-xl border text-sm font-medium transition-all
-                      ${!size.inStock ? 'opacity-50 cursor-not-allowed bg-gray-50 dark:bg-stone-800 text-gray-400 dark:text-gray-500 border-gray-200 dark:border-stone-700 line-through' : ''}
-                      ${selectedSize.name === size.name && size.inStock ? 'border-black dark:border-white bg-black dark:bg-white text-white dark:text-black shadow-lg' : 'border-gray-300 dark:border-stone-700 hover:border-black dark:hover:border-white text-gray-700 dark:text-gray-300 bg-white dark:bg-stone-900'}
+                      h-14 rounded-2xl text-xs font-bold tracking-widest transition-all
+                      ${!size.inStock ? 'opacity-30 cursor-not-allowed bg-stone-50 text-stone-400 border border-stone-100 line-through' : ''}
+                      ${selectedSize.name === size.name && size.inStock 
+                        ? 'bg-amber-500 text-white shadow-xl shadow-amber-500/20 active:scale-95' 
+                        : 'bg-white border border-stone-200 text-stone-600 hover:border-amber-300 hover:text-amber-600'}
                     `}
                   >
                     {size.name}
@@ -241,207 +233,235 @@ const ProductDetail = () => {
                 ))}
               </div>
             </div>
-          </div>
 
-          <div className="mt-8 flex gap-4">
-            {/* Quantity */}
-            <div className="flex items-center border border-gray-300 rounded-xl px-2 h-14 bg-white">
-              <button 
-                onClick={() => setQuantity(Math.max(1, quantity - 1))}
-                className="w-10 h-10 flex items-center justify-center text-gray-500 hover:text-black hover:bg-gray-100 rounded-lg transition-colors"
-              >
-                <Minus className="w-5 h-5" />
-              </button>
-              <span className="w-12 text-center font-semibold text-lg">{quantity}</span>
-              <button 
-                onClick={() => setQuantity(quantity + 1)}
-                className="w-10 h-10 flex items-center justify-center text-gray-500 hover:text-black hover:bg-gray-100 rounded-lg transition-colors"
-              >
-                <Plus className="w-5 h-5" />
-              </button>
-            </div>
-
-            {/* Action Buttons */}
-            <button 
-              onClick={() => {
-                dispatch(addToCart({
-                  id: MOCK_PRODUCT.id,
-                  isim: MOCK_PRODUCT.name,
-                  fiyat: `${MOCK_PRODUCT.price} ₺`,
-                  image: MOCK_PRODUCT.image,
-                  color: selectedColor.name,
-                  size: selectedSize.name,
-                  quantity: quantity
-                }));
-                toast.success('Ürün sepete eklendi');
-              }}
-              className="flex-1 bg-black text-white hover:bg-gray-800 rounded-xl font-bold text-lg flex items-center justify-center gap-2 transition-transform active:scale-95 shadow-xl shadow-black/20"
-            >
-              <ShoppingBag className="w-6 h-6" />
-              Sepete Ekle
-            </button>
-            <button className="flex-1 bg-blue-600 text-white hover:bg-blue-700 rounded-xl font-bold text-lg flex items-center justify-center transition-transform active:scale-95 shadow-xl shadow-blue-600/20">
-              Hemen Satın Al
-            </button>
-          </div>
-
-          {/* Seller Info & Trust Badges */}
-          <div className="mt-8 bg-gray-50 dark:bg-stone-800 p-6 rounded-2xl space-y-4">
-            <div className="flex items-center justify-between mb-2">
-              <span className="text-gray-500 dark:text-gray-400 text-sm">Satıcı:</span>
-              <Link to={`/satici/${MOCK_PRODUCT.seller}`} className="font-bold text-blue-600 hover:underline flex items-center gap-2">
-                {MOCK_PRODUCT.seller}
-                <span className="bg-green-100 text-green-700 text-xs px-2 py-0.5 rounded font-semibold items-center flex gap-1">
-                  <Star className="w-3 h-3 fill-current" /> 9.8
-                </span>
-              </Link>
-            </div>
-            
-            <div className="grid grid-cols-2 gap-4 pt-4 border-t border-gray-200">
-              <div className="flex items-center gap-3 text-gray-700">
-                <Truck className="w-5 h-5 text-green-500" />
-                <span className="text-sm font-medium">Bugün Kargoda</span>
+            <div className="flex flex-col sm:flex-row gap-4 mb-10">
+              {/* Adet Kontrolü */}
+              <div className="flex items-center justify-between border border-stone-200 rounded-2xl px-2 h-16 bg-stone-50 min-w-[140px]">
+                <button 
+                  onClick={() => setQuantity(Math.max(1, quantity - 1))}
+                  className="w-10 h-10 flex items-center justify-center text-stone-400 hover:text-stone-900 hover:bg-white rounded-xl transition-all active:scale-90"
+                >
+                  <Minus size={18} />
+                </button>
+                <span className="font-bold text-lg text-stone-900">{quantity}</span>
+                <button 
+                  onClick={() => setQuantity(quantity + 1)}
+                  className="w-10 h-10 flex items-center justify-center text-stone-400 hover:text-stone-900 hover:bg-white rounded-xl transition-all active:scale-90"
+                >
+                  <Plus size={18} />
+                </button>
               </div>
-              <div className="flex items-center gap-3 text-gray-700">
-                <ShieldCheck className="w-5 h-5 text-blue-500" />
-                <span className="text-sm font-medium">14 Gün İade Garantisi</span>
-              </div>
+
+              {/* Ana Buton */}
+              <button 
+                onClick={() => {
+                  dispatch(addToCart({
+                    id: MOCK_PRODUCT.id,
+                    isim: MOCK_PRODUCT.name,
+                    fiyat: `${MOCK_PRODUCT.price} ₺`,
+                    image: MOCK_PRODUCT.image,
+                    color: selectedColor.name,
+                    size: selectedSize.name,
+                    quantity: quantity
+                  }));
+                  toast.success('Ürün sepete eklendi', {
+                    style: { background: '#1c1917', color: '#fff', borderRadius: '12px' },
+                    iconTheme: { primary: '#d97706', secondary: '#fff' }
+                  });
+                }}
+                className="flex-1 bg-amber-600 text-white rounded-2xl font-black text-xs uppercase tracking-[0.2em] flex items-center justify-center gap-3 transition-all hover:bg-amber-700 active:scale-95 shadow-2xl shadow-amber-600/20"
+              >
+                <ShoppingBag size={20} />
+                Sepete Ekle
+              </button>
             </div>
-          </div>
 
-        </div>
-      </div>
-
-      {/* Tabs Layout */}
-      <div className="mt-16 border-t pt-8">
-        <div className="flex gap-8 border-b mb-8 overflow-x-auto hide-scrollbar">
-          {[
-            { id: 'description', label: 'Ürün Açıklaması' },
-            { id: 'features', label: 'Özellikler' },
-            { id: 'reviews', label: `Değerlendirmeler (${MOCK_PRODUCT.reviews})` }
-          ].map(tab => (
-            <button
-              key={tab.id}
-              onClick={() => setActiveTab(tab.id)}
-              className={`pb-4 font-semibold text-lg whitespace-nowrap transition-colors relative ${activeTab === tab.id ? 'text-black' : 'text-gray-400 hover:text-gray-700'}`}
-            >
-              {tab.label}
-              {activeTab === tab.id && (
-                <span className="absolute bottom-0 left-0 w-full h-1 bg-black rounded-t-full" />
-              )}
-            </button>
-          ))}
-        </div>
-
-        <div className="prose max-w-none min-h-[200px] mb-16">
-          {activeTab === 'description' && (
-            <div className="text-gray-700 leading-relaxed text-lg">
-              <p>{MOCK_PRODUCT.description}</p>
-              <p className="mt-4">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
-            </div>
-          )}
-          {activeTab === 'features' && (
-            <ul className="space-y-4 max-w-2xl">
-              {MOCK_PRODUCT.features.map((feature, idx) => (
-                <li key={idx} className="flex items-center gap-3 bg-gray-50 p-4 rounded-xl">
-                  <div className="w-2 h-2 rounded-full bg-blue-500" />
-                  <span className="font-medium text-gray-800">{feature}</span>
-                </li>
-              ))}
-            </ul>
-          )}
-          {activeTab === 'reviews' && (
-            <div className="space-y-6">
-              <div className="flex items-center gap-4 bg-yellow-50 p-6 rounded-2xl max-w-md">
-                <div className="text-5xl font-black text-yellow-600">{MOCK_PRODUCT.rating}</div>
+            {/* Güven Rozetleri */}
+            <div className="bg-stone-50 border border-stone-100 rounded-3xl p-8 space-y-6">
+              <div className="flex items-center gap-4">
+                <div className="w-12 h-12 bg-white rounded-2xl flex items-center justify-center shadow-sm text-amber-600">
+                  <Truck size={24} strokeWidth={1.5} />
+                </div>
                 <div>
-                  <div className="flex text-yellow-500 mb-1">
-                    {Array.from({ length: 5 }).map((_, i) => (
-                      <Star key={i} className={`w-5 h-5 ${i < 4 ? 'fill-current' : ''}`} />
+                  <h4 className="text-xs font-black uppercase tracking-widest text-stone-900">Premium Teslimat</h4>
+                  <p className="text-xs text-stone-500 font-medium mt-1">Özel sigortalı paketleme ve 24 saatte kargolama.</p>
+                </div>
+              </div>
+              <div className="flex items-center gap-4">
+                <div className="w-12 h-12 bg-white rounded-2xl flex items-center justify-center shadow-sm text-emerald-600">
+                  <ShieldCheck size={24} strokeWidth={1.5} />
+                </div>
+                <div>
+                  <h4 className="text-xs font-black uppercase tracking-widest text-stone-900">Güvenceli Alışveriş</h4>
+                  <p className="text-xs text-stone-500 font-medium mt-1">14 gün koşulsuz iade ve orijinal ürün garantisi.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* ── DETAYLAR & DEĞERLENDİRMELER ── */}
+        <div className="mt-24">
+          <div className="flex border-b border-stone-100 gap-12 overflow-x-auto no-scrollbar mb-12">
+            {[
+              { id: 'description', label: 'Ürün Hikayesi' },
+              { id: 'features', label: 'Özellikler' },
+              { id: 'reviews', label: `Yorumlar (${MOCK_PRODUCT.reviews})` }
+            ].map(tab => (
+              <button
+                key={tab.id}
+                onClick={() => setActiveTab(tab.id)}
+                className={`pb-6 text-xs font-black uppercase tracking-[0.3em] whitespace-nowrap transition-all relative ${activeTab === tab.id ? 'text-stone-900' : 'text-stone-300 hover:text-stone-500'}`}
+              >
+                {tab.label}
+                {activeTab === tab.id && (
+                  <span className="absolute bottom-0 left-0 w-full h-1 bg-amber-500 rounded-t-full" />
+                )}
+              </button>
+            ))}
+          </div>
+
+          <div className="max-w-4xl min-h-[300px]">
+            {activeTab === 'description' && (
+              <div className="animate-fadeIn">
+                <h3 className="text-3xl font-serif text-stone-900 mb-6">Detaylı Bilgi</h3>
+                <p className="text-stone-600 leading-relaxed text-lg mb-8 italic">"{MOCK_PRODUCT.description}"</p>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mt-12">
+                  <div className="flex gap-4 p-6 bg-stone-50 rounded-3xl">
+                    <Info className="flex-shrink-0 text-amber-500" />
+                    <p className="text-sm text-stone-600 leading-relaxed">Ürünün uzun ömürlü olması için kuru temizleme önerilir. Direkt güneş ışığından uzak tutunuz.</p>
+                  </div>
+                  <div className="flex gap-4 p-6 bg-amber-50 rounded-3xl">
+                    <Clock className="flex-shrink-0 text-amber-600" />
+                    <p className="text-sm text-amber-800 leading-relaxed font-medium">Bu ürün tamamen el işçiliği olduğu için sevk süresi 2 iş günü sürmektedir.</p>
+                  </div>
+                </div>
+              </div>
+            )}
+            
+            {activeTab === 'features' && (
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 animate-fadeIn">
+                {MOCK_PRODUCT.features.map((feature, idx) => (
+                  <div key={idx} className="flex items-center gap-4 bg-white border border-stone-100 p-5 rounded-2xl shadow-sm hover:shadow-md hover:border-amber-200 transition-all group">
+                    <div className="w-2 h-2 rounded-full bg-amber-500 group-hover:scale-150 transition-transform" />
+                    <span className="text-sm font-bold text-stone-800 uppercase tracking-widest">{feature}</span>
+                  </div>
+                ))}
+              </div>
+            )}
+
+            {activeTab === 'reviews' && (
+              <div className="space-y-12 animate-fadeIn">
+                <div className="flex flex-col sm:flex-row items-center gap-10 bg-gradient-to-br from-stone-900 to-stone-800 p-10 rounded-[3rem] text-white shadow-2xl">
+                  <div className="text-center">
+                    <div className="text-7xl font-serif text-amber-400 mb-2">{MOCK_PRODUCT.rating}</div>
+                    <div className="flex text-amber-400 justify-center mb-3">
+                      {Array.from({ length: 5 }).map((_, i) => (
+                        <Star key={i} size={20} className={i < 4 ? 'fill-current' : ''} />
+                      ))}
+                    </div>
+                    <div className="text-[10px] font-black uppercase tracking-widest text-stone-400">GENEL PUAN</div>
+                  </div>
+                  <div className="flex-1 w-full space-y-3">
+                    {[5, 4, 3, 2, 1].map((star) => (
+                      <div key={star} className="flex items-center gap-3">
+                        <span className="text-xs font-bold text-stone-400 w-4">{star}</span>
+                        <div className="flex-1 h-1.5 bg-white/10 rounded-full overflow-hidden">
+                          <div 
+                            className="h-full bg-amber-500 rounded-full" 
+                            style={{ width: star === 5 ? '85%' : star === 4 ? '20%' : '5%' }}
+                          />
+                        </div>
+                      </div>
                     ))}
                   </div>
-                  <div className="text-sm font-medium text-gray-600">{MOCK_PRODUCT.reviews} değerlendirme test edildi</div>
+                </div>
+                
+                {/* User Reviews */}
+                <div className="space-y-6">
+                  <div className="p-8 bg-white border border-stone-100 rounded-[2rem] shadow-sm relative group overflow-hidden">
+                    <div className="absolute top-0 right-0 p-8 opacity-5 group-hover:scale-150 transition-transform duration-700">
+                      <Star size={100} />
+                    </div>
+                    <div className="flex justify-between items-start mb-6 relative z-10">
+                      <div className="flex items-center gap-4">
+                        <div className="w-12 h-12 bg-stone-100 rounded-2xl flex items-center justify-center font-black text-stone-400 shadow-inner">AH</div>
+                        <div>
+                          <h4 className="font-bold text-stone-900 text-lg">Ahmet Yılmaz</h4>
+                          <div className="flex items-center gap-2 mt-1">
+                            <span className="text-[10px] font-black uppercase tracking-widest text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full flex items-center gap-1">
+                              <ShieldCheck size={10} /> Onaylı Satın Alım
+                            </span>
+                            <span className="text-[10px] text-stone-400 font-bold">2 GÜN ÖNCE</span>
+                          </div>
+                        </div>
+                      </div>
+                      <div className="flex text-amber-500">
+                        {Array.from({ length: 5 }).map((_, i) => <Star key={i} size={16} className="fill-current" />)}
+                      </div>
+                    </div>
+                    <p className="text-stone-600 leading-relaxed text-lg relative z-10 italic">
+                      "Ürün gerçekten çok kaliteli, zanaatkarların dokunuşu her halinden belli. Derisinin kokusu harika ve kesinlikle uzun yıllar kullanabileceğim bir parça. Paketleme ise sanat eseri gibiydi."
+                    </p>
+                  </div>
                 </div>
               </div>
-              
-              <div className="border rounded-2xl p-6 shadow-sm">
-                <div className="flex justify-between items-start mb-4">
-                  <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 bg-gray-200 rounded-full flex items-center justify-center font-bold text-gray-600">AH</div>
-                    <div>
-                      <h4 className="font-bold text-gray-900">Ahmet Y.</h4>
-                      <span className="text-xs text-green-600 font-medium flex items-center gap-1">
-                        <ShieldCheck className="w-3 h-3" /> Onaylı Satın Alım
-                      </span>
+            )}
+          </div>
+        </div>
+
+        {/* ── ÖNERİLEN ÜRÜNLER ── */}
+        <div className="mt-32">
+          <div className="flex items-end justify-between mb-12">
+            <div>
+              <div className="flex items-center gap-2 mb-2">
+                <div className="w-8 h-px bg-amber-500"></div>
+                <span className="text-[10px] font-black uppercase tracking-[0.4em] text-amber-600">Sizin İçin</span>
+              </div>
+              <h2 className="text-4xl font-serif text-stone-900">Benzer Koleksiyonlar</h2>
+            </div>
+            <Link to="/urunler" className="group flex items-center gap-2 text-xs font-black uppercase tracking-widest text-stone-400 hover:text-stone-900 transition-all">
+              TÜMÜNÜ GÖR <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
+            </Link>
+          </div>
+
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-10">
+            {SIMILAR_PRODUCTS.map(product => (
+              <Link key={product.id} to={`/urunler/${product.id}`} className="group block relative">
+                <div className="aspect-[3/4] overflow-hidden rounded-3xl bg-stone-50 border border-stone-100 relative shadow-md group-hover:shadow-2xl group-hover:-translate-y-2 transition-all duration-500">
+                  <img src={product.image} alt={product.name} className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110" />
+                  <div className="absolute inset-x-0 bottom-0 p-6 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500">
+                    <button 
+                      onClick={(e) => {
+                        e.preventDefault();
+                        dispatch(addToCart({
+                          id: product.id,
+                          isim: product.name,
+                          fiyat: `${product.price} ₺`,
+                          image: product.image
+                        }));
+                        toast.success('Sepete eklendi');
+                      }}
+                      className="w-full bg-white text-stone-900 py-3 rounded-xl text-[10px] font-black uppercase tracking-widest shadow-xl transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500 hover:bg-amber-500 hover:text-white"
+                    >
+                      HIZLI EKLE
+                    </button>
+                  </div>
+                </div>
+                <div className="mt-6 space-y-1">
+                  <p className="text-[10px] font-black text-amber-600 uppercase tracking-widest mb-1">{product.brand}</p>
+                  <h3 className="font-serif text-lg text-stone-800 line-clamp-1 group-hover:text-amber-600 transition-colors">{product.name}</h3>
+                  <div className="flex items-center justify-between pt-2">
+                    <span className="text-xl font-bold text-stone-900">{product.price.toLocaleString('tr-TR')} ₺</span>
+                    <div className="flex items-center gap-1 text-amber-500">
+                      <Star size={12} className="fill-current" />
+                      <span className="text-[10px] font-bold text-stone-500">{product.rating}</span>
                     </div>
                   </div>
-                  <span className="text-sm text-gray-400">2 gün önce</span>
                 </div>
-                <div className="flex text-yellow-400 mb-3">
-                  {Array.from({ length: 5 }).map((_, i) => <Star key={i} className="w-4 h-4 fill-current" />)}
-                </div>
-                <p className="text-gray-700">Ürün gerçekten çok kaliteli, el işçiliği olduğu her halinden belli. Derisinin dokusu harika ve kesinlikle uzun yıllar kullanabileceğim bir parça. Tavsiye ederim.</p>
-              </div>
-            </div>
-          )}
-        </div>
-      </div>
-
-      {/* Similar Products Recommendation */}
-      <div className="mt-16 mb-16">
-        <div className="flex items-center justify-between mb-8">
-          <h2 className="text-3xl font-bold text-gray-900">Bunlar da İlgini Çekebilir</h2>
-          <Link to="/urunler" className="text-blue-600 font-medium hover:underline flex items-center gap-1">
-            Tümünü Gör <ChevronRight className="w-4 h-4" />
-          </Link>
-        </div>
-
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
-          {SIMILAR_PRODUCTS.map(product => (
-            <Link key={product.id} to={`/urunler/${product.id}`} className="group block bg-white border border-gray-100 rounded-2xl overflow-hidden hover:shadow-2xl transition-all duration-300">
-              <div className="aspect-[4/5] overflow-hidden relative bg-gray-50">
-                <img src={product.image} alt={product.name} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
-                <button 
-                  onClick={(e) => {
-                    e.preventDefault();
-                    dispatch(addToFavorites({
-                      id: product.id,
-                      name: product.name,
-                      price: product.price,
-                      category: product.category,
-                      image: product.image
-                    }));
-                  }}
-                  className="absolute top-3 right-3 p-2 rounded-full bg-white/80 backdrop-blur text-gray-400 hover:text-red-500 hover:bg-white transition-all opacity-0 group-hover:opacity-100 translate-y-2 group-hover:translate-y-0"
-                >
-                  <Heart className="w-5 h-5" />
-                </button>
-                <button 
-                  onClick={(e) => {
-                    e.preventDefault();
-                    dispatch(addToCart({
-                      id: product.id,
-                      isim: product.name,
-                      fiyat: `${product.price} ₺`,
-                      image: product.image
-                    }));
-                    toast.success('Ürün sepete eklendi');
-                  }}
-                  className="absolute bottom-3 right-3 p-2.5 rounded-xl bg-black text-white shadow-xl opacity-0 group-hover:opacity-100 translate-y-2 group-hover:translate-y-0 transition-all duration-300 hover:bg-amber-500"
-                >
-                  <ShoppingBag className="w-5 h-5" />
-                </button>
-              </div>
-              <div className="p-5">
-                <h3 className="font-medium text-gray-900 line-clamp-1 group-hover:text-blue-600 transition-colors mb-2">{product.name}</h3>
-                <div className="flex items-center gap-1 text-sm text-yellow-500 mb-3">
-                  <Star className="w-4 h-4 fill-current" />
-                  <span className="text-gray-600 font-medium">{product.rating}</span>
-                </div>
-                <div className="text-lg font-bold text-gray-900">{product.price} ₺</div>
-              </div>
-            </Link>
-          ))}
+              </Link>
+            ))}
+          </div>
         </div>
       </div>
     </div>

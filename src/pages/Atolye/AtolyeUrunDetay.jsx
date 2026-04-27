@@ -352,10 +352,9 @@ function OnerilenUrunler({ mevcutUrun }) {
     ...tumOneriler.map((u) => ({ ...u, _key: `${u.id}-1` })),
   ];
 
-  if (tumOneriler.length === 0) return null;
-
   // Ana sayfandaki otomatik kaydırma mantığı
   useEffect(() => {
+    if (tumOneriler.length === 0) return;
     const randomSure = Math.floor(Math.random() * 1000) + 3500;
     const otoKaydir = setInterval(() => {
       if (sliderRef.current) {
@@ -368,7 +367,9 @@ function OnerilenUrunler({ mevcutUrun }) {
       }
     }, randomSure);
     return () => clearInterval(otoKaydir);
-  }, []);
+  }, [tumOneriler.length]);
+
+  if (tumOneriler.length === 0) return null;
 
   const manuelKaydir = (yon) => {
     if (sliderRef.current) sliderRef.current.scrollBy({ left: yon * 284, behavior: 'smooth' });
@@ -434,9 +435,7 @@ function AtolyeUrunDetay() {
   
   // Ürünü state içinde tutuyoruz. Eğer başka sayfadan geldiysek oradan alır, 
   // yoksa (sayfa yenilendiyse) null başlar.
-  const [urun, setUrun] = useState(location.state?.urun || null);
-  const [yukleniyor, setYukleniyor] = useState(!urun);
-
+ const [urun] = useState(location.state?.urun || null);
  useEffect(() => {
     window.scrollTo(0, 0);
     
@@ -444,14 +443,10 @@ function AtolyeUrunDetay() {
     if (!urun && id) {
       // React'i döngüye sokmamak için asenkron bir fonksiyon tanımlıyoruz
       const veriGetir = async () => {
-        setYukleniyor(true); // Artık 'yukleniyor' değişkeni kullanılmış oldu
-        
         // İleride burası backend'den veri çekme yeri olacak:
         // const response = await fetch(`/api/urunler/${id}`);
         // const data = await response.json();
-        // setUrun(data); // Artık 'setUrun' kullanılmış oldu
-        
-        setYukleniyor(false); 
+        // setUrun(data); 
       };
       
       veriGetir();
@@ -476,6 +471,10 @@ function AtolyeUrunDetay() {
   const [seciliRenk, setSeciliRenk] = useState({ id: 'taba', isim: 'Taba', ekUcret: 0, hex: '#8B5A2B' });
   const [seciliEkstralar, setSeciliEkstralar] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
+
+ 
+const atolye = null;
+
 
   useEffect(() => { window.scrollTo(0, 0); }, []);
 
@@ -764,6 +763,53 @@ function AtolyeUrunDetay() {
                 <p className="text-center text-[10px] text-stone-400 mt-2"> Güvenli ödeme </p>
               </div>
             </div>
+
+            {/* Atölye Bilgileri & Satıcı Kontrolü */}
+            {atolye && (
+              <div className="mt-12 space-y-4">
+                <div className="bg-stone-50 border border-stone-100 rounded-2xl p-6 shadow-sm">
+                  <div className="flex items-center gap-4 mb-4">
+                    <div className="w-14 h-14 rounded-full overflow-hidden border-2 border-white shadow-sm ring-1 ring-stone-100">
+                      <img src={atolye.avatar} alt={atolye.isim} className="w-full h-full object-cover" />
+                    </div>
+                    <div>
+                      <h4 className="text-xs font-black text-stone-400 uppercase tracking-widest mb-0.5">Zanaatkar / Atölye</h4>
+                      <Link to={`/atolyeler/${atolye.id}`} className="text-lg font-serif text-stone-800 hover:text-amber-600 transition-colors">
+                        {atolye.isim}
+                      </Link>
+                    </div>
+                  </div>
+                  
+                  <div className="flex flex-wrap gap-4 text-[11px] text-stone-500 font-medium mb-6">
+                    <div className="flex items-center gap-1.5 bg-white px-3 py-1.5 rounded-full border border-stone-100 shadow-sm">
+                      <MapPin size={12} className="text-amber-600" />
+                      {atolye.lokasyon}
+                    </div>
+                    <div className="flex items-center gap-1.5 bg-white px-3 py-1.5 rounded-full border border-stone-100 shadow-sm">
+                      <Star size={12} className="text-amber-500 fill-amber-500" />
+                      {atolye.puan} ({atolye.degerlendirmeSayisi})
+                    </div>
+                    <div className="flex items-center gap-1.5 bg-white px-3 py-1.5 rounded-full border border-stone-100 shadow-sm">
+                      <ShieldCheck size={12} className="text-emerald-600" />
+                      Onaylı Atölye
+                    </div>
+                  </div>
+
+                  <p className="text-sm text-stone-600 leading-relaxed mb-6 line-clamp-3 italic">
+                    "{atolye.aciklama}"
+                  </p>
+
+                  <Link 
+                    to={`/atolyeler/${atolye.id}`} 
+                    className="w-full inline-flex items-center justify-center gap-2 py-3 bg-white border border-stone-200 text-stone-800 rounded-xl text-xs font-black tracking-widest uppercase hover:bg-stone-50 hover:border-stone-400 transition-all shadow-sm"
+                  >
+                    TÜM KOLEKSİYONU GÖR <ArrowRight size={14} />
+                  </Link>
+                </div>
+
+
+              </div>
+            )}
           </div>
         </div>
       </div>

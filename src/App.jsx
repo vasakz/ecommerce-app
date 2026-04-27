@@ -35,6 +35,16 @@ import StoreCalendar from './pages/Seller/StoreCalendar'
 import StatisticsDashboard from './pages/Seller/StatisticsDashboard'
 import FinancialManagement from './pages/Seller/FinancialManagement'
 import ShippingManagement from './pages/Seller/ShippingManagement'
+import AddAtolyeProduct from './pages/Seller/AddAtolyeProduct'
+
+// Admin Pages
+import AdminLogin from './pages/Admin/AdminLogin'
+import AdminDashboard from './pages/Admin/AdminDashboard'
+import AdminUsers from './pages/Admin/AdminUsers'
+import AdminOrders from './pages/Admin/AdminOrders'
+import AdminProducts from './pages/Admin/AdminProducts'
+import AdminSellers from './pages/Admin/AdminSellers'
+import AdminLayout from './pages/Admin/AdminLayout'
 
 // Layout
 import Navbar from './components/layout/Navbar'
@@ -44,7 +54,7 @@ function Layout() {
   const location = useLocation()
 
   const hideFooterRoutes = ['/kayit-ol', '/giris-yap', '/sifremi-unuttum']
-  const hideNavbarRoutes = ['/satici-kayit', '/satici-panel', '/satici-giris']
+  const hideNavbarRoutes = ['/satici-kayit', '/satici-panel', '/satici-giris', '/admin']
 
   const shouldHideFooter = hideFooterRoutes.includes(location.pathname)
   const shouldHideNavbar = hideNavbarRoutes.some(r =>
@@ -100,6 +110,7 @@ function Layout() {
         {/* Seller */}
         <Route path="/satici/urunler" element={<ProductManagement />} />
         <Route path="/satici/urun-ekle" element={<AddProduct />} />
+        <Route path="/satici/atolye-urun-ekle" element={<AddAtolyeProduct />} />
         <Route path="/satici/urun-duzenle/:id" element={<AddProduct />} />
         <Route path="/satici/siparisler" element={<OrderManagement />} />
         <Route path="/satici/talepler" element={<OrderRequests />} />
@@ -107,10 +118,21 @@ function Layout() {
         <Route path="/satici/istatistikler" element={<StatisticsDashboard />} />
         <Route path="/satici/finans" element={<FinancialManagement />} />
         <Route path="/satici/kargo" element={<ShippingManagement />} />
+        <Route path="/satici/atolye-urun-ekle" element={<AddAtolyeProduct />} />
 
         {/* Satici */}
         <Route path="/satici-kayit" element={<SaticiKayit />} />
         <Route path="/satici/profil/:id" element={<SaticiProfil />} />
+
+        {/* Admin */}
+        <Route path="/admin/giris" element={<AdminLogin />} />
+        <Route path="/admin" element={<AdminLayout />}>
+          <Route index element={<AdminDashboard />} />
+          <Route path="kullanicilar" element={<AdminUsers />} />
+          <Route path="siparisler" element={<AdminOrders />} />
+          <Route path="urunler" element={<AdminProducts />} />
+          <Route path="saticilar" element={<AdminSellers />} />
+        </Route>
 
         {/* 404 */}
         <Route path="*" element={<NotFound />} />
@@ -124,7 +146,6 @@ function Layout() {
 function App() {
   return (
     <BrowserRouter>
-      {/* Toaster bileşeni*/}
       <Toaster 
         position="top-center" 
         reverseOrder={false} 
