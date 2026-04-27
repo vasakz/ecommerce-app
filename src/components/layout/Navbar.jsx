@@ -240,6 +240,7 @@ function Navbar() {
             { label: 'Aksesuarlar', to: '/urunler?category=Aksesuarlar' },
             { label: 'Ev & Yaşam', to: '/urunler?category=Ev %26 Yaşam' },
             { label: 'Siparişlerim', to: '/siparislerim' },
+            { label: 'İadelerim', to: '/iadelerim' },
           ].map(item => (
             <li key={item.to}>
               <Link to={item.to} onClick={() => setMenuOpen(false)}
@@ -250,10 +251,34 @@ function Navbar() {
             </li>
           ))}
           <li className="border-t my-3" />
+          <li className="px-6 mb-2">
+             <h3 className="text-[10px] font-black text-stone-400 uppercase tracking-widest mt-4 mb-2">SATICI MENÜSÜ</h3>
+          </li>
           <li>
-            <Link to="/kampanyalar" onClick={() => setMenuOpen(false)}
-              className="flex justify-between px-6 py-3 text-red-500 font-semibold hover:bg-red-50">
-              Kampanyalar
+            <Link to="/satici/istatistikler" onClick={() => setMenuOpen(false)}
+              className="flex justify-between px-6 py-3 hover:bg-amber-50 dark:hover:bg-amber-900/10 text-amber-600 font-bold">
+              Satıcı Paneli
+              <ChevronRight size={14} />
+            </Link>
+          </li>
+          <li>
+            <Link to="/satici/urunler" onClick={() => setMenuOpen(false)}
+              className="flex justify-between px-6 py-3 hover:bg-stone-50 dark:hover:bg-stone-800">
+              Ürün Yönetimi
+              <ChevronRight size={14} />
+            </Link>
+          </li>
+          <li>
+            <Link to="/satici/siparisler" onClick={() => setMenuOpen(false)}
+              className="flex justify-between px-6 py-3 hover:bg-stone-50 dark:hover:bg-stone-800">
+              Siparişler
+              <ChevronRight size={14} />
+            </Link>
+          </li>
+          <li>
+            <Link to="/satici/iadeler" onClick={() => setMenuOpen(false)}
+              className="flex justify-between px-6 py-3 hover:bg-stone-50 dark:hover:bg-stone-800">
+              İade Talepleri
               <ChevronRight size={14} />
             </Link>
           </li>

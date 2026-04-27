@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { orders, getStatusColor } from '../../data/orders';
 import { generateInvoicePDF } from '../../utils/generateInvoice';
-import { Package, Truck, Clock, MapPin, Info, ArrowRight, ExternalLink, RefreshCw, X, Edit3, RotateCcw } from 'lucide-react';
+import { Package, Truck, Clock, MapPin, Info, ArrowRight, ExternalLink, RefreshCw, X, Edit3, RotateCcw, CheckCircle } from 'lucide-react';
 
 const TrackingModal = ({ isOpen, onClose, order }) => {
   if (!isOpen) return null;
@@ -10,12 +10,12 @@ const TrackingModal = ({ isOpen, onClose, order }) => {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
       <div className="bg-white dark:bg-stone-900 w-full max-w-lg rounded-3xl shadow-2xl overflow-hidden animate-in fade-in zoom-in duration-300">
-        <div className="p-6 border-b border-stone-100 dark:border-stone-800 flex justify-between items-center">
-          <h3 className="text-xl font-bold flex items-center gap-2">
-            <Truck className="text-primary-600" />
+        <div className="p-6 border-b border-stone-100 dark:border-stone-800 flex justify-between items-center bg-amber-50/50 dark:bg-amber-900/10">
+          <h3 className="text-xl font-black italic flex items-center gap-2 text-amber-600">
+            <Truck className="text-amber-600" />
             Kargo Takip Detayları
           </h3>
-          <button onClick={onClose} className="p-2 hover:bg-stone-100 dark:hover:bg-stone-800 rounded-full transition-colors">
+          <button onClick={onClose} className="p-2 hover:bg-stone-100 dark:hover:bg-stone-800 rounded-full transition-colors text-amber-600">
             <X size={20} />
           </button>
         </div>
@@ -24,11 +24,11 @@ const TrackingModal = ({ isOpen, onClose, order }) => {
           <div className="mb-6 flex items-center justify-between p-4 bg-stone-50 dark:bg-stone-800/50 rounded-2xl">
             <div>
               <p className="text-xs font-bold text-stone-400 uppercase">Kargo Firması</p>
-              <p className="font-bold">{order.carrier}</p>
+              <p className="font-bold text-amber-600 dark:text-amber-400">{order.carrier}</p>
             </div>
             <div className="text-right">
               <p className="text-xs font-bold text-stone-400 uppercase">Takip No</p>
-              <p className="font-mono font-bold text-primary-600">{order.trackingNumber}</p>
+              <p className="font-mono font-black text-amber-600">{order.trackingNumber}</p>
             </div>
           </div>
 
@@ -36,12 +36,12 @@ const TrackingModal = ({ isOpen, onClose, order }) => {
             {order.deliveryDetails.history.map((h, i) => (
               <div key={i} className="relative pl-10">
                 <div className={`absolute left-0 top-1 w-9 h-9 rounded-full border-4 border-white dark:border-stone-900 flex items-center justify-center z-10 ${
-                  i === 0 ? 'bg-primary-600' : 'bg-stone-200 dark:bg-stone-700'
+                  i === 0 ? 'bg-amber-600 shadow-lg shadow-amber-500/30' : 'bg-stone-200 dark:bg-stone-700'
                 }`}>
                   <div className={`w-2 h-2 rounded-full ${i === 0 ? 'bg-white' : 'bg-stone-400'}`} />
                 </div>
                 <div>
-                  <p className={`font-bold ${i === 0 ? 'text-primary-600' : 'text-stone-900 dark:text-white'}`}>
+                  <p className={`font-black uppercase tracking-tight ${i === 0 ? 'text-amber-600 italic' : 'text-stone-900 dark:text-white'}`}>
                     {h.status}
                   </p>
                   <p className="text-sm text-stone-500 dark:text-stone-400 mt-0.5">{h.detail}</p>
@@ -60,7 +60,7 @@ const TrackingModal = ({ isOpen, onClose, order }) => {
         </div>
 
         <div className="p-6 bg-stone-50 dark:bg-stone-800/30 border-t border-stone-100 dark:border-stone-800">
-          <button onClick={onClose} className="w-full py-3 bg-stone-900 dark:bg-white text-white dark:text-stone-900 rounded-xl font-bold hover:opacity-90 transition-opacity">
+          <button onClick={onClose} className="w-full py-4 bg-amber-600 text-white rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-amber-700 shadow-xl shadow-amber-500/30 transition-all active:scale-95">
             Kapat
           </button>
         </div>
@@ -200,6 +200,79 @@ const OrderDetail = () => {
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
           <div className="lg:col-span-2 space-y-10">
+            {/* Return Process Section (New) */}
+            {order.status === 'İade Sürecinde' && order.returnDetails && (
+              <div className="bg-indigo-50 dark:bg-indigo-950/20 rounded-[2.5rem] p-8 border border-indigo-100 dark:border-indigo-900/40 animate-in fade-in slide-in-from-top-4 duration-700">
+                <div className="flex items-center justify-between mb-10">
+                  <h2 className="text-xl font-bold flex items-center gap-3 text-indigo-900 dark:text-indigo-300">
+                    <RotateCcw className="animate-spin-slow" />
+                    İade Süreci Takibi
+                  </h2>
+                  <div className="px-4 py-1.5 bg-indigo-600 text-white rounded-xl text-[10px] font-black uppercase tracking-widest shadow-lg shadow-indigo-500/20">
+                    İnceleme Aşamasında
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-12 relative">
+                  {/* Progress Line */}
+                  <div className="hidden md:block absolute top-[22px] left-[15%] right-[15%] h-[2px] bg-indigo-200 dark:bg-indigo-900/50 -z-0"></div>
+                  
+                  {order.returnDetails.steps.map((step, idx) => (
+                    <div key={idx} className="relative z-10 flex flex-col items-center group">
+                      <div className={`w-12 h-12 rounded-2xl flex items-center justify-center transition-all duration-500 border-4 ${
+                        step.status === 'completed' 
+                          ? 'bg-indigo-600 border-indigo-100 dark:border-indigo-900 text-white shadow-xl shadow-indigo-500/20' 
+                          : step.status === 'current'
+                          ? 'bg-white dark:bg-stone-900 border-indigo-600 text-indigo-600 animate-pulse'
+                          : 'bg-stone-100 dark:bg-stone-800 border-stone-200 dark:border-stone-700 text-stone-400'
+                      }`}>
+                        {step.status === 'completed' ? <CheckCircle size={20} /> : (idx + 1)}
+                      </div>
+                      <div className="mt-4 text-center">
+                        <p className={`text-xs font-black uppercase tracking-tight ${
+                          step.status === 'completed' || step.status === 'current' ? 'text-indigo-900 dark:text-indigo-300' : 'text-stone-400'
+                        }`}>
+                          {step.title}
+                        </p>
+                        <p className="text-[10px] text-stone-500 mt-1">{step.date}</p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div className="p-6 bg-white/60 dark:bg-stone-900/40 rounded-3xl backdrop-blur-md border border-white/40 dark:border-indigo-900/20">
+                    <p className="text-[10px] font-black text-indigo-400 uppercase tracking-widest mb-2">İade Kargo Kodu</p>
+                    <div className="flex items-center justify-between">
+                      <p className="text-xl font-mono font-black text-indigo-900 dark:text-indigo-200">{order.returnDetails.returnCode}</p>
+                      <button 
+                        onClick={() => {
+                          navigator.clipboard.writeText(order.returnDetails.returnCode);
+                          alert('Kopyaalandı!');
+                        }}
+                        className="text-[10px] font-black text-indigo-600 underline uppercase tracking-tighter"
+                      >
+                        Kopyala
+                      </button>
+                    </div>
+                  </div>
+                  <div className="p-6 bg-white/60 dark:bg-stone-900/40 rounded-3xl backdrop-blur-md border border-white/40 dark:border-indigo-900/20">
+                    <p className="text-[10px] font-black text-indigo-400 uppercase tracking-widest mb-2">İade Nedeni</p>
+                    <p className="text-sm font-bold text-stone-700 dark:text-stone-300 truncate" title={order.returnDetails.reason}>
+                      {order.returnDetails.reason}
+                    </p>
+                  </div>
+                </div>
+
+                <div className="mt-8 flex items-center gap-3 p-4 bg-indigo-100/50 dark:bg-indigo-900/20 rounded-2xl border border-indigo-200/50 dark:border-indigo-800/30">
+                  <Info className="w-5 h-5 text-indigo-600 shrink-0" />
+                  <p className="text-xs text-indigo-800 dark:text-indigo-400 font-medium leading-relaxed">
+                    İade kargonuz satıcıya ulaştıktan sonra 48 saat içinde incelenecek ve onaylandığında ücret iadeniz başlatılacaktır.
+                  </p>
+                </div>
+              </div>
+            )}
+
             {/* Delivery Info Section (New) */}
             <div className="bg-stone-50 dark:bg-stone-900 rounded-[2.5rem] p-8 border border-stone-100 dark:border-stone-800">
               <div className="flex items-center justify-between mb-8">
@@ -317,28 +390,28 @@ const OrderDetail = () => {
 
           <div className="space-y-10">
             {/* Tracking Card */}
-            <div className="bg-stone-900 dark:bg-white text-white dark:text-stone-900 rounded-[2.5rem] p-8 shadow-2xl shadow-stone-500/10">
-              <h2 className="text-lg font-bold mb-6 flex items-center justify-between">
+            <div className="bg-amber-600 text-white rounded-[2.5rem] p-8 shadow-2xl shadow-amber-500/30">
+              <h2 className="text-lg font-black italic mb-6 flex items-center justify-between">
                 Kargo Takibi
-                <Truck size={20} className="opacity-50" />
+                <Truck size={20} className="opacity-80" />
               </h2>
               
               {order.trackingNumber ? (
                 <div className="space-y-6">
-                  <div className="p-4 bg-white/10 dark:bg-stone-100 rounded-2xl border border-white/10 dark:border-stone-200">
-                    <p className="text-[10px] font-black uppercase tracking-widest opacity-60 mb-1">{order.carrier}</p>
-                    <p className="font-mono text-lg font-bold tracking-tight">{order.trackingNumber}</p>
+                  <div className="p-5 bg-white/20 rounded-2xl border border-white/20 backdrop-blur-sm">
+                    <p className="text-[10px] font-black uppercase tracking-widest opacity-80 mb-1">{order.carrier}</p>
+                    <p className="font-mono text-xl font-black tracking-tight">{order.trackingNumber}</p>
                   </div>
                   
                   <div className="space-y-4">
                     <button 
                       onClick={() => setTrackingOpen(true)}
-                      className="w-full py-4 bg-primary-600 dark:bg-primary-500 text-white rounded-2xl text-sm font-black shadow-lg shadow-primary-500/30 hover:scale-[1.02] transition-all flex items-center justify-center gap-2"
+                      className="w-full py-4 bg-white text-amber-600 rounded-2xl text-xs font-black uppercase tracking-widest shadow-xl shadow-black/10 hover:scale-[1.02] active:scale-95 transition-all flex items-center justify-center gap-3"
                     >
                       Kargom Nerede?
                       <ArrowRight size={16} />
                     </button>
-                    <a href="#" className="flex items-center justify-center gap-2 text-xs font-bold opacity-60 hover:opacity-100 transition-opacity">
+                    <a href="#" className="flex items-center justify-center gap-2 text-[10px] font-black uppercase tracking-widest opacity-80 hover:opacity-100 transition-opacity">
                       Kargo Web Sitesine Git
                       <ExternalLink size={12} />
                     </a>
@@ -361,15 +434,15 @@ const OrderDetail = () => {
                     <MapPin size={24} />
                   </div>
                   <div>
-                    <h3 className="text-base font-black text-stone-900 dark:text-white">Teslimat Adresi</h3>
+                    <h3 className="text-base font-black text-amber-600 dark:text-amber-400">Teslimat Adresi</h3>
                     <p className="text-xs font-bold text-stone-400 uppercase tracking-widest">{order.deliveryAddress.split('/').pop()}</p>
                   </div>
                 </div>
               </div>
 
-              <div className="bg-stone-50 dark:bg-stone-800/50 p-5 rounded-2xl border border-stone-100 dark:border-stone-800 mb-8">
+                  <div className="bg-stone-50 dark:bg-stone-800/50 p-5 rounded-2xl border border-stone-100 dark:border-stone-800 mb-8">
                 <p className="text-[10px] font-black text-stone-400 uppercase tracking-widest mb-3">Güncel Adres Detayı</p>
-                <p className="text-sm text-stone-700 dark:text-stone-300 font-bold leading-relaxed">
+                <p className="text-sm text-amber-600 dark:text-amber-400 font-bold leading-relaxed">
                   {order.deliveryAddress}
                 </p>
               </div>

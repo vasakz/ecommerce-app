@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
 import { useForm, useFieldArray } from 'react-hook-form';
 import { 
   ArrowLeft, 
@@ -36,20 +36,138 @@ const BRANDS = ['ModaZen', 'TechPro', 'TimeLess', 'EcoWear', 'SecureHome', 'Diğ
 const COLOR_OPTIONS = ['Siyah', 'Beyaz', 'Lacivert', 'Kırmızı', 'Mavi', 'Bej', 'Gri', 'Yeşil', 'Sarı'];
 const SIZE_OPTIONS = ['XS', 'S', 'M', 'L', 'XL', '2XL', '3XL', 'Standart', '36', '37', '38', '39', '40', '41', '42', '43', '44', '45'];
 
+// Mock products for edit mode (same data as ProductManagement)
+const MOCK_PRODUCTS_FOR_EDIT = [
+  {
+    id: 1,
+    name: 'Klasik Deri Ceket',
+    category: 'Giyim',
+    subCategory: 'Ceket',
+    brand: 'ModaZen',
+    price: 1250,
+    discountedPrice: 999,
+    stock: 45,
+    status: 'Published',
+    description: 'Hakiki deri, klasik kesim erkek ceket. Yumuşak iç astarlı, her mevsim uygun.',
+    weight: '1.2',
+    dimensions: '40x60x10',
+    leadTime: '3',
+    tags: 'deri, ceket, klasik, erkek, kışlık',
+    image: 'https://images.unsplash.com/photo-1551028719-00167b16eac5?auto=format&fit=crop&q=80&w=300',
+  },
+  {
+    id: 2,
+    name: 'Kablosuz Kulaklık G7',
+    category: 'Elektronik',
+    subCategory: 'Kulaklık',
+    brand: 'TechPro',
+    price: 850,
+    discountedPrice: '',
+    stock: 0,
+    status: 'Published',
+    description: 'Aktif gürültü engelleme özellikli kablosuz Bluetooth kulaklık. 40 saat pil ömrü.',
+    weight: '0.3',
+    dimensions: '20x18x8',
+    leadTime: '2',
+    tags: 'kulaklık, bluetooth, kablosuz, müzik',
+    image: 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&q=80&w=300',
+  },
+  {
+    id: 3,
+    name: 'Minimalist Kol Saati',
+    category: 'Aksesuar',
+    subCategory: 'Kemer',
+    brand: 'TimeLess',
+    price: 450,
+    discountedPrice: 399,
+    stock: 12,
+    status: 'Under Review',
+    description: 'Paslanmaz çelik kasa, deri kordon. Minimalist kadran tasarımı.',
+    weight: '0.15',
+    dimensions: '10x10x5',
+    leadTime: '1',
+    tags: 'saat, minimalist, aksesuar, hediye',
+    image: 'https://images.unsplash.com/photo-1524592094714-0f0654e20314?auto=format&fit=crop&q=80&w=300',
+  },
+  {
+    id: 4,
+    name: 'Ham Pamuk T-shirt',
+    category: 'Giyim',
+    subCategory: 'Tişört',
+    brand: 'EcoWear',
+    price: 120,
+    discountedPrice: '',
+    stock: 100,
+    status: 'Draft',
+    description: '%100 organik pamuk, çevre dostu üretim. Rahat kesim, günlük kullanıma uygun.',
+    weight: '0.2',
+    dimensions: '30x25x5',
+    leadTime: '2',
+    tags: 'tişört, pamuk, organik, günlük',
+    image: 'https://images.unsplash.com/photo-1521572267360-ee0c2909d518?auto=format&fit=crop&q=80&w=300',
+  },
+  {
+    id: 5,
+    name: 'Akıllı Ev Kamerası',
+    category: 'Elektronik',
+    subCategory: 'Kulaklık',
+    brand: 'SecureHome',
+    price: 1100,
+    discountedPrice: '',
+    stock: 5,
+    status: 'Rejected',
+    description: '1080p Full HD akıllı ev güvenlik kamerası. Gece görüş, hareket algılama.',
+    weight: '0.4',
+    dimensions: '10x10x10',
+    leadTime: '3',
+    tags: 'kamera, güvenlik, akıllı ev, wifi',
+    image: 'https://images.unsplash.com/photo-1557324232-b8917d3c3dcb?auto=format&fit=crop&q=80&w=300',
+  }
+];
+
 const AddProduct = () => {
   const navigate = useNavigate();
+  const { id } = useParams();
+  const isEditMode = Boolean(id);
   const [images, setImages] = useState([]);
   const [activeStep, setActiveStep] = useState(1);
   const [showSummary, setShowSummary] = useState(false);
   const [formData, setFormData] = useState(null);
 
-  const { register, control, handleSubmit, watch, formState: { errors } } = useForm({
+  const { register, control, handleSubmit, watch, reset, formState: { errors } } = useForm({
     defaultValues: {
       variants: [{ color: '', size: '', stock: '' }],
       tags: '',
       status: 'Under Review'
     }
   });
+
+  // Load product data in edit mode
+  useEffect(() => {
+    if (isEditMode) {
+      const product = MOCK_PRODUCTS_FOR_EDIT.find(p => p.id === parseInt(id));
+      if (product) {
+        reset({
+          name: product.name,
+          brand: product.brand,
+          category: product.category,
+          subCategory: product.subCategory,
+          price: product.price,
+          discountedPrice: product.discountedPrice || '',
+          description: product.description,
+          weight: product.weight,
+          dimensions: product.dimensions,
+          leadTime: product.leadTime,
+          tags: product.tags,
+          variants: [{ color: '', size: '', stock: product.stock || '' }],
+          status: product.status
+        });
+        if (product.image) {
+          setImages([{ id: 'existing-1', url: product.image }]);
+        }
+      }
+    }
+  }, [id, isEditMode, reset]);
 
   const selectedCategory = watch('category');
 
@@ -65,7 +183,7 @@ const AddProduct = () => {
 
   const handleFinalSubmit = () => {
     console.log('Final Product Data:', formData);
-    toast.success('Ürün başarıyla oluşturuldu ve onaya gönderildi!');
+    toast.success(isEditMode ? 'Ürün başarıyla güncellendi!' : 'Ürün başarıyla oluşturuldu ve onaya gönderildi!');
     setTimeout(() => navigate('/satici/urunler'), 2000);
   };
 
@@ -89,7 +207,7 @@ const AddProduct = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-stone-950 p-4 md:p-8">
+    <div className="animate-in fade-in duration-500">
       <div className="max-w-4xl mx-auto">
         
         {/* Top Navigation */}
@@ -113,8 +231,8 @@ const AddProduct = () => {
 
         {/* Header */}
         <div className="mb-10 text-center">
-          <h1 className="text-4xl font-black text-stone-900 dark:text-white mb-3 tracking-tight">Yeni Ürün Ekle</h1>
-          <p className="text-stone-500 dark:text-stone-400 font-medium">Satışa başlamak için ürün detaylarını doldurun.</p>
+          <h1 className="text-4xl font-black text-stone-900 dark:text-white mb-3 tracking-tight">{isEditMode ? 'Ürünü Düzenle' : 'Yeni Ürün Ekle'}</h1>
+          <p className="text-stone-500 dark:text-stone-400 font-medium">{isEditMode ? 'Ürün bilgilerini güncelleyin.' : 'Satışa başlamak için ürün detaylarını doldurun.'}</p>
         </div>
 
         {/* Stepper */}
@@ -125,13 +243,13 @@ const AddProduct = () => {
                 className={`flex flex-col items-center gap-2 cursor-pointer transition-all duration-300 ${activeStep >= step.id ? 'scale-110' : 'opacity-40'}`}
                 onClick={() => setActiveStep(step.id)}
               >
-                <div className={`w-12 h-12 rounded-2xl flex items-center justify-center shadow-lg transition-all ${activeStep >= step.id ? 'bg-blue-600 text-white shadow-blue-500/30' : 'bg-white dark:bg-stone-800 text-stone-400'}`}>
+                <div className={`w-12 h-12 rounded-2xl flex items-center justify-center shadow-lg transition-all ${activeStep >= step.id ? 'bg-amber-600 text-white shadow-amber-500/30' : 'bg-white dark:bg-stone-800 text-stone-400'}`}>
                   {step.icon}
                 </div>
-                <span className={`text-[10px] font-black uppercase tracking-widest ${activeStep >= step.id ? 'text-blue-600' : 'text-stone-400'}`}>{step.label}</span>
+                <span className={`text-[10px] font-black uppercase tracking-widest ${activeStep >= step.id ? 'text-amber-600' : 'text-stone-400'}`}>{step.label}</span>
               </div>
               {idx < steps.length - 1 && (
-                <div className={`h-[2px] w-12 sm:w-20 mx-4 transition-all duration-500 ${activeStep > step.id ? 'bg-blue-600' : 'bg-gray-200 dark:bg-stone-800'}`} />
+                <div className={`h-[2px] w-12 sm:w-20 mx-4 transition-all duration-500 ${activeStep > step.id ? 'bg-amber-600' : 'bg-gray-200 dark:bg-stone-800'}`} />
               )}
             </React.Fragment>
           ))}
@@ -153,7 +271,7 @@ const AddProduct = () => {
                     {...register("name", { required: "Ürün adı zorunludur" })}
                     type="text" 
                     placeholder="Örn: Klasik Deri Ceket"
-                    className={`w-full px-5 py-4 bg-gray-50 dark:bg-stone-800 border-none rounded-2xl focus:ring-2 focus:ring-blue-500 transition-all font-medium ${errors.name ? 'ring-2 ring-red-500' : ''}`}
+                    className={`w-full px-5 py-4 bg-gray-50 dark:bg-stone-800 border-none rounded-2xl focus:ring-2 focus:ring-amber-500 transition-all font-medium ${errors.name ? 'ring-2 ring-red-500' : ''}`}
                   />
                   {errors.name && <span className="text-[10px] text-red-500 font-bold uppercase">{errors.name.message}</span>}
                 </div>
@@ -164,7 +282,7 @@ const AddProduct = () => {
                   <div className="relative">
                     <select 
                       {...register("brand", { required: "Marka seçiniz" })}
-                      className="w-full px-5 py-4 bg-gray-50 dark:bg-stone-800 border-none rounded-2xl focus:ring-2 focus:ring-blue-500 font-medium appearance-none pr-12"
+                      className="w-full px-5 py-4 bg-gray-50 dark:bg-stone-800 border-none rounded-2xl focus:ring-2 focus:ring-amber-500 font-medium appearance-none pr-12"
                     >
                       <option value="">Marka Seçin</option>
                       {BRANDS.map(b => <option key={b} value={b}>{b}</option>)}
@@ -181,7 +299,7 @@ const AddProduct = () => {
                   <div className="relative">
                     <select 
                       {...register("category", { required: "Kategori seçiniz" })}
-                      className="w-full px-5 py-4 bg-gray-50 dark:bg-stone-800 border-none rounded-2xl focus:ring-2 focus:ring-blue-500 font-medium appearance-none pr-12"
+                      className="w-full px-5 py-4 bg-gray-50 dark:bg-stone-800 border-none rounded-2xl focus:ring-2 focus:ring-amber-500 font-medium appearance-none pr-12"
                     >
                       <option value="">Kategori Seçin</option>
                       {CATEGORIES.map(c => <option key={c} value={c}>{c}</option>)}
@@ -221,7 +339,7 @@ const AddProduct = () => {
                        {...register("price", { required: true })}
                        type="number" 
                        placeholder="0.00"
-                       className="w-full pl-12 pr-5 py-4 bg-gray-50 dark:bg-stone-800 border-none rounded-2xl focus:ring-2 focus:ring-blue-500 font-medium appearance-none no-spinner"
+                       className="w-full pl-12 pr-5 py-4 bg-gray-50 dark:bg-stone-800 border-none rounded-2xl focus:ring-2 focus:ring-amber-500 font-medium appearance-none no-spinner"
                     />
                     <div className="absolute left-5 top-1/2 -translate-y-1/2 text-stone-400 font-bold">₺</div>
                   </div>
@@ -234,7 +352,7 @@ const AddProduct = () => {
                        {...register("discountedPrice")}
                        type="number" 
                        placeholder="0.00"
-                       className="w-full pl-12 pr-5 py-4 bg-gray-50 dark:bg-stone-800 border-none rounded-2xl focus:ring-2 focus:ring-blue-500 font-medium appearance-none no-spinner"
+                       className="w-full pl-12 pr-5 py-4 bg-gray-50 dark:bg-stone-800 border-none rounded-2xl focus:ring-2 focus:ring-amber-500 font-medium appearance-none no-spinner"
                     />
                     <div className="absolute left-5 top-1/2 -translate-y-1/2 text-stone-400 font-bold">₺</div>
                   </div>
@@ -247,7 +365,7 @@ const AddProduct = () => {
                     {...register("description")}
                     rows={6}
                     placeholder="Ürününüzün özelliklerini ve detaylarını buraya yazın..."
-                    className="w-full px-5 py-4 bg-gray-50 dark:bg-stone-800 border-none rounded-2xl focus:ring-2 focus:ring-blue-500 transition-all font-medium resize-none"
+                    className="w-full px-5 py-4 bg-gray-50 dark:bg-stone-800 border-none rounded-2xl focus:ring-2 focus:ring-amber-500 transition-all font-medium resize-none"
                   />
                 </div>
               </div>
@@ -256,7 +374,7 @@ const AddProduct = () => {
                 <button 
                   type="button"
                   onClick={() => setActiveStep(2)}
-                  className="bg-stone-900 dark:bg-white text-white dark:text-black px-10 py-4 rounded-2xl font-bold hover:bg-stone-800 dark:hover:bg-gray-100 transition-all flex items-center gap-3 shadow-lg group active:scale-95"
+                  className="bg-amber-600 text-white px-10 py-4 rounded-2xl font-bold hover:bg-amber-700 transition-all flex items-center gap-3 shadow-lg shadow-amber-500/30 group active:scale-95"
                 >
                   Sonraki Adım
                   <ChevronRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
@@ -286,7 +404,7 @@ const AddProduct = () => {
                     </div>
                   ))}
                   {images.length < 8 && (
-                    <label className="aspect-square rounded-2xl border-2 border-dashed border-gray-200 dark:border-stone-800 flex flex-col items-center justify-center gap-2 cursor-pointer hover:border-blue-500 hover:bg-blue-50/10 transition-all text-stone-400 hover:text-blue-600 group">
+                    <label className="aspect-square rounded-2xl border-2 border-dashed border-gray-200 dark:border-stone-800 flex flex-col items-center justify-center gap-2 cursor-pointer hover:border-amber-500 hover:bg-amber-50/10 transition-all text-stone-400 hover:text-amber-600 group">
                       <input type="file" multiple className="hidden" onChange={handleImageUpload} accept="image/*" />
                       <div className="p-3 bg-gray-50 dark:bg-stone-800 rounded-xl group-hover:bg-blue-50 dark:group-hover:bg-blue-900/20 transition-colors">
                         <Upload className="w-6 h-6" />
@@ -301,12 +419,12 @@ const AddProduct = () => {
               <div className="space-y-6">
                 <div className="flex items-center justify-between border-b border-gray-100 dark:border-stone-800 pb-4">
                   <label className="text-xs font-bold text-stone-900 dark:text-white uppercase tracking-widest flex items-center gap-2">
-                    Varyantlar (Renk, Beden vb.) <Layers className="w-3 h-3 text-blue-500" />
+                    Varyantlar (Renk, Beden vb.) <Layers className="w-3 h-3 text-amber-500" />
                   </label>
                   <button 
                     type="button"
                     onClick={() => append({ color: '', size: '', stock: '' })}
-                    className="flex items-center gap-1.5 text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/30 px-3 py-1.5 rounded-lg text-xs font-bold transition-all"
+                    className="flex items-center gap-1.5 text-amber-600 hover:bg-amber-50 dark:hover:bg-amber-900/30 px-3 py-1.5 rounded-lg text-xs font-bold transition-all"
                   >
                     <Plus className="w-4 h-4" /> Yeni Varyant
                   </button>
@@ -320,7 +438,7 @@ const AddProduct = () => {
                         <div className="relative">
                           <select 
                             {...register(`variants.${index}.color`)}
-                            className="w-full px-4 py-3 bg-white dark:bg-stone-900 border-none rounded-xl focus:ring-2 focus:ring-blue-500 text-sm font-bold appearance-none pr-10"
+                            className="w-full px-4 py-3 bg-white dark:bg-stone-900 border-none rounded-xl focus:ring-2 focus:ring-amber-500 text-sm font-bold appearance-none pr-10"
                           >
                             <option value="">Seçiniz</option>
                             {COLOR_OPTIONS.map(c => <option key={c} value={c}>{c}</option>)}
@@ -335,7 +453,7 @@ const AddProduct = () => {
                         <div className="relative">
                           <select 
                             {...register(`variants.${index}.size`)}
-                            className="w-full px-4 py-3 bg-white dark:bg-stone-900 border-none rounded-xl focus:ring-2 focus:ring-blue-500 text-sm font-bold appearance-none pr-10"
+                            className="w-full px-4 py-3 bg-white dark:bg-stone-900 border-none rounded-xl focus:ring-2 focus:ring-amber-500 text-sm font-bold appearance-none pr-10"
                           >
                             <option value="">Seçiniz</option>
                             {SIZE_OPTIONS.map(s => <option key={s} value={s}>{s}</option>)}
@@ -380,7 +498,7 @@ const AddProduct = () => {
                 <button 
                   type="button"
                   onClick={() => setActiveStep(3)}
-                  className="bg-stone-900 dark:bg-white text-white dark:text-black px-10 py-4 rounded-2xl font-bold hover:bg-stone-800 dark:hover:bg-gray-100 transition-all flex items-center gap-3 shadow-lg group active:scale-95"
+                  className="bg-amber-600 text-white px-10 py-4 rounded-2xl font-bold hover:bg-amber-700 transition-all flex items-center gap-3 shadow-lg shadow-amber-500/30 group active:scale-95"
                 >
                   Sonraki Adım
                   <ChevronRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
@@ -439,16 +557,16 @@ const AddProduct = () => {
                     {...register("tags")}
                     rows={3}
                     placeholder="Kelimeleri virgül ile ayırın (Örn: deri, ceket, kışlık, siyah)"
-                    className="w-full px-5 py-4 bg-gray-50 dark:bg-stone-800 border-none rounded-2xl focus:ring-2 focus:ring-blue-500 transition-all font-medium resize-none shadow-inner"
+                    className="w-full px-5 py-4 bg-gray-50 dark:bg-stone-800 border-none rounded-2xl focus:ring-2 focus:ring-amber-500 transition-all font-medium resize-none shadow-inner"
                   />
                   <p className="text-[10px] text-stone-400 font-bold px-2 italic">Arama sonuçlarında üst sıralarda çıkmak için alakalı kelimeler ekleyin.</p>
                 </div>
               </div>
 
               {/* Durum Seçimi (Hidden or internal but exposed for demo) */}
-              <div className="p-6 bg-blue-50/50 dark:bg-blue-900/10 rounded-2xl border border-blue-100 dark:border-blue-950 flex flex-col sm:flex-row items-center justify-between gap-6">
-                 <div className="flex items-center gap-4 text-blue-600">
-                    <div className="p-3 bg-white dark:bg-stone-800 rounded-xl shadow-sm border border-blue-100 dark:border-blue-900">
+              <div className="p-6 bg-amber-50/50 dark:bg-amber-900/10 rounded-2xl border border-amber-100 dark:border-amber-900/30 flex flex-col sm:flex-row items-center justify-between gap-6">
+                 <div className="flex items-center gap-4 text-amber-600">
+                    <div className="p-3 bg-white dark:bg-stone-800 rounded-xl shadow-sm border border-amber-100 dark:border-amber-900">
                        <CheckCircle2 className="w-6 h-6" />
                     </div>
                     <div>
@@ -458,7 +576,7 @@ const AddProduct = () => {
                  </div>
                  <div className="flex items-center gap-3">
                     <span className="text-[10px] font-black uppercase text-stone-500 tracking-widest">Durum:</span>
-                    <div className="px-4 py-2 bg-white dark:bg-stone-800 text-blue-600 rounded-xl text-xs font-black shadow-sm border border-blue-50 dark:border-blue-900">
+                    <div className="px-4 py-2 bg-white dark:bg-stone-800 text-amber-600 rounded-xl text-xs font-black shadow-sm border border-amber-50 dark:border-amber-900">
                        İNCELENİYOR
                     </div>
                  </div>
@@ -475,10 +593,10 @@ const AddProduct = () => {
                 </button>
                 <button 
                   type="submit"
-                  className="bg-blue-600 text-white px-12 py-4 rounded-2xl font-bold hover:bg-blue-700 transition-all flex items-center gap-3 shadow-lg shadow-blue-500/30 group active:scale-95"
+                  className="bg-amber-600 text-white px-12 py-4 rounded-2xl font-bold hover:bg-amber-700 transition-all flex items-center gap-3 shadow-lg shadow-amber-500/30 group active:scale-95"
                 >
                   <Package className="w-5 h-5" />
-                  Ürünü Kaydet ve Bitir
+                  {isEditMode ? 'Değişiklikleri Kaydet' : 'Ürünü Kaydet ve Bitir'}
                 </button>
               </div>
             </div>
@@ -496,7 +614,7 @@ const AddProduct = () => {
                 <h2 className="text-2xl font-black text-stone-900 dark:text-white">Ürün Özeti</h2>
                 <p className="text-stone-500 font-medium text-sm">Lütfen bilgileri son kez kontrol edin.</p>
               </div>
-              <div className="p-3 bg-blue-50 dark:bg-blue-900/20 rounded-2xl text-blue-600">
+              <div className="p-3 bg-amber-50 dark:bg-amber-900/20 rounded-2xl text-amber-600">
                 <CheckCircle2 className="w-6 h-6" />
               </div>
             </div>
@@ -613,7 +731,7 @@ const AddProduct = () => {
               </button>
               <button 
                 onClick={handleFinalSubmit}
-                className="flex-[2] py-4 px-6 bg-blue-600 hover:bg-blue-700 text-white rounded-2xl font-bold shadow-lg shadow-blue-500/30 transition-all active:scale-95 flex items-center justify-center gap-2"
+                className="flex-[2] py-4 px-6 bg-amber-600 hover:bg-amber-700 text-white rounded-2xl font-bold shadow-lg shadow-amber-500/30 transition-all active:scale-95 flex items-center justify-center gap-2"
               >
                 Onayla ve Kaydet
                 <CheckCircle2 className="w-5 h-5" />
