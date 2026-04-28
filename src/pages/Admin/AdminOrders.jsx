@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from 'react'
+import { useState, useMemo } from 'react'
 import { 
   Search, Filter, Eye, MoreHorizontal, Loader2, ArrowUpDown, X, 
   MapPin, Package, Calendar, Store, User, CheckCircle, XCircle, AlertCircle, FileText, ImageIcon
@@ -67,8 +67,8 @@ const StatusBadge = ({ durum }) => {
 
 // --- 3. ANA BİLEŞEN ---
 export default function AdminOrders() {
-  const [siparisler, setSiparisler] = useState([])
-  const [yukleniyor, setYukleniyor] = useState(true)
+const [siparisler, setSiparisler] = useState(MOCK_SIPARISLER)
+  const [yukleniyor] = useState(false)
   const [aktifSekme, setAktifSekme] = useState('siparisler') // 'siparisler' veya 'cozum-merkezi'
   const [arama, setArama] = useState('')
   const [siralaYonu, setSiralaYonu] = useState('desc')
@@ -76,12 +76,7 @@ export default function AdminOrders() {
   const [seciliSiparis, setSeciliSiparis] = useState(null)
   const [aktifDropdown, setAktifDropdown] = useState(null)
 
-  useEffect(() => {
-    setTimeout(() => {
-      setSiparisler(MOCK_SIPARISLER)
-      setYukleniyor(false)
-    }, 600)
-  }, [])
+ 
 
   const durumuGuncelle = (id, yeniDurum) => {
     setSiparisler(prev => prev.map(s => s.id === id ? { ...s, durum: yeniDurum } : s))
@@ -193,7 +188,8 @@ export default function AdminOrders() {
       </div>
 
       {/* Tablo */}
-      <div className="bg-white rounded-2xl border border-stone-200 shadow-sm overflow-hidden">
+    <div className="bg-white rounded-2xl border border-stone-200 shadow-sm overflow-visible min-h-[450px] relative z-0">
+  <div className="overflow-x-auto"></div>
         <table className="w-full text-sm text-left">
           <thead className="bg-stone-50 border-b border-stone-200">
             <tr>

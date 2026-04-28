@@ -107,7 +107,8 @@ export default function AdminUsers() {
       </div>
 
       {/* Kullanıcı Tablosu */}
-      <div className="bg-white rounded-2xl border border-stone-200 shadow-sm overflow-hidden">
+      <div className="bg-white rounded-2xl border border-stone-200 shadow-sm overflow-visible min-h-[450px] relative z-0">
+  <div className="overflow-x-auto"></div>
         <table className="w-full text-sm text-left">
           <thead className="bg-stone-50 border-b border-stone-200">
             <tr>
