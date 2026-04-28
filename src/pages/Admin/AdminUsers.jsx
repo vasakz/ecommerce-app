@@ -70,19 +70,29 @@ export default function AdminUsers() {
         </div>
       </div>
 
-      {/* ROL NAVBAR  */}
-      <div className="flex items-center gap-8 border-b border-stone-200 mb-2">
-        {['Hepsi', 'Yönetici', 'Satıcı', 'Müşteri'].map(rol => (
-          <button 
-            key={rol}
-            onClick={() => setAktifSekme(rol)}
-            className={`pb-4 text-sm font-bold transition-all relative ${aktifSekme === rol ? 'text-stone-900' : 'text-stone-400 hover:text-stone-600'}`}
-          >
-            {rol}
-            {aktifSekme === rol && <span className="absolute bottom-0 left-0 w-full h-0.5 bg-stone-900 rounded-full"></span>}
-          </button>
-        ))}
-      </div>
+     {/* ROL NAVBAR  */}
+<div className="flex items-center gap-8 border-b border-stone-200 mb-6">
+  {['Hepsi', 'Yönetici', 'Satıcı', 'Müşteri'].map(rol => {
+    // Onay bekleyen satıcı sayısını hesapla
+    const bekleyenSayisi = kullanicilar.filter(u => u.rol === 'Satıcı' && u.durum === 'Onay Bekliyor').length;
+    
+    return (
+      <button 
+        key={rol}
+        onClick={() => setAktifSekme(rol)}
+        className={`pb-4 text-sm font-bold transition-all relative flex items-center gap-2 ${aktifSekme === rol ? 'text-stone-900' : 'text-stone-400 hover:text-stone-600'}`}
+      >
+        {rol}
+        {rol === 'Satıcı' && bekleyenSayisi > 0 && (
+          <span className="bg-rose-500 text-white text-[10px] px-1.5 py-0.5 rounded-full animate-bounce">
+            {bekleyenSayisi}
+          </span>
+        )}
+        {aktifSekme === rol && <span className="absolute bottom-0 left-0 w-full h-0.5 bg-stone-900 rounded-full"></span>}
+      </button>
+    );
+  })}
+</div>
 
       {/* Arama Çubuğu */}
       <div className="flex items-center border border-stone-200 rounded-2xl px-4 py-3 gap-3 bg-white w-full sm:w-96 shadow-sm focus-within:ring-4 focus-within:ring-stone-900/5 transition-all">
@@ -152,36 +162,43 @@ export default function AdminUsers() {
                         <MoreHorizontal size={18} />
                       </button>
 
-                      {aktifDropdown === kullanici.id && (
-                        <>
-                          <div className="fixed inset-0 z-10" onClick={() => setAktifDropdown(null)}></div>
-                          <div className="absolute right-0 mt-2 w-52 bg-white border border-stone-200 rounded-2xl shadow-xl py-2 z-20 overflow-hidden ring-4 ring-stone-900/5">
-                            
-                            {/* Satıcı Başvuru Yönetimi (Sadece Onay Bekleyen Satıcılar İçin) */}
-                            {kullanici.rol === 'Satıcı' && kullanici.durum === 'Onay Bekliyor' && (
-                              <>
-                                <button onClick={() => durumuGuncelle(kullanici.id, 'Aktif')} className="w-full text-left px-4 py-2.5 text-xs font-bold text-emerald-600 hover:bg-emerald-50 flex items-center gap-2">
-                                  <ShieldCheck size={14} /> Başvuruyu Onayla
-                                </button>
-                                <button onClick={() => durumuGuncelle(kullanici.id, 'Yasaklı')} className="w-full text-left px-4 py-2.5 text-xs font-bold text-rose-600 hover:bg-rose-50 flex items-center gap-2 border-b border-stone-100">
-                                  <XCircle size={14} /> Başvuruyu Reddet
-                                </button>
-                              </>
-                            )}
+                  {aktifDropdown === kullanici.id && (
+  <>
+    <div className="fixed inset-0 z-10" onClick={() => setAktifDropdown(null)}></div>
+    <div className="absolute right-0 mt-2 w-56 bg-white border border-stone-200 rounded-2xl shadow-xl py-2 z-20 overflow-hidden ring-4 ring-stone-900/5">
+      
+      {/* KRİTİK: Satıcı Başvurusu Onay Paneli */}
+      {kullanici.rol === 'Satıcı' && kullanici.durum === 'Onay Bekliyor' && (
+        <div className="bg-amber-50/50 pb-2 mb-2 border-b border-stone-100">
+          <p className="px-4 py-2 text-[10px] font-black text-amber-600 uppercase tracking-widest">Başvuru Yönetimi</p>
+          <button onClick={() => durumuGuncelle(kullanici.id, 'Aktif')} className="w-full text-left px-4 py-2 text-xs font-bold text-emerald-600 hover:bg-emerald-50 flex items-center gap-2">
+            <CheckCircle size={14} /> Başvuruyu Onayla
+          </button>
+          <button onClick={() => durumuGuncelle(kullanici.id, 'Yasaklı')} className="w-full text-left px-4 py-2 text-xs font-bold text-rose-600 hover:bg-rose-50 flex items-center gap-2">
+            <XCircle size={14} /> Başvuruyu Reddet
+          </button>
+        </div>
+      )}
 
-                            {/* Standart Yönetim */}
-                            <button onClick={() => durumuGuncelle(kullanici.id, 'Pasif')} className="w-full text-left px-4 py-2.5 text-xs font-bold text-stone-600 hover:bg-stone-50 flex items-center gap-2">
-                              <Slash size={14} /> Hesabı Askıya Al
-                            </button>
-                            <button onClick={() => durumuGuncelle(kullanici.id, 'Aktif')} className="w-full text-left px-4 py-2.5 text-xs font-bold text-stone-600 hover:bg-stone-50 flex items-center gap-2">
-                              <UserCheck size={14} /> Aktifleştir
-                            </button>
-                            <button onClick={() => kullaniciSil(kullanici.id)} className="w-full text-left px-4 py-2.5 text-xs font-bold text-rose-600 hover:bg-rose-50 flex items-center gap-2 border-t border-stone-100">
-                              <Trash2 size={14} /> Hesabı Kalıcı Sil
-                            </button>
-                          </div>
-                        </>
-                      )}
+      {/* HESAP YÖNETİMİ (Dinamik Butonlar) */}
+      <p className="px-4 py-2 text-[10px] font-black text-stone-400 uppercase tracking-widest">Hesap Ayarları</p>
+      
+      {kullanici.durum === 'Aktif' ? (
+        <button onClick={() => durumuGuncelle(kullanici.id, 'Pasif')} className="w-full text-left px-4 py-2.5 text-xs font-bold text-stone-600 hover:bg-stone-50 flex items-center gap-2">
+          <Slash size={14} /> Hesabı Askıya Al
+        </button>
+      ) : (
+        <button onClick={() => durumuGuncelle(kullanici.id, 'Aktif')} className="w-full text-left px-4 py-2.5 text-xs font-bold text-emerald-600 hover:bg-emerald-50 flex items-center gap-2">
+          <UserCheck size={14} /> Askıyı Kaldır / Aktifleştir
+        </button>
+      )}
+
+      <button onClick={() => kullaniciSil(kullanici.id)} className="w-full text-left px-4 py-2.5 text-xs font-bold text-rose-600 hover:bg-rose-50 flex items-center gap-2 border-t border-stone-100">
+        <Trash2 size={14} /> Hesabı Kalıcı Olarak Sil
+      </button>
+    </div>
+  </>
+)}
                     </div>
                   </div>
                 </td>
@@ -218,18 +235,33 @@ export default function AdminUsers() {
               <div className="space-y-8">
                 <div>
                   <h3 className="text-[10px] font-black text-stone-400 uppercase tracking-widest mb-4 flex items-center gap-2">
-                    <User size={14} /> Temel Bilgiler
+                    <User size={14} /> Kimlik Bilgileri
                   </h3>
-                  <div className="space-y-4">
+                  <div className="bg-stone-50 rounded-2xl p-5 border border-stone-100 space-y-4">
                     <div>
-                      <p className="text-[9px] font-bold text-stone-300 uppercase">E-Posta Kanalları</p>
-                      <p className="text-sm font-bold text-stone-800 flex items-center gap-2 mt-1 italic">
+                      <p className="text-[9px] font-bold text-stone-300 uppercase">Tam Adı</p>
+                      <p className="text-sm font-bold text-stone-800">{seciliKullanici.ad} {seciliKullanici.soyad}</p>
+                    </div>
+                    <div>
+                      <p className="text-[9px] font-bold text-stone-300 uppercase">E-Posta Adresi</p>
+                      <p className="text-sm font-medium text-stone-600 italic underline flex items-center gap-2 mt-1">
                         <Mail size={12} className="text-stone-400" /> {seciliKullanici.email}
                       </p>
                     </div>
-                    <div>
-                      <p className="text-[9px] font-bold text-stone-300 uppercase">Platforma Katılım</p>
-                      <p className="text-sm font-bold text-stone-800 flex items-center gap-2 mt-1 italic">
+                    
+                    {/* Sadece Satıcıysa Mağaza Bilgisi Çıkar */}
+                    {seciliKullanici.rol === 'Satıcı' && (
+                      <div className="pt-3 border-t border-stone-200/50">
+                        <p className="text-[9px] font-bold text-amber-600 uppercase mb-1">Mağaza Adı</p>
+                        <p className="text-sm font-black text-stone-800 uppercase tracking-tight">
+                           {seciliKullanici.ad.toUpperCase()} ATÖLYESİ
+                        </p>
+                      </div>
+                    )}
+                    
+                    <div className="pt-3 border-t border-stone-200/50">
+                      <p className="text-[9px] font-bold text-stone-300 uppercase mb-1">Platforma Katılım</p>
+                      <p className="text-sm font-bold text-stone-800 flex items-center gap-2 italic">
                         <Calendar size={12} className="text-stone-400" /> {seciliKullanici.kayitTarihi}
                       </p>
                     </div>
@@ -240,16 +272,20 @@ export default function AdminUsers() {
               <div className="space-y-8">
                 <div>
                   <h3 className="text-[10px] font-black text-stone-400 uppercase tracking-widest mb-4 flex items-center gap-2">
-                    <Activity size={14} /> Güncel Durum Analizi
+                    <Activity size={14} /> Güvenlik & Kayıtlar
                   </h3>
-                  <div className="bg-stone-50 rounded-3xl p-5 border border-stone-100 space-y-5">
+                  <div className="bg-stone-50 rounded-2xl p-5 border border-stone-100 space-y-5">
+                    <div className="flex items-center justify-between">
+                      <p className="text-[10px] font-bold text-stone-400 uppercase tracking-tighter">IP Adresi</p>
+                      <span className="text-[10px] font-mono font-bold text-stone-500">192.168.1.42</span>
+                    </div>
                     <div className="flex items-center justify-between">
                       <p className="text-[10px] font-bold text-stone-400 uppercase tracking-tighter flex items-center gap-1.5">
                         <Clock size={12} /> Son Giriş
                       </p>
-                      <span className="text-[10px] font-black text-emerald-600 bg-emerald-50 px-2.5 py-1 rounded-full uppercase">{seciliKullanici.sonGiris}</span>
+                      <span className="text-[10px] font-black text-emerald-600 bg-emerald-50 px-2.5 py-1 rounded-lg uppercase">{seciliKullanici.sonGiris}</span>
                     </div>
-                    <div className="flex items-center justify-between">
+                    <div className="flex items-center justify-between pt-3 border-t border-stone-200/50">
                       <p className="text-[10px] font-bold text-stone-400 uppercase tracking-tighter flex items-center gap-1.5">
                         <Shield size={12} /> Hesap Durumu
                       </p>
