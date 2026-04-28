@@ -270,7 +270,7 @@ export default function AdminOrders() {
 
       {/* MODAL */}
       {seciliSiparis && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-stone-900/40 backdrop-blur-md">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/20 ">
           <div className="bg-white rounded-[2rem] shadow-2xl w-full max-w-4xl max-h-[90vh] overflow-y-auto border border-stone-200">
             
             {/* Modal Header */}
