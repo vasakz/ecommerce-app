@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { CheckCircle, XCircle, Eye, Store, FileText, User, CreditCard, Clock, Search, Filter } from 'lucide-react'
+import { CheckCircle, XCircle, Eye, Store, FileText, User, CreditCard, Search, AlertTriangle } from 'lucide-react'
 
 const MOCK_BASVURULAR = [
   {
@@ -68,6 +68,15 @@ const MOCK_BASVURULAR = [
   },
 ]
 
+const RED_SEBEPLERI = [
+  'Eksik belge',
+  'Hatalı kimlik bilgisi',
+  'Geçersiz vergi numarası',
+  'Uygun kategori değil',
+  'Sahte belge şüphesi',
+  'Diğer',
+]
+
 const durumRenk = {
   bekliyor: 'bg-amber-100 text-amber-700',
   onaylandi: 'bg-green-100 text-green-700',
@@ -80,12 +89,92 @@ const durumLabel = {
   reddedildi: 'Reddedildi',
 }
 
-function DetayModal({ basvuru, onKapat, onOnayla, onReddet }) {
+function RedModal({ basvuru, onKapat, onOnayla }) {
+  const [sebep, setSebep] = useState('')
+  const [aciklama, setAciklama] = useState('')
+
+  if (!basvuru) return null
+
+  return (
+    <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/50 p-4">
+      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md">
+        <div className="flex items-center justify-between px-6 py-4 border-b border-stone-100">
+          <div className="flex items-center gap-2">
+            <AlertTriangle size={18} className="text-red-500" />
+            <h2 className="text-base font-bold text-stone-900">Reddetme Sebebi</h2>
+          </div>
+          <button onClick={onKapat} className="text-stone-400 hover:text-stone-700 transition">
+            <XCircle size={20} />
+          </button>
+        </div>
+
+        <div className="p-6 space-y-4">
+          <div className="bg-red-50 border border-red-100 rounded-lg px-4 py-3 text-xs text-red-600">
+            <strong>{basvuru.magazaAdi}</strong> başvurusu reddedilecek. Bu işlem satıcıya bildirim olarak iletilecektir.
+          </div>
+
+          <div>
+            <label className="block text-xs font-bold text-stone-500 uppercase tracking-wider mb-2">
+              Red Sebebi <span className="text-red-500">*</span>
+            </label>
+            <div className="space-y-2">
+              {RED_SEBEPLERI.map(s => (
+                <label key={s} className={`flex items-center gap-3 px-4 py-2.5 border rounded-lg cursor-pointer transition ${
+                  sebep === s ? 'border-red-400 bg-red-50' : 'border-stone-200 hover:border-stone-400'
+                }`}>
+                  <input
+                    type="radio"
+                    name="sebep"
+                    value={s}
+                    checked={sebep === s}
+                    onChange={() => setSebep(s)}
+                    className="accent-red-500"
+                  />
+                  <span className="text-sm text-stone-700">{s}</span>
+                </label>
+              ))}
+            </div>
+          </div>
+
+          <div>
+            <label className="block text-xs font-bold text-stone-500 uppercase tracking-wider mb-2">
+              Detaylı Açıklama <span className="text-stone-400">(İsteğe bağlı)</span>
+            </label>
+            <textarea
+              value={aciklama}
+              onChange={e => setAciklama(e.target.value)}
+              rows={3}
+              placeholder="Satıcıya iletilecek ek açıklama..."
+              className="w-full border border-stone-200 rounded-lg px-4 py-2.5 text-sm outline-none focus:border-stone-400 transition resize-none"
+            />
+          </div>
+        </div>
+
+        <div className="px-6 py-4 border-t border-stone-100 flex gap-3">
+          <button
+            onClick={onKapat}
+            className="flex-1 py-2.5 border border-stone-200 text-stone-600 rounded-xl text-sm font-medium hover:bg-stone-50 transition"
+          >
+            Vazgeç
+          </button>
+          <button
+            onClick={() => onOnayla(basvuru.id)}
+            disabled={!sebep}
+            className="flex-1 py-2.5 bg-red-600 text-white rounded-xl text-sm font-bold hover:bg-red-700 transition disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            Reddi Onayla
+          </button>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+function DetayModal({ basvuru, onKapat, onOnayla, onReddetTikla }) {
   if (!basvuru) return null
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
       <div className="bg-white rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
-        {/* Header */}
         <div className="flex items-center justify-between px-6 py-4 border-b border-stone-100">
           <div>
             <h2 className="text-lg font-bold text-stone-900">{basvuru.magazaAdi}</h2>
@@ -97,7 +186,6 @@ function DetayModal({ basvuru, onKapat, onOnayla, onReddet }) {
         </div>
 
         <div className="p-6 space-y-6">
-          {/* Kişisel Bilgiler */}
           <div>
             <h3 className="text-xs font-bold text-stone-400 uppercase tracking-widest mb-3 flex items-center gap-2">
               <User size={13} /> Temel Bilgiler
@@ -109,7 +197,7 @@ function DetayModal({ basvuru, onKapat, onOnayla, onReddet }) {
               </div>
               <div className="bg-stone-50 rounded-lg px-4 py-3">
                 <p className="text-xs text-stone-400 mb-0.5">Hesap Türü</p>
-                <p className="font-medium capitalize">{basvuru.hesapTuru === 'atolye' ? 'Atölye Satıcısı' : 'Bireysel Satıcı'}</p>
+                <p className="font-medium">{basvuru.hesapTuru === 'atolye' ? 'Atölye Satıcısı' : 'Bireysel Satıcı'}</p>
               </div>
               <div className="bg-stone-50 rounded-lg px-4 py-3">
                 <p className="text-xs text-stone-400 mb-0.5">E-posta</p>
@@ -122,7 +210,6 @@ function DetayModal({ basvuru, onKapat, onOnayla, onReddet }) {
             </div>
           </div>
 
-          {/* Mağaza Bilgileri */}
           <div>
             <h3 className="text-xs font-bold text-stone-400 uppercase tracking-widest mb-3 flex items-center gap-2">
               <Store size={13} /> Mağaza Bilgileri
@@ -151,7 +238,6 @@ function DetayModal({ basvuru, onKapat, onOnayla, onReddet }) {
             </div>
           </div>
 
-          {/* Banka Bilgileri */}
           <div>
             <h3 className="text-xs font-bold text-stone-400 uppercase tracking-widest mb-3 flex items-center gap-2">
               <CreditCard size={13} /> Banka Bilgileri
@@ -168,7 +254,6 @@ function DetayModal({ basvuru, onKapat, onOnayla, onReddet }) {
             </div>
           </div>
 
-          {/* Belgeler */}
           <div>
             <h3 className="text-xs font-bold text-stone-400 uppercase tracking-widest mb-3 flex items-center gap-2">
               <FileText size={13} /> Belgeler
@@ -185,11 +270,10 @@ function DetayModal({ basvuru, onKapat, onOnayla, onReddet }) {
           </div>
         </div>
 
-        {/* Footer */}
         {basvuru.durum === 'bekliyor' && (
           <div className="px-6 py-4 border-t border-stone-100 flex gap-3">
             <button
-              onClick={() => onReddet(basvuru.id)}
+              onClick={() => onReddetTikla(basvuru)}
               className="flex-1 flex items-center justify-center gap-2 py-3 border border-red-200 text-red-600 rounded-xl text-sm font-bold hover:bg-red-50 transition"
             >
               <XCircle size={16} /> Reddet
@@ -210,6 +294,7 @@ function DetayModal({ basvuru, onKapat, onOnayla, onReddet }) {
 function AdminSellers() {
   const [basvurular, setBasvurular] = useState(MOCK_BASVURULAR)
   const [seciliBasvuru, setSeciliBasvuru] = useState(null)
+  const [redModalBasvuru, setRedModalBasvuru] = useState(null)
   const [aramaMetni, setAramaMetni] = useState('')
   const [durumFiltre, setDurumFiltre] = useState('hepsi')
 
@@ -218,9 +303,14 @@ function AdminSellers() {
     setSeciliBasvuru(null)
   }
 
-  const handleReddet = (id) => {
-    setBasvurular(prev => prev.map(b => b.id === id ? { ...b, durum: 'reddedildi' } : b))
+  const handleReddetTikla = (basvuru) => {
     setSeciliBasvuru(null)
+    setRedModalBasvuru(basvuru)
+  }
+
+  const handleReddiOnayla = (id) => {
+    setBasvurular(prev => prev.map(b => b.id === id ? { ...b, durum: 'reddedildi' } : b))
+    setRedModalBasvuru(null)
   }
 
   const filtrelenmis = basvurular.filter(b => {
@@ -236,7 +326,6 @@ function AdminSellers() {
 
   return (
     <div className="space-y-6">
-      {/* Header */}
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold text-stone-900">Satıcı Başvuruları</h1>
@@ -249,7 +338,6 @@ function AdminSellers() {
         </div>
       </div>
 
-      {/* Filtreler */}
       <div className="flex items-center gap-4 flex-wrap">
         <div className="flex items-center border border-stone-200 rounded-lg px-3 py-2 gap-2 bg-white w-64">
           <Search size={15} className="text-stone-400" />
@@ -278,7 +366,6 @@ function AdminSellers() {
         </div>
       </div>
 
-      {/* Tablo */}
       <div className="bg-white rounded-xl border border-stone-200 overflow-hidden">
         <table className="w-full text-sm">
           <thead className="bg-stone-50 border-b border-stone-200">
@@ -295,10 +382,8 @@ function AdminSellers() {
             {filtrelenmis.map(b => (
               <tr key={b.id} className="hover:bg-stone-50 transition">
                 <td className="px-5 py-4">
-                  <div>
-                    <p className="font-medium text-stone-900">{b.ad} {b.soyad}</p>
-                    <p className="text-xs text-stone-400">{b.email}</p>
-                  </div>
+                  <p className="font-medium text-stone-900">{b.ad} {b.soyad}</p>
+                  <p className="text-xs text-stone-400">{b.email}</p>
                 </td>
                 <td className="px-5 py-4">
                   <p className="font-medium text-stone-800">{b.magazaAdi}</p>
@@ -329,7 +414,7 @@ function AdminSellers() {
                     {b.durum === 'bekliyor' && (
                       <>
                         <button
-                          onClick={() => handleReddet(b.id)}
+                          onClick={() => handleReddetTikla(b)}
                           className="p-1.5 rounded-lg hover:bg-red-50 text-red-400 hover:text-red-600 transition"
                           title="Reddet"
                         >
@@ -359,12 +444,17 @@ function AdminSellers() {
         </table>
       </div>
 
-      {/* Detay Modal */}
       <DetayModal
         basvuru={seciliBasvuru}
         onKapat={() => setSeciliBasvuru(null)}
         onOnayla={handleOnayla}
-        onReddet={handleReddet}
+        onReddetTikla={handleReddetTikla}
+      />
+
+      <RedModal
+        basvuru={redModalBasvuru}
+        onKapat={() => setRedModalBasvuru(null)}
+        onOnayla={handleReddiOnayla}
       />
     </div>
   )
