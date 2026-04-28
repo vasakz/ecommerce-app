@@ -21,7 +21,7 @@ import {
   ArrowUpRight,
   ArrowDownRight
 } from 'lucide-react';
-import { toast } from 'react-toastify';
+import toast from 'react-hot-toast';
 
 // Mock data based on user requirements
 const INITIAL_PRODUCTS = [
@@ -129,7 +129,7 @@ const ProductManagement = () => {
     setProducts(prev => prev.map(p => {
       if (p.id === id) {
         const newStatus = p.status === 'Published' ? 'Draft' : 'Published';
-        toast.info(`Ürün durumu "${newStatus === 'Published' ? 'Yayında' : 'Pasif'}" olarak güncellendi`);
+        toast.success(`Ürün durumu "${newStatus === 'Published' ? 'Yayında' : 'Pasif'}" olarak güncellendi`);
         return { ...p, status: newStatus };
       }
       return p;
@@ -194,21 +194,21 @@ const ProductManagement = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-stone-950 p-4 md:p-8">
+    <div className="animate-in fade-in duration-500">
       <div className="max-w-7xl mx-auto">
         
         {/* Header Section */}
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
           <div>
             <h1 className="text-3xl font-bold text-stone-900 dark:text-white flex items-center gap-3">
-              <Package className="w-8 h-8 text-blue-600" />
-              Ürün Yönetimi
+            <Package className="w-8 h-8 text-amber-600" />
+            Ürün Yönetimi
             </h1>
             <p className="text-stone-500 dark:text-stone-400 mt-1">Mağazanızdaki ürünleri buradan yönetebilirsiniz.</p>
           </div>
           <Link 
             to="/satici/urun-ekle"
-            className="flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-xl font-bold transition-all shadow-lg shadow-blue-500/25 active:scale-95"
+            className="flex items-center justify-center gap-2 bg-amber-600 hover:bg-amber-700 text-white px-6 py-3 rounded-xl font-bold transition-all shadow-lg shadow-amber-500/25 active:scale-95"
           >
             <Plus className="w-5 h-5" />
             Yeni Ürün Ekle
@@ -218,7 +218,7 @@ const ProductManagement = () => {
         {/* Stats Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
           {[
-            { label: 'Toplam Ürün', value: stats.total, icon: <Package className="text-blue-500" />, trend: '+3', isPositive: true },
+            { label: 'Toplam Ürün', value: stats.total, icon: <Package className="text-amber-500" />, trend: '+3', isPositive: true },
             { label: 'Yayında', value: stats.published, icon: <CheckCircle2 className="text-green-500" />, trend: '+1', isPositive: true },
             { label: 'Onay Bekleyen', value: stats.pending, icon: <Clock className="text-orange-500" />, trend: '0', isPositive: true },
             { label: 'Kritik Stok', value: stats.lowStock, icon: <AlertTriangle className="text-red-500" />, trend: '+2', isPositive: false },
@@ -253,7 +253,7 @@ const ProductManagement = () => {
                   <input 
                     type="text" 
                     placeholder="Ürün adı veya marka ara..." 
-                    className="w-full pl-10 pr-4 py-2.5 bg-gray-50 dark:bg-stone-800 border-none rounded-xl focus:ring-2 focus:ring-blue-500 text-sm"
+                    className="w-full pl-10 pr-4 py-2.5 bg-gray-50 dark:bg-stone-800 border-none rounded-xl focus:ring-2 focus:ring-amber-500 text-sm"
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
                   />
@@ -277,7 +277,7 @@ const ProductManagement = () => {
               {/* Bulk Actions */}
               {selectedProducts.length > 0 && (
                 <div className="flex items-center gap-3 animate-in fade-in slide-in-from-right-4">
-                  <span className="text-sm font-bold text-blue-600 bg-blue-50 dark:bg-blue-900/30 px-3 py-1.5 rounded-lg border border-blue-100 dark:border-blue-800">
+                  <span className="text-sm font-bold text-amber-600 bg-amber-50 dark:bg-amber-900/30 px-3 py-1.5 rounded-lg border border-amber-100 dark:border-amber-800">
                     {selectedProducts.length} Seçildi
                   </span>
                   <div className="h-8 w-[1px] bg-gray-200 dark:bg-stone-700 mx-1"></div>
@@ -310,7 +310,7 @@ const ProductManagement = () => {
                   <th className="px-6 py-4 w-12 text-center">
                     <input 
                       type="checkbox" 
-                      className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                      className="rounded border-gray-300 text-amber-600 focus:ring-amber-500"
                       onChange={handleSelectAll}
                       checked={selectedProducts.length === filteredProducts.length && filteredProducts.length > 0}
                     />
@@ -329,7 +329,7 @@ const ProductManagement = () => {
                     <td className="px-6 py-5 text-center">
                       <input 
                         type="checkbox" 
-                        className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                        className="rounded border-gray-300 text-amber-600 focus:ring-amber-500"
                         checked={selectedProducts.includes(product.id)}
                         onChange={() => handleSelectOne(product.id)}
                       />
@@ -340,7 +340,7 @@ const ProductManagement = () => {
                           <img src={product.image} alt="" className="w-full h-full object-cover" />
                         </div>
                         <div className="flex flex-col min-w-0">
-                          <span className="text-sm font-bold text-stone-900 dark:text-white truncate group-hover:text-blue-600 transition-colors">
+                          <span className="text-sm font-bold text-stone-900 dark:text-white truncate group-hover:text-amber-600 transition-colors">
                             {product.name}
                           </span>
                           <span className="text-[11px] text-stone-500 font-medium uppercase">{product.brand}</span>
@@ -390,13 +390,13 @@ const ProductManagement = () => {
                     </td>
                     <td className="px-6 py-5">
                       <div className="flex items-center justify-center gap-2">
-                        <button 
-                          onClick={() => toast.info('Düzenleme sayfası yakında!')}
-                          className="p-2 text-stone-400 hover:text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-lg transition-all"
+                        <Link 
+                          to={`/satici/urun-duzenle/${product.id}`}
+                          className="p-2 text-stone-400 hover:text-amber-600 hover:bg-amber-50 dark:hover:bg-amber-900/20 rounded-lg transition-all inline-flex"
                           title="Düzenle"
                         >
                           <Edit2 className="w-4 h-4" />
-                        </button>
+                        </Link>
                         <button 
                           onClick={() => copyProduct(product)}
                           className="p-2 text-stone-400 hover:text-emerald-600 hover:bg-emerald-50 dark:hover:bg-emerald-900/20 rounded-lg transition-all"

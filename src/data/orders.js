@@ -134,6 +134,54 @@ export const orders = [
       { status: 'Onaylandı', date: '2024-02-10T11:05:00Z', completed: true },
       { status: 'İptal Edildi', date: '2024-02-11T14:00:00Z', completed: true }
     ]
+  },
+  {
+    id: 'ORD-2024-005',
+    date: '2024-03-20T10:00:00Z',
+    status: 'İade Sürecinde',
+    total: 1250.00,
+    paymentMethod: 'Kredi Kartı',
+    deliveryAddress: 'Gül Mah. Lale Sok. No:10 Beşiktaş/İstanbul',
+    trackingNumber: 'TR4455667788',
+    carrier: 'MNG Kargo',
+    deliveryDetails: {
+      type: 'Standart',
+      option: 'Adrese Teslim',
+      history: [
+        { status: 'Teslim Edildi', date: '2024-03-22T14:00:00Z', detail: 'Sipariş teslim edildi.' },
+        { status: 'İade Talebi Alındı', date: '2024-03-23T09:00:00Z', detail: 'İade talebi oluşturuldu.' },
+        { status: 'İade Kargosu Yola Çıktı', date: '2024-03-24T11:00:00Z', detail: 'Ürün satıcıya ulaştırılmak üzere yolda.' }
+      ]
+    },
+    items: [
+      {
+        id: 10,
+        name: 'Seramik Vazo Seti',
+        price: 1250.00,
+        image: 'https://images.unsplash.com/photo-1578500494198-246f612d3b3d?auto=format&fit=crop&w=800&q=80',
+        quantity: 1,
+        color: 'Pastel Mavi'
+      }
+    ],
+    timeline: [
+      { status: 'Onaylandı', date: '2024-03-20T10:05:00Z', completed: true },
+      { status: 'Hazırlandı', date: '2024-03-21T09:00:00Z', completed: true },
+      { status: 'Teslim Edildi', date: '2024-03-22T14:00:00Z', completed: true },
+      { status: 'İade Talebi', date: '2024-03-23T09:00:00Z', completed: true },
+      { status: 'İade İnceleniyor', date: null, completed: false }
+    ],
+    returnDetails: {
+      reason: 'Ürün beklentilerimi karşılamadı',
+      refundAmount: 1250.00,
+      returnCode: 'MNG-998877',
+      status: 'InReview', // InReview, Approved, Rejected, Refunded
+      steps: [
+        { title: 'İade Talebi', date: '2024-03-23 09:00', status: 'completed' },
+        { title: 'Kargo Teslimatı', date: '2024-03-24 11:30', status: 'completed' },
+        { title: 'Satıcı İncelemesi', date: 'Şu an', status: 'current' },
+        { title: 'Ücret İadesi', date: '-', status: 'pending' }
+      ]
+    }
   }
 ];
 
@@ -162,6 +210,8 @@ export const getStatusColor = (status) => {
       return 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400';
     case 'İptal Edildi':
       return 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400';
+    case 'İade Sürecinde':
+      return 'bg-indigo-100 text-indigo-800 dark:bg-indigo-900/30 dark:text-indigo-400';
     case 'Ödeme Bekleniyor':
       return 'bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-400';
     case 'Teslim Edilemedi':

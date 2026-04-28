@@ -2,16 +2,18 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { orders, getStatusColor } from '../../data/orders';
 import { generateInvoicePDF } from '../../utils/generateInvoice';
+import { RotateCcw } from 'lucide-react';
 
 const MyOrders = () => {
   const [activeTab, setActiveTab] = useState('Hepsi');
 
-  const tabs = ['Hepsi', 'Aktif', 'Tamamlanan', 'İptal Edilen'];
+  const tabs = ['Hepsi', 'Aktif', 'Tamamlanan', 'İadeler', 'İptal Edilen'];
 
   const filteredOrders = orders.filter(order => {
     if (activeTab === 'Hepsi') return true;
     if (activeTab === 'Aktif') return ['Hazırlanıyor', 'Kargoya Verildi', 'Kargoda', 'Dağıtımda', 'Onay Bekliyor', 'Ödeme Bekleniyor'].includes(order.status);
-    if (activeTab === 'Tamamlanan') return order.status === 'Teslim Edildi' || order.status === 'İade Sürecinde';
+    if (activeTab === 'Tamamlanan') return order.status === 'Teslim Edildi';
+    if (activeTab === 'İadeler') return order.status === 'İade Sürecinde';
     if (activeTab === 'İptal Edilen') return order.status === 'İptal Edildi';
     return true;
   });
@@ -19,7 +21,12 @@ const MyOrders = () => {
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-4xl mx-auto">
-        <h1 className="text-3xl font-extrabold text-gray-900 dark:text-white mb-8">Siparişlerim</h1>
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
+           <h1 className="text-3xl font-extrabold text-gray-900 dark:text-white">Siparişlerim</h1>
+           <Link to="/iadelerim" className="inline-flex items-center gap-2 text-primary-600 dark:text-primary-400 font-bold text-sm bg-primary-50 dark:bg-primary-900/20 px-4 py-2 rounded-xl border border-primary-100 dark:border-primary-800/50 hover:bg-primary-100 transition-all">
+              <RotateCcw size={16} /> İade Taleplerimi Gör
+           </Link>
+        </div>
 
         {/* Tabs */}
         <div className="flex space-x-4 mb-8 border-b border-gray-200 dark:border-gray-800">
@@ -107,6 +114,11 @@ const MyOrders = () => {
                       {(order.status === 'Hazırlanıyor' || order.status === 'Onay Bekliyor' || order.status === 'Ödeme Bekleniyor') && (
                          <Link to={`/siparislerim/${order.id}/islem`} className="px-4 py-2 text-sm font-medium text-amber-700 bg-amber-100 hover:bg-amber-200 dark:text-amber-200 dark:bg-amber-900/40 border border-amber-200 dark:border-amber-800 rounded-lg transition-colors">
                             Siparişi İptal Et
+                         </Link>
+                      )}
+                      {(order.status === 'İade Sürecinde') && (
+                         <Link to={`/siparislerim/${order.id}`} className="px-4 py-2 text-sm font-black text-indigo-700 bg-indigo-100 hover:bg-indigo-200 dark:text-indigo-200 dark:bg-indigo-900/40 border border-indigo-200 dark:border-indigo-800 rounded-lg transition-all animate-pulse">
+                            İadeyi Takip Et
                          </Link>
                       )}
                       {(order.status === 'Teslim Edildi') && (

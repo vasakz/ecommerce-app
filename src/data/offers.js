@@ -17,7 +17,7 @@ export const OFFERS = [
     title: 'Al 2 Öde 1',
     description: 'Seçili çantalarda 2. Ürün bedava',
     category: 'Çantalar',
-    image: 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=900&q=80',
+    image: 'https://images.unsplash.com/photo-1548036328-c9fa89d128fa?auto=format&fit=crop&w=1200&q=80',
     price: 0,
     discount: 50,
     endsAt: new Date(Date.now() + 1000 * 60 * 60 * 24 * 6).toISOString(),

@@ -19,7 +19,7 @@ import {
   FileText
 } from 'lucide-react';
 import { generateInvoicePDF } from '../../utils/generateInvoice';
-import { toast } from 'react-toastify';
+import toast from 'react-hot-toast';
 
 const SELLER_ORDERS = [
   {
@@ -147,7 +147,7 @@ const OrderManagement = () => {
     link.href = URL.createObjectURL(blob);
     link.download = `Siparis_Raporu_${new Date().toLocaleDateString()}.csv`;
     link.click();
-    toast.info('Sipariş raporu hazırlandı ve indiriliyor.');
+    toast.success('Sipariş raporu hazırlandı ve indiriliyor.');
   };
 
   const handleDailyPrint = () => {
@@ -155,37 +155,36 @@ const OrderManagement = () => {
   };
 
   return (
-    <>
-      <div className="min-h-screen bg-[#f8fafc] dark:bg-stone-950 p-4 md:p-8 print:p-0 print:bg-white">
+    <div className="animate-in fade-in duration-500">
       <div className="max-w-[1400px] mx-auto print:max-w-none">
-        
-        {/* Header Section */}
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-8 print:hidden">
-          <div>
-            <h1 className="text-3xl font-black text-stone-900 dark:text-white flex items-center gap-3">
-              <ShoppingBag className="w-8 h-8 text-blue-600" />
-              Sipariş Yönetimi
-            </h1>
-            <p className="text-stone-500 dark:text-stone-400 font-medium mt-1">Siparişlerinizi takip edin, onaylayın ve kargolayın.</p>
-          </div>
           
-          <div className="flex items-center gap-3">
-            <button 
-              onClick={handleExportExcel}
-              className="flex items-center gap-2 bg-white dark:bg-stone-900 border border-gray-200 dark:border-stone-800 px-4 py-2.5 rounded-xl text-sm font-bold text-stone-700 dark:text-stone-300 hover:bg-gray-50 transition-all shadow-sm active:scale-95"
-            >
-              <Download className="w-4 h-4" />
-              Rapor Al
-            </button>
-            <button 
-              onClick={handleDailyPrint}
-              className="flex items-center gap-2 bg-blue-600 text-white px-5 py-2.5 rounded-xl text-sm font-bold hover:bg-blue-700 transition-all shadow-lg shadow-blue-500/25 active:scale-95"
-            >
-              <Printer className="w-4 h-4" />
-              Günlük Çıktı Al
-            </button>
+          {/* Header Section */}
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-8 print:hidden">
+            <div>
+              <h1 className="text-3xl font-black text-stone-900 dark:text-white flex items-center gap-3">
+                <ShoppingBag className="w-8 h-8 text-blue-600" />
+                Sipariş Yönetimi
+              </h1>
+              <p className="text-stone-500 dark:text-stone-400 font-medium mt-1">Siparişlerinizi takip edin, onaylayın ve kargolayın.</p>
+            </div>
+            
+            <div className="flex items-center gap-3">
+              <button 
+                onClick={handleExportExcel}
+                className="flex items-center gap-2 bg-white dark:bg-stone-900 border border-gray-200 dark:border-stone-800 px-4 py-2.5 rounded-xl text-sm font-bold text-stone-700 dark:text-stone-300 hover:bg-gray-50 transition-all shadow-sm active:scale-95"
+              >
+                <Download className="w-4 h-4" />
+                Rapor Al
+              </button>
+              <button 
+                onClick={handleDailyPrint}
+                className="flex items-center gap-2 bg-blue-600 text-white px-5 py-2.5 rounded-xl text-sm font-bold hover:bg-blue-700 transition-all shadow-lg shadow-blue-500/25 active:scale-95"
+              >
+                <Printer className="w-4 h-4" />
+                Günlük Çıktı Al
+              </button>
+            </div>
           </div>
-        </div>
 
         {/* Filters & Actions Card */}
         <div className="bg-white dark:bg-stone-900 rounded-[2rem] shadow-xl shadow-gray-200/50 dark:shadow-none border border-gray-100 dark:border-stone-800 p-6 mb-8">
@@ -394,7 +393,6 @@ const OrderManagement = () => {
             </div>
          </div>
       </div>
-    </div>
 
     {/* Shipping Modal */}
     {shippingModal.show && (
@@ -593,7 +591,7 @@ const OrderManagement = () => {
         </div>
       </div>
     )}
-    </>
+    </div>
   );
 };
 

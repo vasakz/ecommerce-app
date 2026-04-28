@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
 import { 
   Wallet, 
   ArrowDownCircle, 
@@ -103,13 +104,22 @@ const FinancialManagement = () => {
       <div className="max-w-7xl mx-auto space-y-8">
         
         {/* Header */}
-        <div>
-          <h1 className="text-3xl font-bold text-stone-900 dark:text-white flex items-center gap-3">
-            <Wallet className="w-8 h-8 text-emerald-600" />
-            Finansal Yönetim
-          </h1>
-          <p className="text-stone-500 dark:text-stone-400 mt-1">Bakiye yönetimi, ödemeler ve kazanç geçmişinizi takip edin.</p>
-        </div>
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+            <div>
+              <h1 className="text-3xl font-bold text-stone-900 dark:text-white flex items-center gap-3">
+                <Wallet className="w-8 h-8 text-emerald-600" />
+                Finansal Yönetim
+              </h1>
+              <p className="text-stone-500 dark:text-stone-400 mt-1">Bakiye yönetimi, ödemeler ve kazanç geçmişinizi takip edin.</p>
+            </div>
+            <Link 
+              to="/satici/iban-ayarlari"
+              className="flex items-center gap-2 bg-white dark:bg-stone-900 text-stone-900 dark:text-white px-5 py-3 rounded-2xl font-bold border border-gray-100 dark:border-stone-800 shadow-sm hover:bg-gray-50 transition-all active:scale-95"
+            >
+              <Building2 className="w-5 h-5 text-amber-500" />
+              Banka Bilgilerim
+            </Link>
+          </div>
 
         {/* Balance Cards */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
