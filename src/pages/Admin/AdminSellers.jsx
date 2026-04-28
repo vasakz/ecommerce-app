@@ -89,11 +89,40 @@ const durumLabel = {
   reddedildi: 'Reddedildi',
 }
 
+// ─── Red Modalı ───────────────────────────────────────────
 function RedModal({ basvuru, onKapat, onOnayla }) {
   const [sebep, setSebep] = useState('')
   const [aciklama, setAciklama] = useState('')
+  const [gonderildi, setGonderildi] = useState(false)
 
   if (!basvuru) return null
+
+  const handleReddiOnayla = () => {
+    if (!sebep) return
+    onOnayla(basvuru.id)
+    setGonderildi(true)
+    setTimeout(() => {
+      setGonderildi(false)
+      onKapat()
+    }, 2500)
+  }
+
+  if (gonderildi) {
+    return (
+      <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/50 p-4">
+        <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md p-8 text-center">
+          <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
+            <XCircle size={32} className="text-red-500" />
+          </div>
+          <h2 className="text-lg font-bold text-stone-900 mb-2">Başvuru Reddedildi</h2>
+          <p className="text-sm text-stone-500">Reddetme sebebi satıcıya bildirim olarak gönderildi.</p>
+          <div className="mt-4 px-4 py-2 bg-stone-50 rounded-lg border border-stone-100 inline-block">
+            <p className="text-xs text-stone-500">Sebep: <span className="font-medium text-stone-700">{sebep}</span></p>
+          </div>
+        </div>
+      </div>
+    )
+  }
 
   return (
     <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/50 p-4">
@@ -122,14 +151,8 @@ function RedModal({ basvuru, onKapat, onOnayla }) {
                 <label key={s} className={`flex items-center gap-3 px-4 py-2.5 border rounded-lg cursor-pointer transition ${
                   sebep === s ? 'border-red-400 bg-red-50' : 'border-stone-200 hover:border-stone-400'
                 }`}>
-                  <input
-                    type="radio"
-                    name="sebep"
-                    value={s}
-                    checked={sebep === s}
-                    onChange={() => setSebep(s)}
-                    className="accent-red-500"
-                  />
+                  <input type="radio" name="sebep" value={s} checked={sebep === s}
+                    onChange={() => setSebep(s)} className="accent-red-500" />
                   <span className="text-sm text-stone-700">{s}</span>
                 </label>
               ))}
@@ -140,10 +163,7 @@ function RedModal({ basvuru, onKapat, onOnayla }) {
             <label className="block text-xs font-bold text-stone-500 uppercase tracking-wider mb-2">
               Detaylı Açıklama <span className="text-stone-400">(İsteğe bağlı)</span>
             </label>
-            <textarea
-              value={aciklama}
-              onChange={e => setAciklama(e.target.value)}
-              rows={3}
+            <textarea value={aciklama} onChange={e => setAciklama(e.target.value)} rows={3}
               placeholder="Satıcıya iletilecek ek açıklama..."
               className="w-full border border-stone-200 rounded-lg px-4 py-2.5 text-sm outline-none focus:border-stone-400 transition resize-none"
             />
@@ -151,17 +171,12 @@ function RedModal({ basvuru, onKapat, onOnayla }) {
         </div>
 
         <div className="px-6 py-4 border-t border-stone-100 flex gap-3">
-          <button
-            onClick={onKapat}
-            className="flex-1 py-2.5 border border-stone-200 text-stone-600 rounded-xl text-sm font-medium hover:bg-stone-50 transition"
-          >
+          <button onClick={onKapat}
+            className="flex-1 py-2.5 border border-stone-200 text-stone-600 rounded-xl text-sm font-medium hover:bg-stone-50 transition">
             Vazgeç
           </button>
-          <button
-            onClick={() => onOnayla(basvuru.id)}
-            disabled={!sebep}
-            className="flex-1 py-2.5 bg-red-600 text-white rounded-xl text-sm font-bold hover:bg-red-700 transition disabled:opacity-50 disabled:cursor-not-allowed"
-          >
+          <button onClick={handleReddiOnayla} disabled={!sebep}
+            className="flex-1 py-2.5 bg-red-600 text-white rounded-xl text-sm font-bold hover:bg-red-700 transition disabled:opacity-50 disabled:cursor-not-allowed">
             Reddi Onayla
           </button>
         </div>
@@ -170,8 +185,38 @@ function RedModal({ basvuru, onKapat, onOnayla }) {
   )
 }
 
+// ─── Detay Modalı ─────────────────────────────────────────
 function DetayModal({ basvuru, onKapat, onOnayla, onReddetTikla }) {
+  const [onaylandi, setOnaylandi] = useState(false)
+
   if (!basvuru) return null
+
+  const handleOnayla = () => {
+    onOnayla(basvuru.id)
+    setOnaylandi(true)
+    setTimeout(() => {
+      setOnaylandi(false)
+      onKapat()
+    }, 2500)
+  }
+
+  if (onaylandi) {
+    return (
+      <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
+        <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md p-8 text-center">
+          <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+            <CheckCircle size={32} className="text-green-500" />
+          </div>
+          <h2 className="text-lg font-bold text-stone-900 mb-2">Başvuru Onaylandı</h2>
+          <p className="text-sm text-stone-500">Onay bildirimi satıcıya iletildi.</p>
+          <div className="mt-4 px-4 py-2 bg-green-50 rounded-lg border border-green-100 inline-block">
+            <p className="text-xs text-green-700 font-medium">{basvuru.magazaAdi} artık aktif satıcı!</p>
+          </div>
+        </div>
+      </div>
+    )
+  }
+
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
       <div className="bg-white rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
@@ -272,16 +317,12 @@ function DetayModal({ basvuru, onKapat, onOnayla, onReddetTikla }) {
 
         {basvuru.durum === 'bekliyor' && (
           <div className="px-6 py-4 border-t border-stone-100 flex gap-3">
-            <button
-              onClick={() => onReddetTikla(basvuru)}
-              className="flex-1 flex items-center justify-center gap-2 py-3 border border-red-200 text-red-600 rounded-xl text-sm font-bold hover:bg-red-50 transition"
-            >
+            <button onClick={() => onReddetTikla(basvuru)}
+              className="flex-1 flex items-center justify-center gap-2 py-3 border border-red-200 text-red-600 rounded-xl text-sm font-bold hover:bg-red-50 transition">
               <XCircle size={16} /> Reddet
             </button>
-            <button
-              onClick={() => onOnayla(basvuru.id)}
-              className="flex-1 flex items-center justify-center gap-2 py-3 bg-green-600 text-white rounded-xl text-sm font-bold hover:bg-green-700 transition"
-            >
+            <button onClick={handleOnayla}
+              className="flex-1 flex items-center justify-center gap-2 py-3 bg-green-600 text-white rounded-xl text-sm font-bold hover:bg-green-700 transition">
               <CheckCircle size={16} /> Onayla
             </button>
           </div>
@@ -291,6 +332,7 @@ function DetayModal({ basvuru, onKapat, onOnayla, onReddetTikla }) {
   )
 }
 
+// ─── Ana Bileşen ──────────────────────────────────────────
 function AdminSellers() {
   const [basvurular, setBasvurular] = useState(MOCK_BASVURULAR)
   const [seciliBasvuru, setSeciliBasvuru] = useState(null)
@@ -300,7 +342,6 @@ function AdminSellers() {
 
   const handleOnayla = (id) => {
     setBasvurular(prev => prev.map(b => b.id === id ? { ...b, durum: 'onaylandi' } : b))
-    setSeciliBasvuru(null)
   }
 
   const handleReddetTikla = (basvuru) => {
@@ -310,7 +351,6 @@ function AdminSellers() {
 
   const handleReddiOnayla = (id) => {
     setBasvurular(prev => prev.map(b => b.id === id ? { ...b, durum: 'reddedildi' } : b))
-    setRedModalBasvuru(null)
   }
 
   const filtrelenmis = basvurular.filter(b => {
@@ -341,25 +381,16 @@ function AdminSellers() {
       <div className="flex items-center gap-4 flex-wrap">
         <div className="flex items-center border border-stone-200 rounded-lg px-3 py-2 gap-2 bg-white w-64">
           <Search size={15} className="text-stone-400" />
-          <input
-            type="text"
-            placeholder="Ad, mağaza veya e-posta..."
-            value={aramaMetni}
-            onChange={e => setAramaMetni(e.target.value)}
-            className="text-sm outline-none flex-1 bg-transparent"
-          />
+          <input type="text" placeholder="Ad, mağaza veya e-posta..."
+            value={aramaMetni} onChange={e => setAramaMetni(e.target.value)}
+            className="text-sm outline-none flex-1 bg-transparent" />
         </div>
         <div className="flex items-center gap-2">
           {['hepsi', 'bekliyor', 'onaylandi', 'reddedildi'].map(d => (
-            <button
-              key={d}
-              onClick={() => setDurumFiltre(d)}
+            <button key={d} onClick={() => setDurumFiltre(d)}
               className={`px-3 py-1.5 rounded-lg text-xs font-medium transition ${
-                durumFiltre === d
-                  ? 'bg-stone-900 text-white'
-                  : 'bg-white border border-stone-200 text-stone-600 hover:border-stone-400'
-              }`}
-            >
+                durumFiltre === d ? 'bg-stone-900 text-white' : 'bg-white border border-stone-200 text-stone-600 hover:border-stone-400'
+              }`}>
               {d === 'hepsi' ? 'Hepsi' : durumLabel[d]}
             </button>
           ))}
@@ -404,27 +435,18 @@ function AdminSellers() {
                 </td>
                 <td className="px-5 py-4 text-right">
                   <div className="flex items-center justify-end gap-2">
-                    <button
-                      onClick={() => setSeciliBasvuru(b)}
-                      className="p-1.5 rounded-lg hover:bg-stone-100 text-stone-500 hover:text-stone-800 transition"
-                      title="İncele"
-                    >
+                    <button onClick={() => setSeciliBasvuru(b)}
+                      className="p-1.5 rounded-lg hover:bg-stone-100 text-stone-500 hover:text-stone-800 transition" title="İncele">
                       <Eye size={16} />
                     </button>
                     {b.durum === 'bekliyor' && (
                       <>
-                        <button
-                          onClick={() => handleReddetTikla(b)}
-                          className="p-1.5 rounded-lg hover:bg-red-50 text-red-400 hover:text-red-600 transition"
-                          title="Reddet"
-                        >
+                        <button onClick={() => handleReddetTikla(b)}
+                          className="p-1.5 rounded-lg hover:bg-red-50 text-red-400 hover:text-red-600 transition" title="Reddet">
                           <XCircle size={16} />
                         </button>
-                        <button
-                          onClick={() => handleOnayla(b.id)}
-                          className="p-1.5 rounded-lg hover:bg-green-50 text-green-400 hover:text-green-600 transition"
-                          title="Onayla"
-                        >
+                        <button onClick={() => handleOnayla(b.id)}
+                          className="p-1.5 rounded-lg hover:bg-green-50 text-green-400 hover:text-green-600 transition" title="Onayla">
                           <CheckCircle size={16} />
                         </button>
                       </>
